@@ -6,6 +6,7 @@ const router = Router();
 
 router.use(authenticateJwt);
 
+router.get('/', getDashboardStats);
 router.get('/stats', getDashboardStats);
 
 export default router;

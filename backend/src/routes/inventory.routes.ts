@@ -7,6 +7,8 @@ const router = Router();
 
 router.use(authenticateJwt);
 
+router.get('/', authorizeRoles('ADMIN', 'WAREHOUSE', 'SALES', 'ACCOUNTS'), getStockLogs);
+router.get('/movements', authorizeRoles('ADMIN', 'WAREHOUSE', 'SALES', 'ACCOUNTS'), getStockLogs);
 router.get(
   '/logs',
   authorizeRoles('ADMIN', 'WAREHOUSE', 'SALES', 'ACCOUNTS'),

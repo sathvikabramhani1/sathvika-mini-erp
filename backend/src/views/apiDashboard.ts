@@ -14,17 +14,15 @@ export function renderApiDashboard(): string {
     :root {
       --bg-dark: #040d08;
       --panel-bg: #08170f;
-      --panel-border: rgba(16, 185, 129, 0.22);
-      --card-bg: rgba(11, 27, 18, 0.85);
+      --panel-border: rgba(16, 185, 129, 0.25);
+      --card-bg: rgba(11, 27, 18, 0.9);
       --emerald-neon: #10b981;
       --emerald-bright: #34d399;
-      --emerald-dark: #065f46;
       --amber-gold: #f59e0b;
       --amber-light: #fbbf24;
       --text-white: #f8fafc;
-      --text-dim: #94a3b8;
       --text-mint: #a7f3d0;
-      --code-bg: #030a06;
+      --code-bg: #020603;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -34,17 +32,16 @@ export function renderApiDashboard(): string {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      overflow-x: hidden;
       background-image: 
-        radial-gradient(circle at 10% 10%, rgba(16, 185, 129, 0.15) 0%, transparent 45%),
-        radial-gradient(circle at 90% 90%, rgba(245, 158, 11, 0.1) 0%, transparent 40%);
+        radial-gradient(circle at 12% 12%, rgba(16, 185, 129, 0.16) 0%, transparent 45%),
+        radial-gradient(circle at 88% 88%, rgba(245, 158, 11, 0.12) 0%, transparent 45%);
     }
 
-    /* Top Studio Command Bar */
+    /* Top Command Bar */
     .top-bar {
       height: 64px;
       border-bottom: 1px solid var(--panel-border);
-      background: rgba(8, 23, 15, 0.92);
+      background: rgba(8, 23, 15, 0.95);
       backdrop-filter: blur(16px);
       display: flex;
       align-items: center;
@@ -60,29 +57,28 @@ export function renderApiDashboard(): string {
       gap: 12px;
     }
     .brand-icon {
-      width: 36px;
-      height: 36px;
+      width: 38px;
+      height: 38px;
       border-radius: 10px;
       background: linear-gradient(135deg, #10b981, #047857);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 16px rgba(16, 185, 129, 0.4);
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.45);
     }
     .brand-title {
       font-weight: 800;
-      font-size: 1.1rem;
-      letter-spacing: -0.02em;
+      font-size: 1.15rem;
     }
     .brand-tag {
       font-size: 0.65rem;
       text-transform: uppercase;
       letter-spacing: 0.12em;
       color: var(--amber-light);
-      background: rgba(245, 158, 11, 0.12);
-      padding: 2px 6px;
+      background: rgba(245, 158, 11, 0.15);
+      padding: 2px 7px;
       border-radius: 4px;
-      border: 1px solid rgba(245, 158, 11, 0.3);
+      border: 1px solid rgba(245, 158, 11, 0.35);
       font-weight: 700;
     }
     .top-actions {
@@ -94,9 +90,9 @@ export function renderApiDashboard(): string {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       font-weight: 600;
-      padding: 6px 14px;
+      padding: 7px 14px;
       border-radius: 8px;
       text-decoration: none;
       transition: all 0.2s;
@@ -104,20 +100,19 @@ export function renderApiDashboard(): string {
     .btn-portal {
       background: linear-gradient(135deg, #10b981, #059669);
       color: #ffffff;
-      box-shadow: 0 2px 10px rgba(16, 185, 129, 0.35);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 2px 12px rgba(16, 185, 129, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.25);
     }
     .btn-portal:hover {
       transform: translateY(-1px);
-      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.5);
     }
     .btn-secondary {
-      background: rgba(16, 185, 129, 0.1);
+      background: rgba(16, 185, 129, 0.12);
       color: var(--text-mint);
       border: 1px solid var(--panel-border);
     }
     .btn-secondary:hover {
-      background: rgba(16, 185, 129, 0.2);
+      background: rgba(16, 185, 129, 0.22);
       color: #ffffff;
     }
 
@@ -126,7 +121,6 @@ export function renderApiDashboard(): string {
       flex: 1;
       display: grid;
       grid-template-columns: 1fr 420px;
-      gap: 0;
       min-height: calc(100vh - 64px);
     }
     @media (max-width: 1024px) {
@@ -135,16 +129,16 @@ export function renderApiDashboard(): string {
       }
     }
 
-    /* Left Pane: Interactive API Sandbox & Terminal */
+    /* Left Pane: Interactive API Sandbox */
     .sandbox-pane {
-      padding: 24px 32px;
+      padding: 28px 36px;
       border-right: 1px solid var(--panel-border);
       display: flex;
       flex-direction: column;
       gap: 20px;
     }
     .sandbox-header h2 {
-      font-size: 1.4rem;
+      font-size: 1.45rem;
       font-weight: 800;
       margin-bottom: 4px;
     }
@@ -153,7 +147,7 @@ export function renderApiDashboard(): string {
       color: var(--text-mint);
     }
 
-    /* API Endpoint Selector Chips */
+    /* Endpoint Selector Buttons */
     .endpoint-tabs {
       display: flex;
       flex-wrap: wrap;
@@ -161,52 +155,53 @@ export function renderApiDashboard(): string {
     }
     .ep-chip {
       background: rgba(16, 185, 129, 0.08);
-      border: 1px solid rgba(16, 185, 129, 0.2);
-      padding: 6px 12px;
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      padding: 8px 14px;
       border-radius: 8px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.78rem;
-      color: #cbd5e1;
+      font-size: 0.8rem;
+      color: #e2e8f0;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 8px;
       transition: all 0.2s;
     }
-    .ep-chip:hover, .ep-chip.active {
-      background: rgba(16, 185, 129, 0.22);
+    .ep-chip:hover {
+      background: rgba(16, 185, 129, 0.18);
+      border-color: var(--emerald-bright);
+      color: #ffffff;
+    }
+    .ep-chip.active {
+      background: rgba(16, 185, 129, 0.28);
       border-color: var(--emerald-neon);
       color: #ffffff;
-      box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.35);
     }
     .ep-badge {
       font-weight: 700;
-      font-size: 0.68rem;
+      font-size: 0.7rem;
       padding: 2px 6px;
       border-radius: 4px;
     }
-    .ep-badge.get { background: rgba(16, 185, 129, 0.3); color: #6ee7b7; }
-    .ep-badge.post { background: rgba(245, 158, 11, 0.3); color: #fde68a; }
+    .ep-badge.get { background: rgba(16, 185, 129, 0.35); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.5); }
+    .ep-badge.post { background: rgba(245, 158, 11, 0.35); color: #fde68a; border: 1px solid rgba(245, 158, 11, 0.5); }
 
     /* Interactive Request Bar */
     .request-bar {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       background: #020603;
       border: 1px solid var(--panel-border);
       border-radius: 12px;
-      padding: 8px 12px;
+      padding: 8px 14px;
       align-items: center;
     }
     .method-select {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.85rem;
-      font-weight: 700;
+      font-size: 0.88rem;
+      font-weight: 800;
       color: var(--emerald-bright);
-      background: transparent;
-      border: none;
-      outline: none;
-      cursor: default;
     }
     .url-input {
       flex: 1;
@@ -214,17 +209,17 @@ export function renderApiDashboard(): string {
       border: none;
       color: #f8fafc;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.88rem;
+      font-size: 0.9rem;
       outline: none;
     }
     .btn-send {
       background: linear-gradient(135deg, #10b981, #059669);
       color: #ffffff;
       border: none;
-      padding: 8px 18px;
+      padding: 9px 20px;
       border-radius: 8px;
       font-weight: 700;
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -239,18 +234,18 @@ export function renderApiDashboard(): string {
     .terminal-window {
       background: var(--code-bg);
       border: 1px solid var(--panel-border);
-      border-radius: 12px;
+      border-radius: 14px;
       flex: 1;
-      min-height: 420px;
+      min-height: 440px;
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.8);
+      box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.9);
     }
     .terminal-header {
       background: #06140b;
-      padding: 8px 16px;
-      border-bottom: 1px solid rgba(16, 185, 129, 0.15);
+      padding: 10px 18px;
+      border-bottom: 1px solid rgba(16, 185, 129, 0.18);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -259,68 +254,73 @@ export function renderApiDashboard(): string {
       display: flex;
       gap: 6px;
     }
-    .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
     .dot.red { background: #f43f5e; }
     .dot.yellow { background: #f59e0b; }
     .dot.green { background: #10b981; }
     .terminal-status {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      color: var(--text-mint);
+      font-size: 0.78rem;
       display: flex;
       align-items: center;
       gap: 8px;
     }
     .status-code-pill {
-      background: rgba(16, 185, 129, 0.2);
+      background: rgba(16, 185, 129, 0.25);
       color: #34d399;
-      padding: 2px 8px;
+      padding: 3px 9px;
       border-radius: 4px;
       font-weight: 700;
-      border: 1px solid rgba(16, 185, 129, 0.35);
+      border: 1px solid rgba(16, 185, 129, 0.4);
     }
     .terminal-body {
-      padding: 16px;
+      padding: 18px;
       overflow: auto;
       flex: 1;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.82rem;
+      font-size: 0.85rem;
       line-height: 1.6;
       color: #e2e8f0;
-      white-space: pre;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
     .terminal-toolbar {
-      padding: 8px 16px;
+      padding: 10px 18px;
       background: #06140b;
-      border-top: 1px solid rgba(16, 185, 129, 0.15);
+      border-top: 1px solid rgba(16, 185, 129, 0.18);
       display: flex;
-      justify-content: flex-end;
-      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .auth-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: #34d399;
+      background: rgba(16, 185, 129, 0.15);
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(16, 185, 129, 0.3);
     }
     .btn-copy {
       background: transparent;
-      border: 1px solid rgba(16, 185, 129, 0.25);
+      border: 1px solid rgba(16, 185, 129, 0.3);
       color: var(--text-mint);
-      font-size: 0.75rem;
-      padding: 4px 10px;
+      font-size: 0.78rem;
+      padding: 5px 12px;
       border-radius: 6px;
       cursor: pointer;
       font-family: 'JetBrains Mono', monospace;
       transition: all 0.2s;
     }
     .btn-copy:hover {
-      background: rgba(16, 185, 129, 0.15);
+      background: rgba(16, 185, 129, 0.2);
       color: #ffffff;
     }
 
     /* Right Pane: Telemetry & Spec Sheet */
     .specs-pane {
       background: var(--panel-bg);
-      padding: 24px;
+      padding: 28px;
       display: flex;
       flex-direction: column;
       gap: 20px;
@@ -330,13 +330,13 @@ export function renderApiDashboard(): string {
       background: var(--card-bg);
       border: 1px solid var(--panel-border);
       border-radius: 12px;
-      padding: 16px;
+      padding: 18px;
     }
     .spec-card-title {
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       font-weight: 800;
       color: #ffffff;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -344,10 +344,10 @@ export function renderApiDashboard(): string {
     .spec-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.82rem;
+      font-size: 0.83rem;
     }
     .spec-table tr {
-      border-bottom: 1px solid rgba(16, 185, 129, 0.1);
+      border-bottom: 1px solid rgba(16, 185, 129, 0.12);
     }
     .spec-table tr:last-child {
       border-bottom: none;
@@ -365,17 +365,17 @@ export function renderApiDashboard(): string {
       font-weight: 600;
     }
 
-    /* Role Credentials Quick-Inject Cards */
+    /* Role Matrix Cards */
     .role-grid {
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
     .role-box {
-      background: rgba(3, 10, 6, 0.7);
-      border: 1px solid rgba(16, 185, 129, 0.18);
+      background: rgba(3, 10, 6, 0.75);
+      border: 1px solid rgba(16, 185, 129, 0.2);
       border-radius: 8px;
-      padding: 10px 12px;
+      padding: 10px 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -384,11 +384,11 @@ export function renderApiDashboard(): string {
     }
     .role-box:hover {
       border-color: var(--amber-gold);
-      background: rgba(245, 158, 11, 0.08);
+      background: rgba(245, 158, 11, 0.1);
     }
     .role-name {
       font-weight: 700;
-      font-size: 0.82rem;
+      font-size: 0.84rem;
       color: #ffffff;
     }
     .role-email {
@@ -397,13 +397,14 @@ export function renderApiDashboard(): string {
       font-family: 'JetBrains Mono', monospace;
     }
     .btn-test-role {
-      font-size: 0.7rem;
-      padding: 3px 8px;
+      font-size: 0.72rem;
+      padding: 4px 10px;
       border-radius: 4px;
-      background: rgba(16, 185, 129, 0.2);
+      background: rgba(16, 185, 129, 0.25);
       border: 1px solid var(--emerald-neon);
       color: #ffffff;
       cursor: pointer;
+      font-weight: 700;
     }
   </style>
 </head>
@@ -412,7 +413,7 @@ export function renderApiDashboard(): string {
   <header class="top-bar">
     <div class="brand-section">
       <div class="brand-icon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.4"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 0 0 8 20C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z"/></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.4"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 0 0 8 20C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z"/></svg>
       </div>
       <div>
         <div class="brand-title">Sathvika Organics <span class="brand-tag">API Engine</span></div>
@@ -444,32 +445,32 @@ export function renderApiDashboard(): string {
     <main class="sandbox-pane">
       <div class="sandbox-header">
         <h2>Live API Requester & Sandbox</h2>
-        <p>Direct REST verification terminal. Click any endpoint below or trigger live requests against the cloud cluster.</p>
+        <p>Click any endpoint button below to test live requests directly against the cloud PostgreSQL cluster.</p>
       </div>
 
       <!-- Endpoint Selector Chips -->
       <div class="endpoint-tabs" id="endpointTabs">
-        <button class="ep-chip active" onclick="selectEndpoint('POST', '/api/auth/login', 'admin')">
+        <button type="button" class="ep-chip active" id="chip-login">
           <span class="ep-badge post">POST</span>
           <span>/api/auth/login</span>
         </button>
-        <button class="ep-chip" onclick="selectEndpoint('GET', '/api/dashboard')">
+        <button type="button" class="ep-chip" id="chip-dashboard">
           <span class="ep-badge get">GET</span>
           <span>/api/dashboard</span>
         </button>
-        <button class="ep-chip" onclick="selectEndpoint('GET', '/api/products')">
+        <button type="button" class="ep-chip" id="chip-products">
           <span class="ep-badge get">GET</span>
           <span>/api/products</span>
         </button>
-        <button class="ep-chip" onclick="selectEndpoint('GET', '/api/customers')">
+        <button type="button" class="ep-chip" id="chip-customers">
           <span class="ep-badge get">GET</span>
           <span>/api/customers</span>
         </button>
-        <button class="ep-chip" onclick="selectEndpoint('GET', '/api/challans')">
+        <button type="button" class="ep-chip" id="chip-challans">
           <span class="ep-badge get">GET</span>
           <span>/api/challans</span>
         </button>
-        <button class="ep-chip" onclick="selectEndpoint('GET', '/api/inventory/logs')">
+        <button type="button" class="ep-chip" id="chip-logs">
           <span class="ep-badge get">GET</span>
           <span>/api/inventory/logs</span>
         </button>
@@ -479,7 +480,7 @@ export function renderApiDashboard(): string {
       <div class="request-bar">
         <span class="method-select" id="currentMethod">POST</span>
         <input type="text" class="url-input" id="currentUrl" value="/api/auth/login" readonly />
-        <button class="btn-send" id="btnSend" onclick="executeCurrentRequest()">
+        <button type="button" class="btn-send" id="btnSend">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
           Send Request
         </button>
@@ -493,25 +494,19 @@ export function renderApiDashboard(): string {
             <div class="dot yellow"></div>
             <div class="dot green"></div>
           </div>
-          <div class="terminal-status" id="terminalStatus">
+          <div class="terminal-status">
             <span>Response:</span>
             <span class="status-code-pill" id="statusCodePill">200 OK</span>
-            <span id="latencyPill" style="color: #6ee7b7;">18ms</span>
+            <span id="latencyPill" style="color: #6ee7b7;">14ms</span>
           </div>
         </div>
-        <div class="terminal-body" id="terminalOutput">// Click "Send Request" or select any endpoint above to execute live API call...
-{
-  "name": "Sathvika Organics & Specialty Foods B2B Portal",
-  "status": "online",
-  "cluster": "Render PostgreSQL Cloud (Active)",
-  "schema": "sathvika",
-  "version": "1.0.0",
-  "auth_scheme": "Bearer JWT with RBAC",
-  "cluster_time": "2026-09-11T01:35:00.000Z"
-}</div>
+        <div class="terminal-body" id="terminalOutput">// Connecting to Sathvika cloud cluster...</div>
         <div class="terminal-toolbar">
-          <button class="btn-copy" onclick="copyCurl()">Copy cURL</button>
-          <button class="btn-copy" onclick="copyJson()">Copy JSON</button>
+          <div class="auth-badge" id="authStatusBadge">Authenticating cluster session...</div>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn-copy" id="btnCopyCurl">Copy cURL</button>
+            <button type="button" class="btn-copy" id="btnCopyJson">Copy JSON</button>
+          </div>
         </div>
       </div>
     </main>
@@ -531,7 +526,7 @@ export function renderApiDashboard(): string {
           </tr>
           <tr>
             <td class="spec-label">Database</td>
-            <td class="spec-value" style="color: #34d399;">PostgreSQL 15</td>
+            <td class="spec-value" style="color: #34d399;">PostgreSQL 15 (Online)</td>
           </tr>
           <tr>
             <td class="spec-label">Schema Isolation</td>
@@ -542,13 +537,13 @@ export function renderApiDashboard(): string {
             <td class="spec-value">Prisma Client 5.22</td>
           </tr>
           <tr>
-            <td class="spec-label">Challan Safety</td>
+            <td class="spec-label">Transaction Safety</td>
             <td class="spec-value" style="color: #fbbf24;">ACID Atomic Rollback</td>
           </tr>
         </table>
       </div>
 
-      <!-- Test Role Matrix & Quick Injection -->
+      <!-- Test Role Matrix -->
       <div class="spec-card">
         <div class="spec-card-title" style="justify-content: space-between;">
           <div style="display: flex; align-items: center; gap: 8px;">
@@ -558,33 +553,33 @@ export function renderApiDashboard(): string {
           <span style="font-size: 0.72rem; color: #fbbf24; font-family: 'JetBrains Mono', monospace;">Password123!</span>
         </div>
         <div class="role-grid">
-          <div class="role-box" onclick="testLoginFor('admin@sathvika.com')">
+          <div class="role-box" id="role-admin">
             <div>
               <div class="role-name">Administrator (Full Access)</div>
               <div class="role-email">admin@sathvika.com</div>
             </div>
-            <button class="btn-test-role">Test &rarr;</button>
+            <button type="button" class="btn-test-role">Test &rarr;</button>
           </div>
-          <div class="role-box" onclick="testLoginFor('sales@sathvika.com')">
+          <div class="role-box" id="role-sales">
             <div>
               <div class="role-name">Sales Team (CRM & Challans)</div>
               <div class="role-email">sales@sathvika.com</div>
             </div>
-            <button class="btn-test-role">Test &rarr;</button>
+            <button type="button" class="btn-test-role">Test &rarr;</button>
           </div>
-          <div class="role-box" onclick="testLoginFor('warehouse@sathvika.com')">
+          <div class="role-box" id="role-warehouse">
             <div>
               <div class="role-name">Warehouse (Inventory & Logs)</div>
               <div class="role-email">warehouse@sathvika.com</div>
             </div>
-            <button class="btn-test-role">Test &rarr;</button>
+            <button type="button" class="btn-test-role">Test &rarr;</button>
           </div>
-          <div class="role-box" onclick="testLoginFor('accounts@sathvika.com')">
+          <div class="role-box" id="role-accounts">
             <div>
               <div class="role-name">Accounts (Tax Invoices)</div>
               <div class="role-email">accounts@sathvika.com</div>
             </div>
-            <button class="btn-test-role">Test &rarr;</button>
+            <button type="button" class="btn-test-role">Test &rarr;</button>
           </div>
         </div>
       </div>
@@ -597,7 +592,7 @@ export function renderApiDashboard(): string {
         </div>
         <div style="font-size: 0.8rem; color: var(--text-mint); line-height: 1.6;">
           • <strong>Atomic Deductions:</strong> Confirming a challan executes within <code style="color: #ffffff;">prisma.$transaction</code> ensuring stock is reduced and audit logs committed synchronously.<br>
-          • <strong>Negative Balance Guard:</strong> Throws HTTP 400 if stock is insufficient.<br>
+          • <strong>Negative Balance Guard:</strong> Returns HTTP 400 if stock is insufficient.<br>
           • <strong>Product Snapshots:</strong> Line items cache unit price and SKU at time of dispatch.
         </div>
       </div>
@@ -606,86 +601,208 @@ export function renderApiDashboard(): string {
 
   <script>
     let activeToken = '';
-    let currentReq = { method: 'POST', url: '/api/auth/login', body: { email: 'admin@sathvika.com', password: 'Password123!' } };
+    let currentReq = {
+      method: 'POST',
+      url: '/api/auth/login',
+      body: { email: 'admin@sathvika.com', password: 'Password123!' }
+    };
 
-    function selectEndpoint(method, url, preset) {
+    function setActiveTab(buttonId) {
       document.querySelectorAll('.ep-chip').forEach(c => c.classList.remove('active'));
-      event.currentTarget.classList.add('active');
-
-      document.getElementById('currentMethod').innerText = method;
-      document.getElementById('currentUrl').value = url;
-
-      if (url === '/api/auth/login') {
-        currentReq = { method: 'POST', url: '/api/auth/login', body: { email: 'admin@sathvika.com', password: 'Password123!' } };
-      } else {
-        currentReq = { method, url, body: null };
-      }
-      executeCurrentRequest();
+      const activeBtn = document.getElementById(buttonId);
+      if (activeBtn) activeBtn.classList.add('active');
     }
 
-    function testLoginFor(email) {
-      document.getElementById('currentMethod').innerText = 'POST';
-      document.getElementById('currentUrl').value = '/api/auth/login';
-      currentReq = { method: 'POST', url: '/api/auth/login', body: { email, password: 'Password123!' } };
-      executeCurrentRequest();
+    async function ensureToken() {
+      if (activeToken) return activeToken;
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: 'admin@sathvika.com', password: 'Password123!' })
+        });
+        const json = await res.json();
+        if (json?.data?.token) {
+          activeToken = json.data.token;
+          const badge = document.getElementById('authStatusBadge');
+          if (badge) badge.innerText = 'Token Active (Admin Session)';
+        }
+      } catch (err) {
+        console.error('Auto login error:', err);
+      }
+      return activeToken;
     }
 
     async function executeCurrentRequest() {
-      const output = document.getElementById('terminalBody') || document.getElementById('terminalOutput');
+      const output = document.getElementById('terminalOutput');
       const statusPill = document.getElementById('statusCodePill');
       const latencyPill = document.getElementById('latencyPill');
+      const btnSend = document.getElementById('btnSend');
 
-      output.innerText = '// Executing ' + currentReq.method + ' ' + currentReq.url + '...';
+      if (btnSend) btnSend.innerText = 'Sending...';
+      output.innerText = '// Requesting ' + currentReq.method + ' ' + currentReq.url + '...\n';
       const start = performance.now();
 
       try {
+        if (currentReq.url !== '/api/auth/login') {
+          await ensureToken();
+        }
+
         const headers = { 'Content-Type': 'application/json' };
-        if (activeToken) headers['Authorization'] = 'Bearer ' + activeToken;
+        if (activeToken && currentReq.url !== '/api/auth/login') {
+          headers['Authorization'] = 'Bearer ' + activeToken;
+        }
 
         const options = { method: currentReq.method, headers };
-        if (currentReq.body) options.body = JSON.stringify(currentReq.body);
+        if (currentReq.body) {
+          options.body = JSON.stringify(currentReq.body);
+        }
 
         const res = await fetch(currentReq.url, options);
         const duration = Math.round(performance.now() - start);
-        latencyPill.innerText = duration + 'ms';
-        statusPill.innerText = res.status + ' ' + res.statusText;
-        statusPill.style.color = res.ok ? '#34d399' : '#f43f5e';
+        if (latencyPill) latencyPill.innerText = duration + 'ms';
+        if (statusPill) {
+          statusPill.innerText = res.status + ' ' + res.statusText;
+          statusPill.style.color = res.ok ? '#34d399' : '#f43f5e';
+        }
 
         const json = await res.json();
-        if (json.data && json.data.token) {
+        if (currentReq.url === '/api/auth/login' && json?.data?.token) {
           activeToken = json.data.token;
+          const badge = document.getElementById('authStatusBadge');
+          if (badge) badge.innerText = 'Token Active (' + (json.data.user?.role || 'Admin') + ')';
         }
+
         output.innerText = JSON.stringify(json, null, 2);
       } catch (err) {
-        statusPill.innerText = 'FETCH ERROR';
-        statusPill.style.color = '#f43f5e';
-        output.innerText = JSON.stringify({ error: err.message }, null, 2);
+        if (statusPill) {
+          statusPill.innerText = 'ERROR';
+          statusPill.style.color = '#f43f5e';
+        }
+        output.innerText = '// Error executing request:\n' + err.message;
+      } finally {
+        if (btnSend) {
+          btnSend.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg> Send Request';
+        }
       }
     }
 
-    function copyJson() {
-      const text = document.getElementById('terminalOutput').innerText;
-      navigator.clipboard.writeText(text);
-      alert('JSON copied to clipboard!');
+    function setupListeners() {
+      // Endpoint Chips
+      document.getElementById('chip-login').addEventListener('click', () => {
+        setActiveTab('chip-login');
+        document.getElementById('currentMethod').innerText = 'POST';
+        document.getElementById('currentUrl').value = '/api/auth/login';
+        currentReq = { method: 'POST', url: '/api/auth/login', body: { email: 'admin@sathvika.com', password: 'Password123!' } };
+        executeCurrentRequest();
+      });
+
+      document.getElementById('chip-dashboard').addEventListener('click', () => {
+        setActiveTab('chip-dashboard');
+        document.getElementById('currentMethod').innerText = 'GET';
+        document.getElementById('currentUrl').value = '/api/dashboard';
+        currentReq = { method: 'GET', url: '/api/dashboard', body: null };
+        executeCurrentRequest();
+      });
+
+      document.getElementById('chip-products').addEventListener('click', () => {
+        setActiveTab('chip-products');
+        document.getElementById('currentMethod').innerText = 'GET';
+        document.getElementById('currentUrl').value = '/api/products';
+        currentReq = { method: 'GET', url: '/api/products', body: null };
+        executeCurrentRequest();
+      });
+
+      document.getElementById('chip-customers').addEventListener('click', () => {
+        setActiveTab('chip-customers');
+        document.getElementById('currentMethod').innerText = 'GET';
+        document.getElementById('currentUrl').value = '/api/customers';
+        currentReq = { method: 'GET', url: '/api/customers', body: null };
+        executeCurrentRequest();
+      });
+
+      document.getElementById('chip-challans').addEventListener('click', () => {
+        setActiveTab('chip-challans');
+        document.getElementById('currentMethod').innerText = 'GET';
+        document.getElementById('currentUrl').value = '/api/challans';
+        currentReq = { method: 'GET', url: '/api/challans', body: null };
+        executeCurrentRequest();
+      });
+
+      document.getElementById('chip-logs').addEventListener('click', () => {
+        setActiveTab('chip-logs');
+        document.getElementById('currentMethod').innerText = 'GET';
+        document.getElementById('currentUrl').value = '/api/inventory/logs';
+        currentReq = { method: 'GET', url: '/api/inventory/logs', body: null };
+        executeCurrentRequest();
+      });
+
+      // Send Button
+      document.getElementById('btnSend').addEventListener('click', executeCurrentRequest);
+
+      // Role Test Buttons
+      document.getElementById('role-admin').addEventListener('click', () => {
+        setActiveTab('chip-login');
+        document.getElementById('currentMethod').innerText = 'POST';
+        document.getElementById('currentUrl').value = '/api/auth/login';
+        currentReq = { method: 'POST', url: '/api/auth/login', body: { email: 'admin@sathvika.com', password: 'Password123!' } };
+        executeCurrentRequest();
+      });
+
+      document.getElementById('role-sales').addEventListener('click', () => {
+        setActiveTab('chip-login');
+        document.getElementById('currentMethod').innerText = 'POST';
+        document.getElementById('currentUrl').value = '/api/auth/login';
+        currentReq = { method: 'POST', url: '/api/auth/login', body: { email: 'sales@sathvika.com', password: 'Password123!' } };
+        executeCurrentRequest();
+      });
+
+      document.getElementById('role-warehouse').addEventListener('click', () => {
+        setActiveTab('chip-login');
+        document.getElementById('currentMethod').innerText = 'POST';
+        document.getElementById('currentUrl').value = '/api/auth/login';
+        currentReq = { method: 'POST', url: '/api/auth/login', body: { email: 'warehouse@sathvika.com', password: 'Password123!' } };
+        executeCurrentRequest();
+      });
+
+      document.getElementById('role-accounts').addEventListener('click', () => {
+        setActiveTab('chip-login');
+        document.getElementById('currentMethod').innerText = 'POST';
+        document.getElementById('currentUrl').value = '/api/auth/login';
+        currentReq = { method: 'POST', url: '/api/auth/login', body: { email: 'accounts@sathvika.com', password: 'Password123!' } };
+        executeCurrentRequest();
+      });
+
+      // Copy Buttons
+      document.getElementById('btnCopyJson').addEventListener('click', () => {
+        const text = document.getElementById('terminalOutput').innerText;
+        navigator.clipboard.writeText(text);
+        alert('JSON response copied to clipboard!');
+      });
+
+      document.getElementById('btnCopyCurl').addEventListener('click', () => {
+        const curl = 'curl -X ' + currentReq.method + ' https://sathvika-backend.onrender.com' + currentReq.url +
+          (activeToken ? ' -H "Authorization: Bearer ' + activeToken + '"' : '') +
+          (currentReq.body ? ' -H "Content-Type: application/json" -d \'' + JSON.stringify(currentReq.body) + '\'' : '');
+        navigator.clipboard.writeText(curl);
+        alert('cURL command copied to clipboard!');
+      });
+
+      // Initial auto-test
+      executeCurrentRequest();
     }
 
-    function copyCurl() {
-      const curl = 'curl -X ' + currentReq.method + ' https://sathvika-backend.onrender.com' + currentReq.url + 
-        (activeToken ? ' -H "Authorization: Bearer ' + activeToken + '"' : '') + 
-        (currentReq.body ? ' -H "Content-Type: application/json" -d \'' + JSON.stringify(currentReq.body) + '\'' : '');
-      navigator.clipboard.writeText(curl);
-      alert('cURL command copied to clipboard!');
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupListeners);
+    } else {
+      setupListeners();
     }
-
-    // Auto run initial demo request
-    setTimeout(executeCurrentRequest, 300);
   </script>
 </body>
 </html>`;
 }
 
 export function renderHealthDashboard(): string {
-  const timestamp = new Date().toISOString();
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -716,11 +833,11 @@ export function renderHealthDashboard(): string {
     .radar-box {
       width: 100%;
       max-width: 580px;
-      background: rgba(6, 20, 13, 0.9);
+      background: rgba(6, 20, 13, 0.92);
       border: 1px solid rgba(16, 185, 129, 0.35);
       border-radius: 20px;
-      padding: 32px;
-      box-shadow: 0 0 50px rgba(16, 185, 129, 0.2);
+      padding: 36px;
+      box-shadow: 0 0 50px rgba(16, 185, 129, 0.25);
       text-align: center;
       position: relative;
       overflow: hidden;
@@ -735,7 +852,7 @@ export function renderHealthDashboard(): string {
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 20px var(--radar-glow);
+      box-shadow: 0 0 24px var(--radar-glow);
     }
     .sweep {
       position: absolute;
@@ -750,14 +867,14 @@ export function renderHealthDashboard(): string {
       100% { transform: rotate(360deg); }
     }
     .hud-title {
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       font-weight: 800;
       color: #ffffff;
       margin-bottom: 6px;
       letter-spacing: -0.02em;
     }
     .hud-sub {
-      font-size: 0.88rem;
+      font-size: 0.9rem;
       color: #a7f3d0;
       margin-bottom: 24px;
     }
@@ -770,8 +887,8 @@ export function renderHealthDashboard(): string {
     }
     .hud-item {
       background: #020603;
-      border: 1px solid rgba(16, 185, 129, 0.2);
-      padding: 12px 14px;
+      border: 1px solid rgba(16, 185, 129, 0.22);
+      padding: 14px;
       border-radius: 10px;
     }
     .hud-label {
@@ -808,7 +925,7 @@ export function renderHealthDashboard(): string {
   <div class="radar-box">
     <div class="radar-circle">
       <div class="sweep"></div>
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
     </div>
     <h1 class="hud-title">Sathvika Cluster Diagnostic HUD</h1>
     <p class="hud-sub">Real-time Node.js & PostgreSQL Telemetry Stream</p>
