@@ -19,7 +19,7 @@
     "prisma",
     "typescript"
   ],
-  "author": "Antigravity",
+  "author": "Swayampakam Sathvika Bramhani (sathvikabramhani1)",
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^5.14.0",

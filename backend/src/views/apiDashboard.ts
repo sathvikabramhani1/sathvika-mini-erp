@@ -266,7 +266,7 @@ export function renderApiDashboard(): string {
         <a href="/health" class="btn btn-secondary">
           ❤️ Health Check JSON
         </a>
-        <a href="https://github.com/sathvika/sathvika-erp-crm" target="_blank" class="btn btn-secondary">
+        <a href="https://github.com/sathvikabramhani1/mini-erp-crm" target="_blank" class="btn btn-secondary">
           📂 GitHub Repository
         </a>
       </div>
