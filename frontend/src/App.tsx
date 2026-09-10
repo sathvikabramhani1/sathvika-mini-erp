@@ -1,3 +1,4 @@
+import { ErrorBoundary } from './components/ErrorBoundary';
 import React, { useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
@@ -50,11 +51,13 @@ const MainLayout: React.FC = () => {
       />
 
       <div className="main-content">
+        <ErrorBoundary>
         {currentTab === 'dashboard' && <DashboardPage onNavigate={setCurrentTab} />}
         {currentTab === 'customers' && <CustomersPage />}
         {currentTab === 'products' && <ProductsPage />}
         {currentTab === 'stock-logs' && <StockLogsPage />}
         {currentTab === 'challans' && <ChallansPage />}
+      </ErrorBoundary>
       </div>
 
       <CommandPalette
@@ -68,11 +71,13 @@ const MainLayout: React.FC = () => {
 
 export const App: React.FC = () => {
   return (
-    <AuthProvider>
+    <ErrorBoundary fallbackTitle="Sathvika Operations Portal Initializer">
+      <AuthProvider>
       <ToastProvider>
         <MainLayout />
       </ToastProvider>
     </AuthProvider>
+    </ErrorBoundary>
   );
 };
 

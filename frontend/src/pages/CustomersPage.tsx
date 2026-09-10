@@ -58,7 +58,8 @@ export const CustomersPage: React.FC = () => {
         search: search || undefined,
         customerType: typeFilter !== 'ALL' ? typeFilter : undefined,
       });
-      setCustomers(res.customers);
+      const list = Array.isArray(res) ? res : (res?.customers || res?.data || []);
+      setCustomers(list);
     } catch (err: any) {
       error(err.message || 'Failed to fetch customer directory');
     } finally {
@@ -77,9 +78,9 @@ export const CustomersPage: React.FC = () => {
 
   // CSV Export
   const handleExportCsv = () => {
-    if (customers.length === 0) return;
+    if ((customers || []).length === 0) return;
     const headers = ['Name', 'Business Name', 'Mobile', 'Email', 'GST Number', 'Type', 'Status', 'Follow-Up Date', 'Address'];
-    const rows = customers.map(c => [
+    const rows = (customers || []).map(c => [
       `"${c.name.replace(/"/g, '""')}"`,
       `"${c.businessName.replace(/"/g, '""')}"`,
       `"${c.mobile}"`,
@@ -213,7 +214,7 @@ export const CustomersPage: React.FC = () => {
         <div>
           <h1 className="page-title">
             <span>Customer CRM Module</span>
-            <span className="badge badge-primary">{customers.length} Accounts</span>
+            <span className="badge badge-primary">{(customers || []).length} Accounts</span>
           </h1>
           <p className="page-subtitle">Wholesale partners, supermarket chains, GST records, and customer follow-up notes</p>
         </div>
@@ -283,12 +284,12 @@ export const CustomersPage: React.FC = () => {
               <tr>
                 <td colSpan={7} style={{ textAlign: 'center', padding: '40px', color: '#a7f3d0' }}>Loading customer directory...</td>
               </tr>
-            ) : customers.length === 0 ? (
+            ) : (customers || []).length === 0 ? (
               <tr>
                 <td colSpan={7} style={{ textAlign: 'center', padding: '40px', color: '#a7f3d0' }}>No customers found matching query.</td>
               </tr>
             ) : (
-              customers.map(c => (
+              (customers || []).map(c => (
                 <tr key={c.id}>
                   <td>
                     <div style={{ fontWeight: 700, color: '#ffffff', cursor: 'pointer' }} onClick={() => handleOpenDetail(c)}>

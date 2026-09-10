@@ -55,7 +55,8 @@ export const ProductsPage: React.FC = () => {
         search: search || undefined,
         category: categoryFilter !== 'ALL' ? categoryFilter : undefined,
       });
-      setProducts(res.products);
+      const list = Array.isArray(res) ? res : (res?.products || res?.data || []);
+      setProducts(list);
     } catch (err: any) {
       error(err.message || 'Failed to fetch product catalog');
     } finally {
@@ -74,9 +75,9 @@ export const ProductsPage: React.FC = () => {
 
   // CSV Export
   const handleExportCsv = () => {
-    if (products.length === 0) return;
+    if ((products || []).length === 0) return;
     const headers = ['SKU', 'Name', 'Category', 'Unit Price', 'Current Stock', 'Min Stock Alert', 'Location'];
-    const rows = products.map(p => [
+    const rows = (products || []).map(p => [
       `"${p.sku}"`,
       `"${p.name.replace(/"/g, '""')}"`,
       `"${p.category}"`,
@@ -192,7 +193,7 @@ export const ProductsPage: React.FC = () => {
         <div>
           <h1 className="page-title">
             <span>Product & Inventory Module</span>
-            <span className="badge badge-primary">{products.length} Items</span>
+            <span className="badge badge-primary">{(products || []).length} Items</span>
           </h1>
           <p className="page-subtitle">Product catalog, real-time stock levels, warehouse locations, and inward/outward adjustments</p>
         </div>
@@ -262,12 +263,12 @@ export const ProductsPage: React.FC = () => {
               <tr>
                 <td colSpan={7} style={{ textAlign: 'center', padding: '40px', color: '#a7f3d0' }}>Loading inventory...</td>
               </tr>
-            ) : products.length === 0 ? (
+            ) : (products || []).length === 0 ? (
               <tr>
                 <td colSpan={7} style={{ textAlign: 'center', padding: '40px', color: '#a7f3d0' }}>No products found.</td>
               </tr>
             ) : (
-              products.map(p => {
+              (products || []).map(p => {
                 const isLowStock = p.currentStock <= p.minStockAlert;
                 return (
                   <tr key={p.id}>
