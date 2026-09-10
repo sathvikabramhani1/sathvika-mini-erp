@@ -1,330 +1,619 @@
 {
   "info": {
-    "name": "Mini ERP + CRM Operations Portal API",
-    "description": "Comprehensive Postman collection for Wholesale ERP/CRM with Auth, Customers, Inventory, Sales Challans and RBAC",
+    "name": "Sathvika Mini ERP & CRM API",
+    "_postman_id": "c1b48b7a-9a99-4d8e-9d22-1d575c3ef921",
+    "description": "Postman collection for Sathvika Organics & Specialty Foods Mini ERP + CRM Operations Portal. Complies with the Full Stack Developer Case Study requirements.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "baseUrl", "value": "http://localhost:5000/api", "type": "string" },
-    { "key": "adminToken", "value": "", "type": "string" },
-    { "key": "salesToken", "value": "", "type": "string" },
-    { "key": "warehouseToken", "value": "", "type": "string" },
-    { "key": "accountsToken", "value": "", "type": "string" }
+    {
+      "key": "baseUrl",
+      "value": "https://sathvika-backend.onrender.com",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
   ],
   "item": [
     {
-      "name": "1. Authentication",
+      "name": "Authentication",
       "item": [
         {
-          "name": "Login as Admin",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "var jsonData = pm.response.json();",
-                  "if (jsonData.success) {",
-                  "    pm.collectionVariables.set('adminToken', jsonData.data.token);",
-                  "}"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
+          "name": "1. Login (Admin)",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"admin@erp.com\",\n  \"password\": \"Password123!\"\n}"
-            },
-            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
-          }
-        },
-        {
-          "name": "Login as Sales",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "var jsonData = pm.response.json();",
-                  "if (jsonData.success) {",
-                  "    pm.collectionVariables.set('salesToken', jsonData.data.token);",
-                  "}"
-                ],
-                "type": "text/javascript"
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
               }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"sales@erp.com\",\n  \"password\": \"Password123!\"\n}"
+              "raw": "{\n  \"email\": \"admin@sathvika.com\",\n  \"password\": \"Password123!\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
-          }
-        },
-        {
-          "name": "Login as Warehouse",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "var jsonData = pm.response.json();",
-                  "if (jsonData.success) {",
-                  "    pm.collectionVariables.set('warehouseToken', jsonData.data.token);",
-                  "}"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"warehouse@erp.com\",\n  \"password\": \"Password123!\"\n}"
-            },
-            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
-          }
-        },
-        {
-          "name": "Login as Accounts",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "var jsonData = pm.response.json();",
-                  "if (jsonData.success) {",
-                  "    pm.collectionVariables.set('accountsToken', jsonData.data.token);",
-                  "}"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"accounts@erp.com\",\n  \"password\": \"Password123!\"\n}"
-            },
-            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
-          }
-        },
-        {
-          "name": "Get Profile (Me)",
-          "request": {
-            "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
-            "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth", "me"] }
-          }
-        }
-      ]
-    },
-    {
-      "name": "2. Dashboard",
-      "item": [
-        {
-          "name": "Get Operations Dashboard Stats",
-          "request": {
-            "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
-            "url": { "raw": "{{baseUrl}}/dashboard/stats", "host": ["{{baseUrl}}"], "path": ["dashboard", "stats"] }
-          }
-        }
-      ]
-    },
-    {
-      "name": "3. Customer CRM",
-      "item": [
-        {
-          "name": "List Customers (Search & Filters)",
-          "request": {
-            "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{salesToken}}" }],
             "url": {
-              "raw": "{{baseUrl}}/customers?status=ACTIVE&customerType=WHOLESALE",
-              "host": ["{{baseUrl}}"],
-              "path": ["customers"],
-              "query": [
-                { "key": "status", "value": "ACTIVE" },
-                { "key": "customerType", "value": "WHOLESALE" }
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
               ]
             }
           }
         },
         {
-          "name": "Create Customer",
+          "name": "2. Login (Sales)",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{salesToken}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Suresh Varma\",\n  \"mobile\": \"+91 98330 11223\",\n  \"email\": \"orders@varmatraders.in\",\n  \"businessName\": \"Varma Wholesale Hub\",\n  \"gstNumber\": \"27AABCV5566G1Z2\",\n  \"customerType\": \"WHOLESALE\",\n  \"address\": \"Shop 40, APMC Market Yard, Navi Mumbai - 400705\",\n  \"status\": \"ACTIVE\",\n  \"followUpDate\": \"2026-09-20\",\n  \"notes\": \"Specializes in retail logistics and corrugated packaging.\"\n}"
+              "raw": "{\n  \"email\": \"sales@sathvika.com\",\n  \"password\": \"Password123!\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/customers", "host": ["{{baseUrl}}"], "path": ["customers"] }
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
           }
         },
         {
-          "name": "Add Follow-up Note to Customer",
+          "name": "3. Login (Warehouse)",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{salesToken}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"note\": \"Discussed Q4 bulk purchase schedule for thermal label rolls.\"\n}"
+              "raw": "{\n  \"email\": \"warehouse@sathvika.com\",\n  \"password\": \"Password123!\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/customers/:customerId/notes",
-              "host": ["{{baseUrl}}"],
-              "path": ["customers", ":customerId", "notes"],
-              "variable": [{ "key": "customerId", "value": "" }]
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "4. Login (Accounts)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"accounts@sathvika.com\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "5. Get Current Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
             }
           }
         }
       ]
     },
     {
-      "name": "4. Products & Stock",
+      "name": "Customer CRM Module",
       "item": [
         {
-          "name": "List Products (with Low Stock Filter)",
+          "name": "List Customers (Search & Filter)",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{warehouseToken}}" }],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
             "url": {
-              "raw": "{{baseUrl}}/products?lowStock=true",
-              "host": ["{{baseUrl}}"],
-              "path": ["products"],
-              "query": [{ "key": "lowStock", "value": "true" }]
+              "raw": "{{baseUrl}}/api/customers?search=Nature&type=WHOLESALE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "customers"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "Nature"
+                },
+                {
+                  "key": "type",
+                  "value": "WHOLESALE"
+                }
+              ]
             }
           }
         },
         {
-          "name": "Create Product",
+          "name": "Get Customer Detail by ID",
           "request": {
-            "method": "POST",
+            "method": "GET",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{warehouseToken}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Heavy Duty Poly Strapping Roll 19mm\",\n  \"sku\": \"PROD-PACK-105\",\n  \"category\": \"Packaging\",\n  \"unitPrice\": 840,\n  \"currentStock\": 60,\n  \"minStockAlert\": 15,\n  \"location\": \"Warehouse B - Bay 05\"\n}"
-            },
-            "url": { "raw": "{{baseUrl}}/products", "host": ["{{baseUrl}}"], "path": ["products"] }
+            "url": {
+              "raw": "{{baseUrl}}/api/customers/cust-1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "customers",
+                "cust-1"
+              ]
+            }
           }
         },
         {
-          "name": "Adjust Stock (IN / OUT)",
+          "name": "Add New Customer",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{warehouseToken}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"quantityChanged\": 25,\n  \"movementType\": \"IN\",\n  \"reason\": \"Inward stock from Supplier PO #704\"\n}"
+              "raw": "{\n  \"name\": \"Ananya Sharma\",\n  \"email\": \"ananya@greenearthgourmet.in\",\n  \"phone\": \"+91 98200 45678\",\n  \"businessName\": \"Green Earth Gourmet Stores\",\n  \"gstNumber\": \"27AABCG4567M1ZV\",\n  \"customerType\": \"WHOLESALE\",\n  \"address\": \"Unit 14, High Street Phoenix, Lower Parel, Mumbai, MH 400013\",\n  \"status\": \"ACTIVE\",\n  \"followUpDate\": \"2026-09-20T10:00:00.000Z\",\n  \"notes\": \"Consistently orders grade-A Arabica beans and organic honey bi-weekly.\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/products/:productId/adjust-stock",
-              "host": ["{{baseUrl}}"],
-              "path": ["products", ":productId", "adjust-stock"],
-              "variable": [{ "key": "productId", "value": "" }]
+              "raw": "{{baseUrl}}/api/customers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "customers"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Edit Customer",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"+91 98200 99999\",\n  \"address\": \"Updated Warehouse Wing 4, Bandra Kurla Complex, Mumbai\",\n  \"status\": \"ACTIVE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/customers/cust-1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "customers",
+                "cust-1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Add Follow-up Note",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"note\": \"Client discussed festival gifting wholesale hamper requirements for Diwali 2026.\",\n  \"nextFollowUpDate\": \"2026-09-25T14:30:00.000Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/customers/cust-1/notes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "customers",
+                "cust-1",
+                "notes"
+              ]
             }
           }
         }
       ]
     },
     {
-      "name": "5. Inventory Movement Logs",
+      "name": "Product & Inventory Module",
       "item": [
         {
-          "name": "Get Stock Movement Audit Trail",
+          "name": "List Products (Search & Category Filter)",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{warehouseToken}}" }],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
             "url": {
-              "raw": "{{baseUrl}}/inventory/logs?movementType=OUT",
-              "host": ["{{baseUrl}}"],
-              "path": ["inventory", "logs"],
-              "query": [{ "key": "movementType", "value": "OUT" }]
+              "raw": "{{baseUrl}}/api/products?search=Coffee&category=Organic Beverages",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Product Detail by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/prod-1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "prod-1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Add New Product",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Organic Kashmiri Walnut Kernels 500g\",\n  \"sku\": \"SAT-WAL-007\",\n  \"category\": \"Gourmet Pantry\",\n  \"unitPrice\": 950,\n  \"currentStock\": 120,\n  \"minStockAlert\": 25,\n  \"location\": \"Warehouse Bay C-02\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Edit Product",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"unitPrice\": 980,\n  \"minStockAlert\": 30,\n  \"location\": \"Warehouse Bay C-03\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/products/prod-1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "prod-1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Stock Movement (IN / OUT)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantityChanged\": 50,\n  \"movementType\": \"IN\",\n  \"reason\": \"Fresh estate harvest batch received from Coorg plantations\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/products/prod-1/adjust-stock",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "prod-1",
+                "adjust-stock"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Stock Movement Logs Audit",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/inventory/movements",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "inventory",
+                "movements"
+              ]
             }
           }
         }
       ]
     },
     {
-      "name": "6. Sales Challans",
+      "name": "Sales Challan Module",
       "item": [
         {
-          "name": "List Sales Challans",
+          "name": "List Sales Challans (Filter by Status)",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{salesToken}}" }],
-            "url": { "raw": "{{baseUrl}}/challans", "host": ["{{baseUrl}}"], "path": ["challans"] }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/challans?status=CONFIRMED",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "challans"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "CONFIRMED"
+                }
+              ]
+            }
           }
         },
         {
-          "name": "Create Sales Challan (Confirmed - Auto Deducts Stock)",
+          "name": "Create Sales Challan (Draft or Confirmed)",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{salesToken}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"customerId\": \"replace-with-customer-id\",\n  \"status\": \"CONFIRMED\",\n  \"items\": [\n    {\n      \"productId\": \"replace-with-product-id\",\n      \"quantity\": 2\n    }\n  ]\n}"
+              "raw": "{\n  \"customerId\": \"cust-1\",\n  \"status\": \"CONFIRMED\",\n  \"items\": [\n    {\n      \"productId\": \"prod-1\",\n      \"quantity\": 20\n    },\n    {\n      \"productId\": \"prod-2\",\n      \"quantity\": 15\n    }\n  ]\n}"
             },
-            "url": { "raw": "{{baseUrl}}/challans", "host": ["{{baseUrl}}"], "path": ["challans"] }
+            "url": {
+              "raw": "{{baseUrl}}/api/challans",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "challans"
+              ]
+            }
           }
         },
         {
-          "name": "Update Challan Status (Confirm Draft / Cancel)",
+          "name": "Update Challan Status (Confirm or Cancel)",
           "request": {
             "method": "PATCH",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{salesToken}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"status\": \"CONFIRMED\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/challans/:challanId/status",
-              "host": ["{{baseUrl}}"],
-              "path": ["challans", ":challanId", "status"],
-              "variable": [{ "key": "challanId", "value": "" }]
+              "raw": "{{baseUrl}}/api/challans/chal-1/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "challans",
+                "chal-1",
+                "status"
+              ]
             }
           }
         },
         {
-          "name": "View Printable Tax Invoice HTML / PDF",
+          "name": "Get Printable Invoice HTML / PDF Data",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{salesToken}}" }],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
             "url": {
-              "raw": "{{baseUrl}}/challans/:challanId/invoice-html",
-              "host": ["{{baseUrl}}"],
-              "path": ["challans", ":challanId", "invoice-html"],
-              "variable": [{ "key": "challanId", "value": "" }]
+              "raw": "{{baseUrl}}/api/challans/chal-1/invoice-html",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "challans",
+                "chal-1",
+                "invoice-html"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard Analytics",
+      "item": [
+        {
+          "name": "Get KPI Metrics & Category Telemetry",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/dashboard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "dashboard"
+              ]
             }
           }
         }

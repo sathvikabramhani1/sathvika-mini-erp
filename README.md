@@ -1,103 +1,118 @@
-# Sathvika Organics - Specialty Foods & B2B Distribution Suite
+# Full Stack Developer Case Study
+# Project: Mini ERP + CRM Operations Portal
 
-> **Full Stack B2B Operations Suite**: Specialty Foods, Gourmet Beverages & Agro-Commodities Wholesale Operations  
-> Built with Node.js, Express, TypeScript, PostgreSQL / SQLite (Prisma ORM), React (Vite), and RBAC (Role-Based Access Control).  
-> 
-> **Live 24/7 Production Deployment**:
-> - **Frontend Web Portal (UI)**: [https://sathvika-frontend.onrender.com](https://sathvika-frontend.onrender.com)
-> - **Backend API Service**: [https://sathvika-backend.onrender.com](https://sathvika-backend.onrender.com)
-> - **Backend Health Check**: [https://sathvika-backend.onrender.com/health](https://sathvika-backend.onrender.com/health)
-> - **GitHub Repository**: [https://github.com/sathvikabramhani1/mini-erp-crm](https://github.com/sathvikabramhani1/mini-erp-crm)
+> **Candidate / Developer**: Swayampakam Sathvika Bramhani ([sathvikabramhani1](https://github.com/sathvikabramhani1))  
+> **Business Vertical**: Sathvika Organics & Specialty Goods Wholesale Distribution  
+> **Tech Stack**: Node.js, Express, TypeScript, PostgreSQL / SQLite (Prisma ORM), React (Vite), Docker, Render Cloud.
 
 ---
 
-## Executive Summary & Highlights
-
-**Sathvika Organics** is an enterprise-grade distribution operations suite designed for regional wholesale merchants, gourmet food exporters, and specialty co-operatives managing high-throughput food lot inventory, tiered supermarket accounts, warehouse harvest intake, and serialized dispatch challans.
-
-- **Studio Top-Navigation Layout**: Clean, full-width studio top navigation bar without bulky sidebars for enhanced readability and modern workflow.
-- **Emerald Jade & Champagne Gold Aesthetic**: Custom luxury theme designed specifically for organic and specialty gourmet commodities.
-- **Role-Based Access Control (RBAC)**: 4 tailored roles (**Admin**, **Sales Specialist**, **Warehouse Lead**, **Accounts Auditor**).
-- **1-Click Quick Role Switcher**: Instant role switching bar at the top of the app header for seamless evaluator testing.
-- **Specialty Client CRM**: Tiered accounts (`Distributor 18% Off`, `Wholesale 10% Off`, `Retail Standard`), GSTIN verification, follow-up scheduler, and timeline logs.
-- **Lot Inventory & Harvest Catalog**: Real-time tracking of single-origin Arabica coffee, A2 Vedic Gir cow ghee, cold-pressed almond oil, and Kashmiri saffron with low-stock alert thresholds.
-- **Dispatch Challan Engine**:
-  - Auto-generated sequential identifiers (`SAT-2026-8001`, `SAT-2026-8002`, etc.).
-  - Atomic stock deductions upon confirmation using ACID database transactions.
-  - Negative-stock prevention with descriptive API diagnostics.
-  - Printable Tax Invoices & Goods Delivery Challans with verification stamps.
-- **One-Click CSV Export**: Instant spreadsheet downloads across Products, Client CRM, Dispatch Challans, and Audit Logs.
+## 1. GitHub Repository Link
+- **Repository URL**: [https://github.com/sathvikabramhani1/mini-erp-crm](https://github.com/sathvikabramhani1/mini-erp-crm)
 
 ---
 
-## Test Login Credentials (All 4 Roles)
+## 2. Live Frontend URL
+- **Production Web Portal**: [https://sathvika-frontend.onrender.com](https://sathvika-frontend.onrender.com)
 
-All demo accounts share the password: **`Password123!`**
+---
 
-| Role | Email | Password | Scope & Responsibilities |
+## 3. Live Backend API URL
+- **Live REST API Base**: [https://sathvika-backend.onrender.com](https://sathvika-backend.onrender.com)
+- **Health Check Endpoint**: [https://sathvika-backend.onrender.com/health](https://sathvika-backend.onrender.com/health)
+
+---
+
+## 4. Test Login Credentials for All Roles
+
+All accounts share the password: **`Password123!`**
+
+| Role | Email | Password | Allowed Capabilities |
 | :--- | :--- | :--- | :--- |
-| **Admin** | `admin@sathvika.com` | `Password123!` | Unrestricted full access across CRM, Products, Logs, Challans, and Users |
-| **Sales** | `sales@sathvika.com` | `Password123!` | Manage Client Accounts, schedule follow-ups, create Dispatch Challans |
-| **Warehouse** | `warehouse@sathvika.com` | `Password123!` | Manage Organic SKUs, execute Stock IN/OUT harvest adjustments, monitor alerts |
-| **Accounts** | `accounts@sathvika.com` | `Password123!` | Inspect Challan financial totals, export/print Tax Invoices, verify billing |
-
-> **Evaluator Tip**: In the top header bar of the live web portal, click on any role pill (**Admin**, **Sales**, **Warehouse**, **Accounts**) to instantly switch session context without manual re-typing!
+| **Admin** | `admin@sathvika.com` | `Password123!` | Full unrestricted access across Customer CRM, Products, Logs, Challans, and Users |
+| **Sales** | `sales@sathvika.com` | `Password123!` | Manage Customer accounts, schedule follow-ups, create Sales Challans (Draft/Confirmed) |
+| **Warehouse** | `warehouse@sathvika.com` | `Password123!` | Manage Product catalog, record Stock Movements (IN/OUT), monitor low stock alerts |
+| **Accounts** | `accounts@sathvika.com` | `Password123!` | Inspect financial summaries, export/print Tax Invoices, verify billing totals |
 
 ---
 
-## Architecture & Project Structure
+## 5. Postman Collection & API Documentation
 
-```
-sathvika/
-├── backend/
-│   ├── src/
-│   │   ├── config/             # Environment configuration
-│   │   ├── controllers/        # Auth, Customers, Products, Challans, Inventory, Dashboard
-│   │   ├── middleware/         # JWT Auth, RBAC, Zod Validation, Central Error Handler
-│   │   ├── routes/             # REST Route mappings
-│   │   ├── schemas/            # Zod validation schemas
-│   │   ├── views/              # Live API Dashboard
-│   │   └── index.ts            # Server entry point
-│   ├── prisma/
-│   │   ├── schema.prisma       # Active schema (SQLite zero-friction local mode)
-│   │   ├── schema.postgresql.prisma # Production PostgreSQL schema
-│   │   └── seed.ts             # Sathvika Organics specialty gourmet dataset
-│   ├── Dockerfile
-│   └── package.json
-├── frontend/
-│   ├── src/
-│   │   ├── components/layout/  # Studio Top-Navigation Header
-│   │   ├── components/         # CommandPalette (Ctrl+K)
-│   │   ├── context/            # AuthContext, ToastContext
-│   │   ├── pages/              # Dashboard, Customers, Products, StockLogs, Challans, Login
-│   │   ├── services/api.ts     # Typed fetch client with JWT interceptor
-│   │   ├── types.ts            # Data models matching backend DTOs
-│   │   └── index.css           # Emerald Jade & Champagne Gold Design System
-│   ├── Dockerfile
-│   └── package.json
-├── docker-compose.yml          # PostgreSQL 15 + Backend + Frontend
-└── README.md
-```
+- **Postman Collection**: Included directly in the repository at `sathvika-erp-crm.postman_collection.json`.
+- **Direct Download via API**: [https://sathvika-backend.onrender.com/postman](https://sathvika-backend.onrender.com/postman)
+- **Interactive Web API Dashboard**: [https://sathvika-backend.onrender.com](https://sathvika-backend.onrender.com)
+
+### Key REST API Endpoints:
+- `POST /api/auth/login` - JWT authentication with role payload
+- `GET /api/auth/me` - Current session profile
+- `GET /api/customers` - Paginated customer CRM list with search and type filter
+- `POST /api/customers` - Add customer record
+- `GET /api/customers/:id` - Customer detail with interaction timeline
+- `PUT /api/customers/:id` - Update customer details
+- `POST /api/customers/:id/notes` - Append follow-up notes to timeline
+- `GET /api/products` - Product list with stock and category filters
+- `POST /api/products` - Add product SKU
+- `PUT /api/products/:id` - Edit product details
+- `POST /api/products/:id/adjust-stock` - Atomic stock movement (IN/OUT) with audit reason
+- `GET /api/inventory/logs` - Chronological stock movement audit trail
+- `GET /api/challans` - Sales challans with customer details
+- `POST /api/challans` - Generate sales challan with atomic stock deduction
+- `PATCH /api/challans/:id/status` - Transition status (Confirm Draft / Cancel)
+- `GET /api/dashboard/stats` - Real-time metrics and alerts
 
 ---
 
-## Quick Start (Local Development)
+## 6. Setup & Deployment Instructions
 
-### 1. Backend Setup
-```bash
-cd backend
-npm install
-npx prisma generate
-npx prisma db push
-npm run prisma:seed
-npm run dev
-```
-- Backend API will run on `http://localhost:5000`
+### Local Development Setup:
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/sathvikabramhani1/mini-erp-crm.git
+   cd mini-erp-crm
+   ```
 
-### 2. Frontend Setup
-```bash
-cd frontend
-npm install
-npm run dev
-```
-- Frontend portal will run on `http://localhost:5173`
+2. **Backend Setup**:
+   ```bash
+   cd backend
+   npm install
+   npx prisma generate
+   npx prisma db push
+   npm run prisma:seed
+   npm run dev
+   ```
+   - Runs locally on `http://localhost:5000`
+
+3. **Frontend Setup**:
+   ```bash
+   cd ../frontend
+   npm install
+   npm run dev
+   ```
+   - Runs locally on `http://localhost:5173`
+
+### Deployment (Render Free Hosting):
+- Both frontend and backend are configured with `render.yaml` for zero-friction blueprint deployment.
+- **Backend Service**: Node.js runtime, environment variables configured, auto-runs `prisma generate && prisma db push && seed.ts`.
+- **Frontend Site**: Static Site on Render with SPA routing (`/* -> /index.html`) and reverse proxy API rewrite.
+
+---
+
+## 7. Short Explanation of Architecture
+
+### Architecture Overview
+The application adheres to a decoupled **Client-Server Architecture**:
+- **Frontend**: React 18 with TypeScript and Vite. Modular structure with centralized Auth and Toast contexts, reusable layout components, and custom CSS design tokens (Forest Jade & Champagne Gold theme).
+- **Backend**: Express.js REST API with TypeScript. Controller-Service-Repository pattern with Zod request validation, JWT authentication middleware, and RBAC authorization guards.
+- **Database & Transactions**: Prisma ORM with PostgreSQL (Render) and SQLite (Local).
+  - **ACID Transactions**: Challan confirmation wraps order creation, snapshot caching, and inventory deductions in an atomic `prisma.$transaction` block. If any product stock is insufficient, the entire transaction rolls back with a descriptive error message preventing negative inventory.
+  - **Product Snapshotting**: Order items store frozen snapshots of unit price, SKU, and product name at the time of dispatch, ensuring immutability against future price or SKU changes.
+
+---
+
+## 8. Known Limitations or Incomplete Parts
+
+While all required core modules, business rules, and bonus features are fully functional, the following enhancements represent future production roadmap items:
+1. **Automated Email / SMS Notifications**: Dispatching real-time notifications to customers when a challan transitions to `CONFIRMED`.
+2. **Barcode / QR Hardware Scanning**: Native integration with physical warehouse handheld scanners via WebUSB / HID.
+3. **Multi-Warehouse Routing**: Advanced logistics routing for organizations managing multiple regional fulfillment hubs.
+4. **AWS S3 Image Upload**: Product catalog currently uses SVG and high-resolution icons; direct image upload to S3 can be activated via AWS SDK.

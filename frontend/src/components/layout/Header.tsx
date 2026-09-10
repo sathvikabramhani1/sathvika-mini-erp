@@ -1,7 +1,6 @@
 import React from 'react';
 import { 
   LogOut, 
-  Sparkles, 
   Search, 
   Activity, 
   LayoutDashboard, 
@@ -9,11 +8,10 @@ import {
   Package, 
   History, 
   FileSpreadsheet, 
-  Leaf 
+  Leaf,
+  ShieldCheck
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { UserRole } from '../../types';
-import { useToast } from '../../context/ToastContext';
 
 interface HeaderProps {
   currentTab: string;
@@ -22,32 +20,19 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ currentTab, setCurrentTab, onOpenCommandPalette }) => {
-  const { user, logout, switchRole } = useAuth();
-  const { success } = useToast();
+  const { user, logout } = useAuth();
 
   const navTabs = [
     { id: 'dashboard', label: 'Overview', icon: LayoutDashboard },
-    { id: 'customers', label: 'Clients & CRM', icon: Users },
-    { id: 'products', label: 'Product Catalog', icon: Package },
+    { id: 'customers', label: 'Customer CRM', icon: Users },
+    { id: 'products', label: 'Product & Stock', icon: Package },
     { id: 'stock-logs', label: 'Stock Audit', icon: History },
-    { id: 'challans', label: 'Dispatch Challans', icon: FileSpreadsheet },
+    { id: 'challans', label: 'Sales Challans', icon: FileSpreadsheet },
   ];
-
-  const roles: { role: UserRole; label: string; desc: string }[] = [
-    { role: 'ADMIN', label: 'Admin', desc: 'Full Access' },
-    { role: 'SALES', label: 'Sales', desc: 'CRM & Orders' },
-    { role: 'WAREHOUSE', label: 'Warehouse', desc: 'Intake & Stock' },
-    { role: 'ACCOUNTS', label: 'Accounts', desc: 'Invoices' },
-  ];
-
-  const handleRoleSwitch = async (role: UserRole) => {
-    await switchRole(role);
-    success(`Switched role to ${role}`);
-  };
 
   return (
     <header className="top-studio-nav">
-      {/* Top Row: Brand, Search, Role Switcher, Profile */}
+      {/* Top Row: Brand, Search, User Role & Profile */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
         {/* Brand Crest */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -68,10 +53,10 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, setCurrentTab, onOpe
           </div>
           <div>
             <div style={{ fontWeight: 800, fontSize: '18px', letterSpacing: '-0.02em', color: '#ffffff' }}>
-              SATHVIKA<span style={{ color: '#fbbf24' }}> ORGANICS</span>
+              Mini ERP + CRM <span style={{ color: '#fbbf24', fontSize: '15px', fontWeight: 600 }}>Portal</span>
             </div>
             <div style={{ fontSize: '10px', color: '#a7f3d0', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700 }}>
-              Specialty B2B Distribution Suite
+              Sathvika Organics B2B Operations Suite
             </div>
           </div>
         </div>
@@ -101,27 +86,13 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, setCurrentTab, onOpe
           }}>Ctrl K</kbd>
         </button>
 
-        {/* 1-Click Role Switcher & User Profile */}
+        {/* Authenticated User Status & Profile */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(9, 29, 20, 0.8)', padding: '4px 6px', borderRadius: '12px', border: '1px solid rgba(16, 185, 129, 0.25)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', paddingLeft: '6px', color: '#fbbf24', fontSize: '11px', fontWeight: 700 }}>
-              <Sparkles size={13} />
-              <span>ROLE:</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(9, 29, 20, 0.8)', padding: '6px 12px', borderRadius: '12px', border: '1px solid rgba(16, 185, 129, 0.25)' }}>
+            <ShieldCheck size={16} color="#10b981" />
+            <div style={{ fontSize: '12px', color: '#e2e8f0' }}>
+              Role: <strong style={{ color: '#fbbf24' }}>{user?.role}</strong>
             </div>
-            {roles.map((r) => {
-              const isActive = user?.role === r.role;
-              return (
-                <button
-                  key={r.role}
-                  onClick={() => handleRoleSwitch(r.role)}
-                  className={`studio-tab-btn ${isActive ? 'active' : ''}`}
-                  style={{ padding: '4px 10px', fontSize: '12px', borderRadius: '6px' }}
-                  title={`${r.label}: ${r.desc}`}
-                >
-                  {r.label}
-                </button>
-              );
-            })}
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', borderLeft: '1px solid rgba(255,255,255,0.1)', paddingLeft: '14px' }}>
@@ -130,7 +101,7 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, setCurrentTab, onOpe
             </div>
             <div>
               <div style={{ fontSize: '12px', fontWeight: 700, color: '#ffffff' }}>{user?.name}</div>
-              <div style={{ fontSize: '10px', color: '#fbbf24', fontWeight: 600 }}>{user?.role}</div>
+              <div style={{ fontSize: '10px', color: '#a7f3d0' }}>{user?.email}</div>
             </div>
             <button
               onClick={logout}
@@ -166,7 +137,7 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, setCurrentTab, onOpe
         {/* Operational Pulse */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#34d399', background: 'rgba(16, 185, 129, 0.12)', padding: '4px 10px', borderRadius: '9999px', border: '1px solid rgba(16, 185, 129, 0.25)' }}>
           <Activity size={12} />
-          <span>Sathvika Organics Cloud Active</span>
+          <span>PostgreSQL Cluster Connected</span>
         </div>
       </div>
     </header>
