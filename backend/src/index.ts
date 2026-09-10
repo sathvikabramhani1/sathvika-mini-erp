@@ -37,7 +37,7 @@ app.get('/', (req, res) => {
     description: 'Operations Portal Backend with RBAC, CRM, Inventory & Sales Challans',
     health: '/health',
     apiBase: '/api',
-    frontend: 'https://mini-erp-frontend-rqz6.onrender.com',
+    frontend: 'https://sathvika-frontend.onrender.com',
     documentation: 'https://github.com/sathvikabramhani1/mini-erp-crm#readme'
   });
 });

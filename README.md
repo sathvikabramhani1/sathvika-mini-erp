@@ -2,6 +2,12 @@
 
 > **Full Stack Operations Suite**: Wholesale & Distribution Operations Suite  
 > Built with Node.js, Express, TypeScript, SQLite / PostgreSQL (Prisma ORM), React (Vite), and RBAC (Role-Based Access Control).
+> 
+> **Live 24/7 Production Deployment**:
+> - **Frontend Portal (UI)**: [https://sathvika-frontend.onrender.com](https://sathvika-frontend.onrender.com)
+> - **Backend API**: [https://sathvika-backend.onrender.com](https://sathvika-backend.onrender.com)
+> - **Backend Health Check**: [https://sathvika-backend.onrender.com/health](https://sathvika-backend.onrender.com/health)
+> - **GitHub Repository**: [https://github.com/sathvikabramhani1/mini-erp-crm](https://github.com/sathvikabramhani1/mini-erp-crm)
 
 ---
 
