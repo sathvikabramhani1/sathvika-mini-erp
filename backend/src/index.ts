@@ -38,7 +38,7 @@ app.get('/', (req, res) => {
     health: '/health',
     apiBase: '/api',
     frontend: 'https://sathvika-frontend.onrender.com',
-    documentation: 'https://github.com/sathvikabramhani1/mini-erp-crm#readme'
+    documentation: 'https://github.com/sathvikabramhani1/sathvika-mini-erp#readme'
   });
 });
 

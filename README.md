@@ -8,7 +8,7 @@
 ---
 
 ## 1. GitHub Repository Link
-- **Repository URL**: [https://github.com/sathvikabramhani1/mini-erp-crm](https://github.com/sathvikabramhani1/mini-erp-crm)
+- **Repository URL**: [https://github.com/sathvikabramhani1/sathvika-mini-erp](https://github.com/sathvikabramhani1/sathvika-mini-erp)
 
 ---
 
@@ -67,7 +67,7 @@ All accounts share the password: **`Password123!`**
 ### Local Development Setup:
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/sathvikabramhani1/mini-erp-crm.git
+   git clone https://github.com/sathvikabramhani1/sathvika-mini-erp.git
    cd mini-erp-crm
    ```
 
