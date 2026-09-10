@@ -5,23 +5,26 @@ export function renderApiDashboard(): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sathvika Organics API - Live Operations Server</title>
+  <title>Sathvika Organics Operations Engine &bull; REST API Server</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2310b981'><path d='M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 0 0 8 20C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0b0f19;
-      --surface: #111827;
-      --surface-border: #1f2937;
-      --card-bg: rgba(17, 24, 39, 0.7);
-      --primary: #6366f1;
-      --primary-hover: #4f46e5;
+      --bg: #05140d;
+      --surface: #092015;
+      --surface-border: rgba(16, 185, 129, 0.25);
+      --card-bg: rgba(9, 29, 20, 0.85);
+      --primary: #10b981;
+      --primary-hover: #059669;
+      --gold: #f59e0b;
+      --gold-light: #fbbf24;
       --success: #10b981;
-      --success-glow: rgba(16, 185, 129, 0.2);
-      --text: #f3f4f6;
-      --text-muted: #9ca3af;
-      --accent: #8b5cf6;
+      --success-glow: rgba(16, 185, 129, 0.35);
+      --text: #f0fdf4;
+      --text-muted: #86efac;
+      --text-dim: #6ee7b7;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -32,368 +35,419 @@ export function renderApiDashboard(): string {
       min-height: 100vh;
       padding: 2.5rem 1.5rem;
       background-image: 
-        radial-gradient(circle at 15% 15%, rgba(59, 130, 246, 0.12) 0%, transparent 40%),
-        radial-gradient(circle at 85% 85%, rgba(139, 92, 246, 0.12) 0%, transparent 40%);
+        radial-gradient(circle at 15% 15%, rgba(16, 185, 129, 0.18) 0%, transparent 50%),
+        radial-gradient(circle at 85% 85%, rgba(245, 158, 11, 0.12) 0%, transparent 50%);
     }
     .container {
-      max-width: 1000px;
+      max-width: 1040px;
       margin: 0 auto;
     }
-    header {
+    .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 1.5rem;
-      padding-bottom: 2rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
       border-bottom: 1px solid var(--surface-border);
-      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
     .brand {
       display: flex;
       align-items: center;
       gap: 1rem;
     }
-    .brand-icon {
+    .logo-box {
       width: 48px;
       height: 48px;
-      background: linear-gradient(135deg, #6366f1, #7c3aed);
-      border-radius: 12px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #10b981 0%, #047857 100%);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.5rem;
-      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35);
+      box-shadow: 0 4px 18px rgba(16, 185, 129, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.25);
     }
-    .brand-title h1 {
-      font-size: 1.6rem;
+    .brand-title {
+      font-size: 1.5rem;
       font-weight: 800;
       letter-spacing: -0.02em;
+      color: #ffffff;
     }
-    .brand-title p {
-      color: var(--text-muted);
-      font-size: 0.875rem;
+    .brand-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      font-weight: 500;
     }
     .status-badge {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      border-radius: 9999px;
+      background: rgba(16, 185, 129, 0.15);
       color: #34d399;
-      font-size: 0.875rem;
-      font-weight: 600;
-      box-shadow: 0 0 20px var(--success-glow);
+      padding: 0.4rem 0.9rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      box-shadow: 0 0 16px var(--success-glow);
     }
-    .pulse-dot {
+    .status-dot {
       width: 8px;
       height: 8px;
-      background: #10b981;
       border-radius: 50%;
-      animation: pulse 2s infinite;
+      background-color: #34d399;
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
     @keyframes pulse {
-      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
-      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .4; transform: scale(0.9); }
     }
-    .hero-banner {
-      background: linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(124, 58, 237, 0.1));
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      border-radius: 16px;
+    .hero-card {
+      background: var(--card-bg);
+      border: 1px solid var(--surface-border);
+      border-radius: 1.25rem;
       padding: 2rem;
-      margin-bottom: 2.5rem;
-      backdrop-filter: blur(10px);
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(12px);
     }
-    .hero-banner h2 {
-      font-size: 1.4rem;
-      margin-bottom: 0.5rem;
+    .hero-card h2 {
+      font-size: 1.35rem;
       font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: #ffffff;
     }
-    .hero-banner p {
-      color: #cbd5e1;
+    .hero-card p {
+      color: #d1fae5;
       font-size: 0.95rem;
       margin-bottom: 1.5rem;
-      max-width: 750px;
+      max-width: 800px;
     }
-    .btn-group {
+    .action-links {
       display: flex;
       flex-wrap: wrap;
-      gap: 1rem;
+      gap: 0.75rem;
     }
     .btn {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.75rem 1.4rem;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 0.9rem;
+      padding: 0.65rem 1.25rem;
+      border-radius: 0.6rem;
+      font-weight: 700;
+      font-size: 0.88rem;
       text-decoration: none;
       transition: all 0.2s ease;
       cursor: pointer;
     }
     .btn-primary {
-      background: linear-gradient(135deg, #2563eb, #1d4ed8);
-      color: #ffffff;
-      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
     .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 25px rgba(37, 99, 235, 0.5);
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      transform: translateY(-1px);
+    }
+    .btn-gold {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #0f172a;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .btn-gold:hover {
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      transform: translateY(-1px);
     }
     .btn-secondary {
-      background: rgba(255, 255, 255, 0.06);
-      color: var(--text);
+      background: rgba(16, 185, 129, 0.1);
+      color: #a7f3d0;
       border: 1px solid var(--surface-border);
     }
     .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.1);
-      transform: translateY(-2px);
+      background: rgba(16, 185, 129, 0.2);
+      color: #ffffff;
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 1.5rem;
-      margin-bottom: 2.5rem;
+      margin-bottom: 2rem;
     }
     .card {
       background: var(--card-bg);
       border: 1px solid var(--surface-border);
-      border-radius: 14px;
+      border-radius: 1rem;
       padding: 1.5rem;
-      backdrop-filter: blur(10px);
     }
-    .card-title {
-      font-size: 1rem;
+    .card h3 {
+      font-size: 1.05rem;
       font-weight: 700;
       margin-bottom: 1rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      color: #ffffff;
     }
-    .stat-row {
+    .stat-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .stat-item {
       display: flex;
       justify-content: space-between;
-      padding: 0.6rem 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      font-size: 0.85rem;
+      align-items: center;
+      font-size: 0.88rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(16, 185, 129, 0.12);
     }
-    .stat-row:last-child { border-bottom: none; }
-    .stat-label { color: var(--text-muted); }
-    .stat-value { font-weight: 600; font-family: 'JetBrains Mono', monospace; }
-    .table-container {
-      overflow-x: auto;
+    .stat-label {
+      color: #a7f3d0;
+    }
+    .stat-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      color: #ffffff;
+    }
+    .endpoints-card {
       background: var(--card-bg);
       border: 1px solid var(--surface-border);
-      border-radius: 14px;
-      margin-bottom: 2.5rem;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-      font-size: 0.85rem;
+    .endpoint-row {
+      display: flex;
+      align-items: center;
+      padding: 0.65rem 0.75rem;
+      border-radius: 0.5rem;
+      margin-bottom: 0.5rem;
+      background: rgba(5, 20, 13, 0.6);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.83rem;
+      gap: 0.75rem;
+      border: 1px solid rgba(16, 185, 129, 0.1);
     }
-    th {
-      background: rgba(255, 255, 255, 0.03);
-      padding: 0.9rem 1.2rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      border-bottom: 1px solid var(--surface-border);
-      text-transform: uppercase;
-      font-size: 0.75rem;
-      letter-spacing: 0.05em;
-    }
-    td {
-      padding: 0.9rem 1.2rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    }
-    tr:last-child td { border-bottom: none; }
-    .badge {
-      display: inline-block;
-      padding: 0.2rem 0.6rem;
-      border-radius: 6px;
-      font-size: 0.75rem;
+    .method {
+      padding: 0.2rem 0.5rem;
+      border-radius: 0.35rem;
       font-weight: 700;
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .badge-get { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
-    .badge-post { background: rgba(16, 185, 129, 0.15); color: #34d399; }
-    .badge-put { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
-    .badge-delete { background: rgba(239, 68, 68, 0.15); color: #f87171; }
-    .code {
-      font-family: 'JetBrains Mono', monospace;
-      color: #93c5fd;
-    }
-    footer {
+      font-size: 0.72rem;
+      min-width: 58px;
       text-align: center;
-      padding-top: 2rem;
+    }
+    .get { background: rgba(16, 185, 129, 0.25); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .post { background: rgba(245, 158, 11, 0.25); color: #fde68a; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .put { background: rgba(59, 130, 246, 0.25); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.4); }
+    .patch { background: rgba(168, 85, 247, 0.25); color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.4); }
+    .delete { background: rgba(244, 63, 94, 0.25); color: #fda4af; border: 1px solid rgba(244, 63, 94, 0.4); }
+    .path { color: #f0fdf4; flex: 1; }
+    .desc { color: #a7f3d0; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.82rem; }
+    .footer {
+      text-align: center;
+      font-size: 0.82rem;
+      color: #6ee7b7;
       border-top: 1px solid var(--surface-border);
-      color: var(--text-muted);
-      font-size: 0.85rem;
+      padding-top: 1.5rem;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <header>
+    <header class="header">
       <div class="brand">
-        <div class="brand-icon">⚡</div>
-        <div class="brand-title">
-          <h1>SathvikaOps API Server</h1>
-          <p>Production Cloud Backend &bull; Node.js + Express + Prisma</p>
+        <div class="logo-box">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 0 0 8 20C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z"/></svg>
+        </div>
+        <div>
+          <div class="brand-title">Sathvika Organics &bull; API Server</div>
+          <div class="brand-subtitle">Production Operations Backend &bull; Node.js 18 + Express + Prisma ORM</div>
         </div>
       </div>
       <div class="status-badge">
-        <span class="pulse-dot"></span>
-        <span>SYSTEM OPERATIONAL</span>
+        <div class="status-dot"></div>
+        SYSTEM OPERATIONAL &bull; CLUSTER LIVE
       </div>
     </header>
 
-    <div class="hero-banner">
-      <h2>👋 Welcome to the SathvikaOps Operations Backend API</h2>
+    <div class="hero-card">
+      <h2>🌿 Sathvika Organics & Specialty Goods Wholesale Engine</h2>
       <p>
-        This server powers the <strong>Full Stack Mini ERP + CRM Portal</strong> for Wholesale & Distribution operations.
-        It manages high-throughput inventory, sequential sales challans, atomic stock deductions, and customer interaction timelines.
+        High-throughput backend powering Customer CRM, Arabica & Gourmet catalog inventory tracking, sequential sales challan generation, atomic stock deductions, and chronological audit timelines.
       </p>
-      <div class="btn-group">
-        <a href="https://mini-erp-frontend-rqz6.onrender.com" target="_blank" class="btn btn-primary">
-          🖥️ Launch Web Portal (Frontend UI)
+      <div class="action-links">
+        <a href="https://sathvika-frontend.onrender.com" target="_blank" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          Launch Web Portal (Frontend UI)
+        </a>
+        <a href="/postman" class="btn btn-gold">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download Postman Collection
         </a>
         <a href="/health" class="btn btn-secondary">
-          ❤️ Health Check JSON
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          Cluster Health Dashboard
         </a>
         <a href="https://github.com/sathvikabramhani1/mini-erp-crm" target="_blank" class="btn btn-secondary">
-          📂 GitHub Repository
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          GitHub Repository
         </a>
       </div>
     </div>
 
     <div class="grid">
       <div class="card">
-        <div class="card-title">🚀 Server Infrastructure</div>
-        <div class="stat-row">
-          <span class="stat-label">Platform</span>
-          <span class="stat-value">Render Cloud (Oregon)</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">Runtime</span>
-          <span class="stat-value">Node.js 18 (TypeScript)</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">Database</span>
-          <span class="stat-value" style="color: #34d399;">PostgreSQL 15 (Active)</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">Authentication</span>
-          <span class="stat-value">JWT Bearer (7-day TTL)</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">Uptime Check</span>
-          <span class="stat-value">${timestamp.substring(11, 19)} UTC</span>
+        <h3>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          Server Infrastructure
+        </h3>
+        <div class="stat-list">
+          <div class="stat-item">
+            <span class="stat-label">Hosting Platform</span>
+            <span class="stat-value">Render Cloud (Oregon)</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Runtime Engine</span>
+            <span class="stat-value">Node.js 18 + TypeScript</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Primary Database</span>
+            <span class="stat-value" style="color: #34d399;">PostgreSQL 15 (Active)</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Authentication Mode</span>
+            <span class="stat-value">JWT Bearer (RBAC)</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Server Telemetry</span>
+            <span class="stat-value">${timestamp.slice(11, 19)} UTC</span>
+          </div>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-title">🔐 Test Login Credentials</div>
-        <div class="stat-row">
-          <span class="stat-label">All Passwords</span>
-          <span class="stat-value" style="color: #60a5fa;">Password123!</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">Admin Role</span>
-          <span class="stat-value">admin@erp.com</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">Sales Role</span>
-          <span class="stat-value">sales@erp.com</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">Warehouse Role</span>
-          <span class="stat-value">warehouse@erp.com</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">Accounts Role</span>
-          <span class="stat-value">accounts@erp.com</span>
+        <h3>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Test Login Credentials (@sathvika.com)
+        </h3>
+        <div class="stat-list">
+          <div class="stat-item">
+            <span class="stat-label">Default Password</span>
+            <span class="stat-value" style="color: #fbbf24;">Password123!</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Admin Role</span>
+            <span class="stat-value">admin@sathvika.com</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Sales Role</span>
+            <span class="stat-value">sales@sathvika.com</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Warehouse Role</span>
+            <span class="stat-value">warehouse@sathvika.com</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Accounts Role</span>
+            <span class="stat-value">accounts@sathvika.com</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <h3 style="font-size: 1.1rem; margin-bottom: 1rem; font-weight: 700;">📡 Core REST API Endpoints</h3>
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>Method</th>
-            <th>Endpoint</th>
-            <th>Authorized Roles</th>
-            <th>Function</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><span class="badge badge-post">POST</span></td>
-            <td class="code">/api/auth/login</td>
-            <td>Public</td>
-            <td>Sign in and obtain JWT authorization token</td>
-          </tr>
-          <tr>
-            <td><span class="badge badge-get">GET</span></td>
-            <td class="code">/api/customers</td>
-            <td>Admin, Sales</td>
-            <td>Query customer directory with status & tier filters</td>
-          </tr>
-          <tr>
-            <td><span class="badge badge-post">POST</span></td>
-            <td class="code">/api/customers</td>
-            <td>Admin, Sales</td>
-            <td>Create a customer with address, GST, and category</td>
-          </tr>
-          <tr>
-            <td><span class="badge badge-get">GET</span></td>
-            <td class="code">/api/products</td>
-            <td>All Roles</td>
-            <td>List products with live stock levels & alert flags</td>
-          </tr>
-          <tr>
-            <td><span class="badge badge-post">POST</span></td>
-            <td class="code">/api/products/adjust-stock</td>
-            <td>Admin, Warehouse</td>
-            <td>Log inward/outward inventory movement with audit log</td>
-          </tr>
-          <tr>
-            <td><span class="badge badge-get">GET</span></td>
-            <td class="code">/api/challans</td>
-            <td>All Roles</td>
-            <td>Retrieve sales challans and line items</td>
-          </tr>
-          <tr>
-            <td><span class="badge badge-post">POST</span></td>
-            <td class="code">/api/challans</td>
-            <td>Admin, Sales</td>
-            <td>Create Draft or Confirmed challan (atomic deduction)</td>
-          </tr>
-          <tr>
-            <td><span class="badge badge-post">POST</span></td>
-            <td class="code">/api/challans/:id/cancel</td>
-            <td>Admin, Sales</td>
-            <td>Cancel order and restore stock into inventory</td>
-          </tr>
-          <tr>
-            <td><span class="badge badge-get">GET</span></td>
-            <td class="code">/health</td>
-            <td>Public</td>
-            <td>Container liveness probe & health monitor</td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="endpoints-card">
+      <h3 style="margin-bottom: 1rem; color: #ffffff; display: flex; align-items: center; gap: 0.5rem;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        Documented REST API Endpoints
+      </h3>
+
+      <div class="endpoint-row">
+        <span class="method post">POST</span>
+        <span class="path">/api/auth/login</span>
+        <span class="desc">Authenticate user & issue JWT bearer token</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method get">GET</span>
+        <span class="path">/api/auth/me</span>
+        <span class="desc">Retrieve authenticated user profile & role</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method get">GET</span>
+        <span class="path">/api/customers</span>
+        <span class="desc">List customers with search, type & status filters</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method post">POST</span>
+        <span class="path">/api/customers</span>
+        <span class="desc">Create new wholesale/retail customer profile</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method put">PUT</span>
+        <span class="path">/api/customers/:id</span>
+        <span class="desc">Update customer contact & business details</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method post">POST</span>
+        <span class="path">/api/customers/:id/notes</span>
+        <span class="desc">Append CRM follow-up note with target date</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method get">GET</span>
+        <span class="path">/api/products</span>
+        <span class="desc">List organic catalog with stock & category filters</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method post">POST</span>
+        <span class="path">/api/products</span>
+        <span class="desc">Add new organic SKU with alert threshold</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method put">PUT</span>
+        <span class="path">/api/products/:id</span>
+        <span class="desc">Update price, location bay, or alert quantity</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method post">POST</span>
+        <span class="path">/api/products/:id/adjust-stock</span>
+        <span class="desc">Inward/Outward stock movement with audit reason</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method get">GET</span>
+        <span class="path">/api/inventory/logs</span>
+        <span class="desc">Chronological stock audit trail with user tracking</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method get">GET</span>
+        <span class="path">/api/challans</span>
+        <span class="desc">List sales challans with status & client filters</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method post">POST</span>
+        <span class="path">/api/challans</span>
+        <span class="desc">Generate challan (Draft/Confirmed) with stock deduction</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method patch">PATCH</span>
+        <span class="path">/api/challans/:id/status</span>
+        <span class="desc">Confirm or cancel challan with atomic balance check</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method get">GET</span>
+        <span class="path">/api/challans/:id/invoice-html</span>
+        <span class="desc">Official formatted printable Goods Delivery Tax Invoice</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method get">GET</span>
+        <span class="path">/api/dashboard</span>
+        <span class="desc">Real-time KPI telemetry, revenue, & stock warnings</span>
+      </div>
     </div>
 
-    <footer>
-      SathvikaOps &bull; Built with Express, TypeScript & Prisma ORM &bull; Ready for Evaluation
+    <footer class="footer">
+      Sathvika Organics &bull; Mini ERP + CRM Portal &bull; Full Stack Developer Case Study &bull; Built by Swayampakam Sathvika Bramhani
     </footer>
   </div>
 </body>
@@ -407,19 +461,20 @@ export function renderHealthDashboard(): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>System Health &bull; SathvikaOps Operations</title>
+  <title>Cluster Health &bull; Sathvika Organics Engine</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2310b981'><path d='M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 0 0 8 20C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0b0f19;
-      --surface: #111827;
-      --surface-border: #1f2937;
-      --primary: #6366f1;
+      --bg: #05140d;
+      --surface: #092015;
+      --surface-border: rgba(16, 185, 129, 0.25);
+      --primary: #10b981;
       --success: #10b981;
-      --text: #f3f4f6;
-      --text-muted: #9ca3af;
+      --text: #f0fdf4;
+      --text-muted: #86efac;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -432,174 +487,126 @@ export function renderHealthDashboard(): string {
       min-height: 100vh;
       padding: 1.5rem;
       background-image: 
-        radial-gradient(circle at 50% 20%, rgba(16, 185, 129, 0.12) 0%, transparent 50%),
-        radial-gradient(circle at 50% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
+        radial-gradient(circle at 50% 20%, rgba(16, 185, 129, 0.2) 0%, transparent 60%),
+        radial-gradient(circle at 80% 80%, rgba(245, 158, 11, 0.12) 0%, transparent 50%);
     }
-    .health-card {
-      background: rgba(17, 24, 39, 0.85);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      border-radius: 20px;
+    .card {
+      background: rgba(9, 29, 20, 0.88);
+      border: 1px solid var(--surface-border);
+      border-radius: 1.5rem;
       padding: 2.5rem;
-      max-width: 540px;
+      max-width: 520px;
       width: 100%;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(16, 185, 129, 0.15);
-      backdrop-filter: blur(12px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(16, 185, 129, 0.2);
       text-align: center;
+      backdrop-filter: blur(16px);
     }
-    .icon-ring {
-      width: 80px;
-      height: 80px;
-      background: rgba(16, 185, 129, 0.12);
-      border: 2px solid #10b981;
-      border-radius: 50%;
-      display: flex;
+    .badge {
+      display: inline-flex;
       align-items: center;
-      justify-content: center;
-      font-size: 2.5rem;
-      margin: 0 auto 1.5rem auto;
-      box-shadow: 0 0 25px rgba(16, 185, 129, 0.35);
-      animation: breathe 3s infinite ease-in-out;
+      gap: 0.5rem;
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      padding: 0.4rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      margin-bottom: 1.5rem;
     }
-    @keyframes breathe {
-      0%, 100% { transform: scale(1); box-shadow: 0 0 25px rgba(16, 185, 129, 0.35); }
-      50% { transform: scale(1.05); box-shadow: 0 0 35px rgba(16, 185, 129, 0.5); }
+    .pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #34d399;
+      box-shadow: 0 0 10px #10b981;
     }
     h1 {
-      font-size: 1.7rem;
+      font-size: 1.75rem;
       font-weight: 800;
       margin-bottom: 0.5rem;
       color: #ffffff;
       letter-spacing: -0.02em;
     }
-    .subhead {
-      color: #34d399;
-      font-weight: 600;
+    p {
+      color: #a7f3d0;
       font-size: 0.95rem;
       margin-bottom: 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
     }
-    .pulse-dot {
-      width: 8px;
-      height: 8px;
-      background: #10b981;
-      border-radius: 50%;
-    }
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-bottom: 2rem;
-      text-align: left;
-    }
-    .metric-box {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--surface-border);
-      border-radius: 12px;
-      padding: 1rem;
-    }
-    .metric-name {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-muted);
-      margin-bottom: 0.3rem;
-    }
-    .metric-val {
-      font-size: 0.95rem;
-      font-weight: 700;
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .text-green { color: #34d399; }
-    .btn-stack {
+    .metrics {
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
+      text-align: left;
+      background: rgba(5, 20, 13, 0.6);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+      margin-bottom: 2rem;
+      font-size: 0.88rem;
+    }
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .metric-label {
+      color: #a7f3d0;
+    }
+    .metric-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      color: #ffffff;
     }
     .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      padding: 0.8rem 1.4rem;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 0.9rem;
-      text-decoration: none;
-      transition: all 0.2s ease;
-    }
-    .btn-primary {
-      background: linear-gradient(135deg, #2563eb, #1d4ed8);
-      color: #ffffff;
-      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
-    }
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 25px rgba(37, 99, 235, 0.5);
-    }
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.06);
-      color: var(--text);
-      border: 1px solid var(--surface-border);
-    }
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.1);
-      transform: translateY(-2px);
-    }
-    .json-link {
       display: inline-block;
-      margin-top: 1.25rem;
-      font-size: 0.8rem;
-      color: var(--text-muted);
+      width: 100%;
+      padding: 0.8rem;
+      border-radius: 0.6rem;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
       text-decoration: none;
+      font-weight: 700;
+      font-size: 0.9rem;
+      border: 1px solid rgba(255,255,255,0.2);
     }
-    .json-link:hover { color: #93c5fd; text-decoration: underline; }
+    .btn:hover {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    }
   </style>
 </head>
 <body>
-  <div class="health-card">
-    <div class="icon-ring">✓</div>
-    <h1>System Status: Healthy</h1>
-    <div class="subhead">
-      <span class="pulse-dot"></span>
-      <span>ALL SERVICES FULLY OPERATIONAL</span>
+  <div class="card">
+    <div class="badge">
+      <div class="pulse"></div>
+      ALL SYSTEMS GREEN
     </div>
-
-    <div class="metrics-grid">
-      <div class="metric-box">
-        <div class="metric-name">Backend API</div>
-        <div class="metric-val text-green">ONLINE (200 OK)</div>
+    <h1>Sathvika Operations Cluster</h1>
+    <p>Operational Node.js / Express REST API and PostgreSQL cluster are active and healthy.</p>
+    <div class="metrics">
+      <div class="metric-row">
+        <span class="metric-label">Status</span>
+        <span class="metric-val" style="color: #34d399;">HEALTHY (200 OK)</span>
       </div>
-      <div class="metric-box">
-        <div class="metric-name">Cloud Database</div>
-        <div class="metric-val text-green">POSTGRESQL 15</div>
+      <div class="metric-row">
+        <span class="metric-label">Cluster Timestamp</span>
+        <span class="metric-val">${timestamp}</span>
       </div>
-      <div class="metric-box">
-        <div class="metric-name">Service Name</div>
-        <div class="metric-val" style="font-size: 0.8rem;">mini-erp-crm-backend</div>
+      <div class="metric-row">
+        <span class="metric-label">PostgreSQL Database</span>
+        <span class="metric-val" style="color: #34d399;">CONNECTED</span>
       </div>
-      <div class="metric-box">
-        <div class="metric-name">Checked At</div>
-        <div class="metric-val" style="font-size: 0.8rem;">${timestamp.substring(11, 19)} UTC</div>
+      <div class="metric-row">
+        <span class="metric-label">Service Name</span>
+        <span class="metric-val">sathvika-backend</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-label">Platform</span>
+        <span class="metric-val">Render Cloud</span>
       </div>
     </div>
-
-    <div class="btn-stack">
-      <a href="https://mini-erp-frontend-rqz6.onrender.com" target="_blank" class="btn btn-primary">
-        🖥️ Open SathvikaOps Frontend Portal
-      </a>
-      <a href="/" class="btn btn-secondary">
-        ⚡ View API Directory & Credentials
-      </a>
-    </div>
-
-    <a href="/health?format=json" class="json-link">
-      Raw JSON View: { "status": "healthy", "database": "connected" }
-    </a>
+    <a href="/" class="btn">View API Operations Dashboard &rarr;</a>
   </div>
 </body>
 </html>`;
 }
-
