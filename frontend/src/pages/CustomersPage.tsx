@@ -143,10 +143,10 @@ export const CustomersPage: React.FC = () => {
       <div className="page-header">
         <div>
           <h1 className="page-title">
-            <span>Customer Accounts & CRM</span>
+            <span>Gourmet Client Accounts & Wholesale CRM</span>
             <span className="badge badge-primary">{customers.length} Accounts</span>
           </h1>
-          <p className="page-subtitle">Tiered wholesale partnerships, GST verified records, and scheduled follow-ups</p>
+          <p className="page-subtitle">Supermarket distributor agreements, hospitality supply tiers, and verified GSTIN records</p>
         </div>
 
         <div style={{ display: 'flex', gap: '10px' }}>

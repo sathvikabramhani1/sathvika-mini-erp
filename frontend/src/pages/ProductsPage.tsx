@@ -153,7 +153,7 @@ export const ProductsPage: React.FC = () => {
     setInitialStock('0');
   };
 
-  const categories = ['ALL', 'Electronics', 'Appliances', 'Hardware', 'Peripherals'];
+  const categories = ['ALL', 'Gourmet Beverages', 'Oils & Ghee', 'Spices & Herbs', 'Grains & Flours', 'Specialty Foods'];
 
   return (
     <div className="page-body">
@@ -161,10 +161,10 @@ export const ProductsPage: React.FC = () => {
       <div className="page-header">
         <div>
           <h1 className="page-title">
-            <span>Product & Stock Catalog</span>
+            <span>Organic Foods & Gourmet Catalog</span>
             <span className="badge badge-primary">{products.length} Items</span>
           </h1>
-          <p className="page-subtitle">Real-time inventory levels, pricing snapshots, and inward/outward adjustments</p>
+          <p className="page-subtitle">Specialty lot inventory: Arabica coffee, A2 Gir cow ghee, Kashmiri saffron, and cold-pressed oils</p>
         </div>
 
         <div style={{ display: 'flex', gap: '10px' }}>

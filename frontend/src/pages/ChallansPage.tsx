@@ -232,7 +232,7 @@ export const ChallansPage: React.FC = () => {
     <div className="page-body">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Sales Challans & Invoices</h1>
+          <h1 className="page-title">Organic Goods Dispatch Challans</h1>
           <p className="page-subtitle">Dispatch orders, auto-reduce inventory on confirmation, and generate tax invoices (ERP Sales & Billing)</p>
         </div>
         {canCreateChallan && (

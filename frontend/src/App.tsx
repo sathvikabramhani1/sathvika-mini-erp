@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
-import { Sidebar } from './components/layout/Sidebar';
 import { Header } from './components/layout/Header';
 import { DashboardPage } from './pages/DashboardPage';
 import { CustomersPage } from './pages/CustomersPage';
@@ -24,14 +23,14 @@ const MainLayout: React.FC = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#070913',
+          backgroundColor: '#05140d',
           color: '#ffffff',
           fontFamily: 'sans-serif',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '16px' }}>
-          <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: '2px solid #8b5cf6', borderTopColor: 'transparent', animation: 'spin 0.8s linear infinite' }} />
-          <span>Authenticating SathvikaOps cluster session...</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '16px', color: '#34d399' }}>
+          <div style={{ width: '18px', height: '18px', borderRadius: '50%', border: '2px solid #10b981', borderTopColor: 'transparent', animation: 'spin 0.8s linear infinite' }} />
+          <span>Synchronizing Sathvika Organics cluster...</span>
         </div>
       </div>
     );
@@ -43,13 +42,14 @@ const MainLayout: React.FC = () => {
 
   return (
     <div className="app-container">
-      <Sidebar 
+      {/* Studio Top-Navigation Bar */}
+      <Header 
         currentTab={currentTab} 
         setCurrentTab={setCurrentTab} 
         onOpenCommandPalette={() => setIsCommandPaletteOpen(true)} 
       />
+
       <div className="main-content">
-        <Header onOpenCommandPalette={() => setIsCommandPaletteOpen(true)} />
         {currentTab === 'dashboard' && <DashboardPage onNavigate={setCurrentTab} />}
         {currentTab === 'customers' && <CustomersPage />}
         {currentTab === 'products' && <ProductsPage />}
