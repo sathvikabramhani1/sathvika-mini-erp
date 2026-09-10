@@ -62,7 +62,7 @@ All accounts share the password: **`Password123!`**
 
 ---
 
-## 6. Setup & Deployment Instructions
+## 6. README with Setup and Deployment Instructions
 
 ### Local Development Setup:
 1. **Clone the repository**:
