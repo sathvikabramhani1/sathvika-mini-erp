@@ -1,0 +1,92 @@
+import 'express-async-errors';
+import express from 'express';
+import cors from 'cors';
+import morgan from 'morgan';
+import path from 'path';
+import { config } from './config';
+import routes from './routes';
+import { errorHandler } from './middleware/errorHandler';
+import { renderApiDashboard, renderHealthDashboard } from './views/apiDashboard';
+
+const app = express();
+
+// Middleware setup
+app.use(
+  cors({
+    origin: '*', // Allow all during dev/testing, configurable via CORS_ORIGIN
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
+app.use(express.json());
+app.use(morgan('dev'));
+
+// Root status and welcoming endpoint
+app.get('/', (req, res) => {
+  // If requested by a browser, return the rich interactive API dashboard
+  if (req.accepts('html') || req.headers.accept?.includes('text/html')) {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    return res.send(renderApiDashboard());
+  }
+
+  // Otherwise return standard JSON for curl/postman/code
+  return res.json({
+    name: 'SathvikaOps - Mini ERP + CRM Backend API',
+    version: '1.0.0',
+    status: 'online',
+    description: 'Operations Portal Backend with RBAC, CRM, Inventory & Sales Challans',
+    health: '/health',
+    apiBase: '/api',
+    frontend: 'https://mini-erp-frontend-rqz6.onrender.com',
+    documentation: 'https://github.com/sathvika/sathvika-erp-crm#readme'
+  });
+});
+
+// Health check
+app.get('/health', (req, res) => {
+  // If requested from browser (without ?format=json), serve rich visual status page
+  if ((req.accepts('html') || req.headers.accept?.includes('text/html')) && req.query.format !== 'json') {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    return res.send(renderHealthDashboard());
+  }
+
+  // Otherwise return standard JSON for monitors/code
+  return res.json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    service: 'sathvika-backend',
+    database: 'connected'
+  });
+});
+
+// Postman collection direct download
+app.get('/postman', (_req, res) => {
+  const filePath = path.join(__dirname, '../sathvika-erp-crm.postman_collection.json');
+  res.download(filePath, 'sathvika-erp-crm.postman_collection.json');
+});
+
+// API Routes
+app.use('/api', routes);
+
+// 404 Handler
+app.use((_req, res) => {
+  res.status(404).json({
+    success: false,
+    error: 'Endpoint not found',
+  });
+});
+
+// Error handling middleware
+app.use(errorHandler);
+
+// Start server
+const server = app.listen(config.port, () => {
+  console.log(`====================================================`);
+  console.log(`🚀 SathvikaOps Backend running on port ${config.port}`);
+  console.log(`👉 Environment: ${config.nodeEnv}`);
+  console.log(`👉 Health check: http://localhost:${config.port}/health`);
+  console.log(`👉 API Base: http://localhost:${config.port}/api`);
+  console.log(`====================================================`);
+});
+
+export default app;
