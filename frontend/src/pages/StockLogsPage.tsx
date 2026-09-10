@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Search, ArrowDownRight, ArrowUpRight, History, Calendar, User as UserIcon } from 'lucide-react';
+import { Search, Download, ArrowDownRight, ArrowUpRight, History, Calendar, User as UserIcon } from 'lucide-react';
 import { api } from '../services/api';
 import { StockMovementLog } from '../types';
 import { useToast } from '../context/ToastContext';
@@ -10,6 +10,29 @@ export const StockLogsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [movementFilter, setMovementFilter] = useState('ALL');
+
+  
+  const handleExportCsv = () => {
+    if (logs.length === 0) return;
+    const headers = ['Timestamp', 'Product', 'SKU', 'Movement Type', 'Quantity', 'Reason', 'Logged By'];
+    const rows = logs.map(l => [
+      `"${new Date(l.createdAt).toLocaleString('en-IN')}"`,
+      `"${(l.product?.name || '').replace(/"/g, '""')}"`,
+      `"${l.product?.sku || ''}"`,
+      l.movementType,
+      l.quantityChanged,
+      `"${l.reason.replace(/"/g, '""')}"`,
+      `"${l.createdByUser?.name || 'System'}"`
+    ]);
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `sathvika_stock_movement_logs_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const fetchLogs = async () => {
     setLoading(true);

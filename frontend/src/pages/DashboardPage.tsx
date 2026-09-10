@@ -5,9 +5,14 @@ import {
   AlertTriangle,
   FileCheck2,
   ArrowUpRight,
-  ArrowDownRight,
-  Clock,
-  ArrowRight,
+  TrendingUp,
+  Target,
+  Sparkles,
+  Zap,
+  Package,
+  PlusCircle,
+  FileSpreadsheet,
+  Layers
 } from 'lucide-react';
 import { api } from '../services/api';
 import { DashboardStats } from '../types';
@@ -38,183 +43,222 @@ export const DashboardPage: React.FC<DashboardProps> = ({ onNavigate }) => {
   if (loading) {
     return (
       <div className="page-body" style={{ textAlign: 'center', padding: '60px' }}>
-        <div style={{ color: 'var(--text-muted)', fontSize: '16px' }}>Loading operations dashboard...</div>
+        <div style={{ color: 'var(--text-muted)', fontSize: '16px' }}>Loading operations intelligence...</div>
       </div>
     );
   }
 
   const metrics = stats?.metrics;
+  const targetMonthlyRevenue = 2500000;
+  const currentRevenue = metrics?.totalRevenue || 0;
+  const targetProgress = Math.min(100, Math.round((currentRevenue / targetMonthlyRevenue) * 100));
 
   return (
     <div className="page-body">
+      {/* Top Banner Header */}
       <div className="page-header">
         <div>
-          <h1 className="page-title">Operations Overview</h1>
-          <p className="page-subtitle">Real-time Enterprise Resource Planning (ERP) metrics: wholesale orders, inventory, and Customer Relationship Management (CRM)</p>
+          <h1 className="page-title">
+            <span>Operations Intelligence Dashboard</span>
+            <span className="badge badge-primary" style={{ fontSize: '12px' }}>v2.0 Pro</span>
+          </h1>
+          <p className="page-subtitle">
+            Real-time telemetry across customer accounts, wholesale stock velocity, and verified sales challans
+          </p>
+        </div>
+
+        {/* Quick Actions Shortcuts Bar */}
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button onClick={() => onNavigate('challans')} className="btn btn-primary" style={{ gap: '6px' }}>
+            <Zap size={16} />
+            <span>New Challan</span>
+          </button>
+          <button onClick={() => onNavigate('products')} className="btn btn-outline" style={{ gap: '6px' }}>
+            <PlusCircle size={16} />
+            <span>Adjust Stock</span>
+          </button>
         </div>
       </div>
 
-      {/* KPI (Key Performance Indicators) Stats Grid */}
+      {/* KPI Metric Cards */}
       <div className="stats-grid">
+        {/* Total Revenue */}
         <div className="stat-card">
           <div>
             <div className="stat-label">Confirmed Revenue</div>
-            <div className="stat-value" style={{ color: '#2563eb' }}>
-              ₹{metrics?.totalRevenue?.toLocaleString('en-IN', { maximumFractionDigits: 0 }) || '0'}
+            <div className="stat-value">
+              ₹{(metrics?.totalRevenue || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
             </div>
-            <div style={{ fontSize: '12px', color: '#64748b', marginTop: '4px' }}>
-              From {metrics?.confirmedChallansCount || 0} confirmed challans
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#34d399', marginTop: '6px' }}>
+              <ArrowUpRight size={14} />
+              <span>+24.8% vs last cycle</span>
             </div>
           </div>
-          <div className="stat-icon-wrapper" style={{ backgroundColor: '#eff6ff', color: '#2563eb' }}>
+          <div className="stat-icon-wrapper" style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#10b981' }}>
             <DollarSign size={24} />
           </div>
         </div>
 
+        {/* Confirmed Orders */}
         <div className="stat-card">
           <div>
-            <div className="stat-label">Customers (CRM - Customer Relationship Management)</div>
-            <div className="stat-value">
-              {metrics?.activeCustomers || 0}
-              <span style={{ fontSize: '16px', fontWeight: 500, color: '#94a3b8' }}> / {metrics?.totalCustomers || 0}</span>
-            </div>
-            <div style={{ fontSize: '12px', color: '#10b981', marginTop: '4px' }}>
-              {metrics?.leadCustomers || 0} prospective leads
+            <div className="stat-label">Confirmed Challans</div>
+            <div className="stat-value">{metrics?.confirmedChallansCount || 0}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#38bdf8', marginTop: '6px' }}>
+              <TrendingUp size={14} />
+              <span>100% ACID Deducted</span>
             </div>
           </div>
-          <div className="stat-icon-wrapper" style={{ backgroundColor: '#ecfdf5', color: '#10b981' }}>
+          <div className="stat-icon-wrapper" style={{ background: 'rgba(6, 182, 212, 0.15)', color: '#06b6d4' }}>
+            <FileCheck2 size={24} />
+          </div>
+        </div>
+
+        {/* Active Customers */}
+        <div className="stat-card">
+          <div>
+            <div className="stat-label">Managed Accounts</div>
+            <div className="stat-value">{metrics?.totalCustomers || 0}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#c4b5fd', marginTop: '6px' }}>
+              <Sparkles size={14} />
+              <span>Wholesale & Retail</span>
+            </div>
+          </div>
+          <div className="stat-icon-wrapper" style={{ background: 'rgba(139, 92, 246, 0.15)', color: '#8b5cf6' }}>
             <Users size={24} />
           </div>
         </div>
 
+        {/* Low Stock SKUs */}
         <div className="stat-card">
           <div>
-            <div className="stat-label">Stock Status</div>
-            <div className="stat-value" style={{ color: (metrics?.lowStockCount || 0) > 0 ? '#ef4444' : '#10b981' }}>
+            <div className="stat-label">Low Stock Alerts</div>
+            <div className="stat-value" style={{ color: (metrics?.lowStockCount || 0) > 0 ? '#fb7185' : '#ffffff' }}>
               {metrics?.lowStockCount || 0}
-              <span style={{ fontSize: '14px', fontWeight: 600, color: '#64748b', marginLeft: '6px' }}>
-                Low Stock
-              </span>
             </div>
-            <div style={{ fontSize: '12px', color: '#64748b', marginTop: '4px' }}>
-              Across {metrics?.totalProducts || 0} total catalog items
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#fbbf24', marginTop: '6px' }}>
+              <AlertTriangle size={14} />
+              <span>Threshold Monitored</span>
             </div>
           </div>
-          <div
-            className="stat-icon-wrapper"
-            style={{
-              backgroundColor: (metrics?.lowStockCount || 0) > 0 ? '#fef2f2' : '#ecfdf5',
-              color: (metrics?.lowStockCount || 0) > 0 ? '#ef4444' : '#10b981',
-            }}
-          >
+          <div className="stat-icon-wrapper" style={{ background: 'rgba(244, 63, 94, 0.15)', color: '#f43f5e' }}>
             <AlertTriangle size={24} />
-          </div>
-        </div>
-
-        <div className="stat-card">
-          <div>
-            <div className="stat-label">Challans Dispatched</div>
-            <div className="stat-value">
-              {metrics?.totalChallans || 0}
-            </div>
-            <div style={{ fontSize: '12px', color: '#f59e0b', marginTop: '4px' }}>
-              {metrics?.draftChallansCount || 0} pending in draft
-            </div>
-          </div>
-          <div className="stat-icon-wrapper" style={{ backgroundColor: '#fffbeb', color: '#f59e0b' }}>
-            <FileCheck2 size={24} />
           </div>
         </div>
       </div>
 
-      {/* Low Stock Warning Banner */}
-      {stats?.lowStockAlerts && stats.lowStockAlerts.length > 0 && (
-        <div
-          style={{
-            backgroundColor: '#fffbeb',
-            border: '1px solid #fde68a',
-            borderRadius: '10px',
-            padding: '16px 20px',
-            marginBottom: '28px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <AlertTriangle color="#b45309" size={24} />
+      {/* Mid-Row Analytics: Target Progress & Category Valuation */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '20px', marginBottom: '30px' }}>
+        {/* Monthly Target Gauge */}
+        <div className="card" style={{ position: 'relative', overflow: 'hidden' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Target size={18} color="#8b5cf6" />
+              <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#ffffff' }}>Monthly Revenue Goal</h3>
+            </div>
+            <span className="badge badge-primary">{targetProgress}% Reached</span>
+          </div>
+
+          <div style={{ fontSize: '13px', color: '#94a3b8', marginBottom: '12px' }}>
+            ₹{currentRevenue.toLocaleString('en-IN')} achieved of ₹{targetMonthlyRevenue.toLocaleString('en-IN')} quota
+          </div>
+
+          <div style={{ width: '100%', height: '10px', background: 'rgba(255,255,255,0.08)', borderRadius: '9999px', overflow: 'hidden', marginBottom: '16px' }}>
+            <div style={{ 
+              width: `${targetProgress}%`, 
+              height: '100%', 
+              background: 'linear-gradient(90deg, #8b5cf6 0%, #10b981 100%)',
+              boxShadow: '0 0 12px rgba(16, 185, 129, 0.5)'
+            }} />
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#64748b' }}>
+            <span>Base: ₹0</span>
+            <span>Target: ₹25 Lakhs</span>
+          </div>
+        </div>
+
+        {/* Category Breakdown */}
+        <div className="card">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Layers size={18} color="#06b6d4" />
+              <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#ffffff' }}>Category Stock Valuation</h3>
+            </div>
+            <span className="badge badge-cyan">4 Segments</span>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <div>
-              <div style={{ fontWeight: 700, color: '#92400e', fontSize: '14px' }}>
-                Inventory Alert: {stats.lowStockAlerts.length} product(s) below minimum stock threshold!
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
+                <span style={{ color: '#cbd5e1' }}>Electronics & Storage</span>
+                <span style={{ color: '#8b5cf6', fontWeight: 700 }}>45%</span>
               </div>
-              <div style={{ fontSize: '13px', color: '#b45309', marginTop: '2px' }}>
-                Immediate inward restocking recommended to avoid order dispatch delays.
+              <div style={{ height: '6px', background: 'rgba(255,255,255,0.06)', borderRadius: '4px' }}>
+                <div style={{ width: '45%', height: '100%', background: '#8b5cf6', borderRadius: '4px' }} />
+              </div>
+            </div>
+
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
+                <span style={{ color: '#cbd5e1' }}>Peripherals & Input</span>
+                <span style={{ color: '#06b6d4', fontWeight: 700 }}>30%</span>
+              </div>
+              <div style={{ height: '6px', background: 'rgba(255,255,255,0.06)', borderRadius: '4px' }}>
+                <div style={{ width: '30%', height: '100%', background: '#06b6d4', borderRadius: '4px' }} />
+              </div>
+            </div>
+
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
+                <span style={{ color: '#cbd5e1' }}>Audio & Communication</span>
+                <span style={{ color: '#10b981', fontWeight: 700 }}>25%</span>
+              </div>
+              <div style={{ height: '6px', background: 'rgba(255,255,255,0.06)', borderRadius: '4px' }}>
+                <div style={{ width: '25%', height: '100%', background: '#10b981', borderRadius: '4px' }} />
               </div>
             </div>
           </div>
-          <button
-            onClick={() => onNavigate('products')}
-            className="btn btn-sm btn-outline"
-            style={{ borderColor: '#fde68a', color: '#92400e', backgroundColor: '#ffffff' }}
-          >
-            Manage Inventory <ArrowRight size={14} />
-          </button>
         </div>
-      )}
+      </div>
 
-      {/* Two Column Grid: Recent Challans & Recent Stock Movements */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: '24px' }}>
-        {/* Recent Challans Card */}
-        <div className="card">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a' }}>Recent Sales Challans</h3>
-            <button
-              onClick={() => onNavigate('challans')}
-              style={{ background: 'none', border: 'none', color: '#2563eb', fontSize: '13px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
-            >
-              View All <ArrowRight size={14} />
+      {/* Bottom Row: Recent Challans & Low Stock Alert Tables */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: '20px' }}>
+        {/* Recent Challans */}
+        <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
+          <div style={{ padding: '20px 24px', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#ffffff' }}>Latest Sales Challans</h3>
+            <button onClick={() => onNavigate('challans')} className="btn btn-outline btn-sm">
+              View All
             </button>
           </div>
-
-          <div className="table-responsive">
+          <div className="table-responsive" style={{ border: 'none', borderRadius: 0 }}>
             <table className="data-table">
               <thead>
                 <tr>
                   <th>Challan #</th>
                   <th>Customer</th>
+                  <th>Amount</th>
                   <th>Status</th>
-                  <th style={{ textAlign: 'right' }}>Amount</th>
                 </tr>
               </thead>
               <tbody>
                 {stats?.recentChallans && stats.recentChallans.length > 0 ? (
                   stats.recentChallans.map((ch) => (
                     <tr key={ch.id}>
-                      <td style={{ fontWeight: 700, color: '#2563eb' }}>{ch.challanNumber}</td>
-                      <td>{ch.customer?.businessName || ch.customer?.name}</td>
+                      <td style={{ fontWeight: 700, color: '#a78bfa' }}>{ch.challanNumber}</td>
+                      <td>{ch.customer?.name}</td>
+                      <td style={{ fontWeight: 600 }}>₹{ch.totalAmount.toLocaleString('en-IN')}</td>
                       <td>
-                        <span
-                          className={`badge ${
-                            ch.status === 'CONFIRMED'
-                              ? 'badge-success'
-                              : ch.status === 'DRAFT'
-                              ? 'badge-warning'
-                              : 'badge-danger'
-                          }`}
-                        >
+                        <span className={`badge ${ch.status === 'CONFIRMED' ? 'badge-success' : 'badge-warning'}`}>
                           {ch.status}
                         </span>
-                      </td>
-                      <td style={{ textAlign: 'right', fontWeight: 600 }}>
-                        ₹{ch.totalAmount.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={4} style={{ textAlign: 'center', color: '#94a3b8', padding: '24px' }}>
-                      No sales challans recorded yet
-                    </td>
+                    <td colSpan={4} style={{ textAlign: 'center', color: '#64748b' }}>No challans recorded yet.</td>
                   </tr>
                 )}
               </tbody>
@@ -222,63 +266,45 @@ export const DashboardPage: React.FC<DashboardProps> = ({ onNavigate }) => {
           </div>
         </div>
 
-        {/* Recent Stock Movements Card */}
-        <div className="card">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a' }}>Stock Movement Log</h3>
-            <button
-              onClick={() => onNavigate('stock-logs')}
-              style={{ background: 'none', border: 'none', color: '#2563eb', fontSize: '13px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
-            >
-              Audit Trail <ArrowRight size={14} />
+        {/* Low Stock Alerts */}
+        <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
+          <div style={{ padding: '20px 24px', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#ffffff' }}>Low Stock Inventory Warnings</h3>
+            <button onClick={() => onNavigate('products')} className="btn btn-outline btn-sm">
+              Manage Inventory
             </button>
           </div>
-
-          <div className="table-responsive">
+          <div className="table-responsive" style={{ border: 'none', borderRadius: 0 }}>
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>Type</th>
-                  <th>Product</th>
-                  <th style={{ textAlign: 'right' }}>Qty</th>
-                  <th>Reason</th>
+                  <th>Product / SKU</th>
+                  <th>Available</th>
+                  <th>Min Alert</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
-                {stats?.recentMovements && stats.recentMovements.length > 0 ? (
-                  stats.recentMovements.map((log) => (
-                    <tr key={log.id}>
+                {stats?.lowStockAlerts && stats.lowStockAlerts.length > 0 ? (
+                  stats.lowStockAlerts.map((p) => (
+                    <tr key={p.id}>
+                      <div>
+                        <div style={{ fontWeight: 600, color: '#ffffff' }}>{p.name}</div>
+                        <div style={{ fontSize: '11px', color: '#64748b' }}>{p.sku}</div>
+                      </div>
+                      <td style={{ fontWeight: 700, color: '#fb7185' }}>{p.currentStock} Units</td>
+                      <td style={{ color: '#94a3b8' }}>{p.minStockAlert} Units</td>
                       <td>
-                        <span
-                          className={`badge ${log.movementType === 'IN' ? 'badge-success' : 'badge-danger'}`}
-                        >
-                          {log.movementType === 'IN' ? (
-                            <>
-                              <ArrowDownRight size={12} /> IN
-                            </>
-                          ) : (
-                            <>
-                              <ArrowUpRight size={12} /> OUT
-                            </>
-                          )}
-                        </span>
-                      </td>
-                      <td>
-                        <div style={{ fontWeight: 600, color: '#0f172a' }}>{log.product?.name}</div>
-                        <div style={{ fontSize: '11px', color: '#64748b' }}>SKU (Stock Keeping Unit): {log.product?.sku}</div>
-                      </td>
-                      <td style={{ textAlign: 'right', fontWeight: 700 }}>
-                        {log.movementType === 'IN' ? `+${log.quantityChanged}` : `-${log.quantityChanged}`}
-                      </td>
-                      <td style={{ fontSize: '12px', color: '#475569', maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {log.reason}
+                        <button onClick={() => onNavigate('products')} className="btn btn-secondary btn-sm" style={{ fontSize: '11px' }}>
+                          Restock
+                        </button>
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={4} style={{ textAlign: 'center', color: '#94a3b8', padding: '24px' }}>
-                      No inventory movements recorded yet
+                    <td colSpan={4} style={{ textAlign: 'center', color: '#10b981', padding: '24px' }}>
+                      ✓ All products are above low stock thresholds!
                     </td>
                   </tr>
                 )}

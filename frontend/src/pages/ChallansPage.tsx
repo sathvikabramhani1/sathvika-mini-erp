@@ -64,6 +64,29 @@ export const ChallansPage: React.FC = () => {
     fetchChallans();
   }, [search, statusFilter]);
 
+  
+  const handleExportCsv = () => {
+    if (challans.length === 0) return;
+    const headers = ['Challan Number', 'Customer', 'Items Count', 'Total Amount', 'Status', 'Date'];
+    const rows = challans.map(ch => [
+      `"${ch.challanNumber}"`,
+      `"${ch.customer.businessName.replace(/"/g, '""')}"`,
+      ch.items.length,
+      ch.totalAmount,
+      ch.status,
+      `"${new Date(ch.createdAt).toLocaleString('en-IN')}"`
+    ]);
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `sathvika_sales_challans_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    success('Sales Challans exported to CSV');
+  };
+
   const openCreateModal = async () => {
     try {
       const [custRes, prodRes] = await Promise.all([
@@ -295,7 +318,7 @@ export const ChallansPage: React.FC = () => {
                     </div>
                   </td>
                   <td>
-                    <div style={{ fontWeight: 700, color: '#0f172a' }}>
+                    <div style={{ fontWeight: 700, color: '#ffffff' }}>
                       {ch.customer?.businessName || ch.customer?.name}
                     </div>
                     <div style={{ fontSize: '12px', color: '#64748b' }}>

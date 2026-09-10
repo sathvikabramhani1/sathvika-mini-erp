@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import {
   Search,
   Plus,
-  Edit2,
-  SlidersHorizontal,
-  AlertTriangle,
-  ArrowDownRight,
-  ArrowUpRight,
-  X,
   Package,
+  AlertTriangle,
+  ArrowUpDown,
+  Download,
+  CheckCircle2,
+  X,
+  PlusCircle,
+  MinusCircle
 } from 'lucide-react';
 import { api } from '../services/api';
 import { Product } from '../types';
@@ -23,47 +24,35 @@ export const ProductsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('ALL');
-  const [lowStockOnly, setLowStockOnly] = useState(false);
 
-  // Modals
-  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [isAdjustModalOpen, setIsAdjustModalOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  // Creation modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [name, setName] = useState('');
+  const [sku, setSku] = useState('');
+  const [category, setCategory] = useState('Electronics');
+  const [unit, setUnit] = useState('Units');
+  const [unitPrice, setUnitPrice] = useState('');
+  const [lowStockThreshold, setLowStockThreshold] = useState('10');
+  const [initialStock, setInitialStock] = useState('0');
 
-  // Product Form
-  const [formData, setFormData] = useState({
-    name: '',
-    sku: '',
-    category: 'Electronics',
-    unitPrice: 0,
-    currentStock: 0,
-    minStockAlert: 10,
-    location: '',
-  });
-
-  // Stock Adjust Form
-  const [adjustData, setAdjustData] = useState<{
-    quantityChanged: number;
-    movementType: 'IN' | 'OUT';
-    reason: string;
-  }>({
-    quantityChanged: 1,
-    movementType: 'IN',
-    reason: '',
-  });
+  // Quick Inward/Outward Modal State
+  const [adjustProduct, setAdjustProduct] = useState<Product | null>(null);
+  const [adjustQty, setAdjustQty] = useState('');
+  const [adjustType, setAdjustType] = useState<'IN' | 'OUT'>('IN');
+  const [adjustReason, setAdjustReason] = useState('Manual Stock Audit Adjustment');
+  const [adjusting, setAdjusting] = useState(false);
 
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const data = await api.getProducts({
-        search,
-        category: categoryFilter,
-        lowStock: lowStockOnly,
+      const res = await api.getProducts({
+        search: search || undefined,
+        category: categoryFilter !== 'ALL' ? categoryFilter : undefined,
       });
-      setProducts(data);
+      setProducts(res.products);
     } catch (err: any) {
-      error(err.message || 'Failed to load products');
+      error(err.message || 'Failed to fetch product catalog');
     } finally {
       setLoading(false);
     }
@@ -71,170 +60,157 @@ export const ProductsPage: React.FC = () => {
 
   useEffect(() => {
     fetchProducts();
-  }, [search, categoryFilter, lowStockOnly]);
+  }, [categoryFilter]);
 
-  const openCreateModal = () => {
-    setEditingProduct(null);
-    setFormData({
-      name: '',
-      sku: '',
-      category: 'Electronics',
-      unitPrice: 100,
-      currentStock: 0,
-      minStockAlert: 10,
-      location: 'Warehouse A - Bay 01',
-    });
-    setIsFormModalOpen(true);
-  };
-
-  const openEditModal = (p: Product) => {
-    setEditingProduct(p);
-    setFormData({
-      name: p.name,
-      sku: p.sku,
-      category: p.category,
-      unitPrice: p.unitPrice,
-      currentStock: p.currentStock,
-      minStockAlert: p.minStockAlert,
-      location: p.location,
-    });
-    setIsFormModalOpen(true);
-  };
-
-  const openAdjustModal = (p: Product) => {
-    setSelectedProduct(p);
-    setAdjustData({
-      quantityChanged: 5,
-      movementType: 'IN',
-      reason: 'Standard stock replenishment',
-    });
-    setIsAdjustModalOpen(true);
-  };
-
-  const handleSaveProduct = async (e: React.FormEvent) => {
+  const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      if (editingProduct) {
-        await api.updateProduct(editingProduct.id, formData);
-        success('Product details updated successfully');
-      } else {
-        await api.createProduct(formData);
-        success('New product added to inventory');
-      }
-      setIsFormModalOpen(false);
-      fetchProducts();
-    } catch (err: any) {
-      error(err.message || 'Failed to save product');
-    }
+    fetchProducts();
   };
 
-  const handleAdjustStock = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedProduct) return;
+  // CSV Export Function
+  const handleExportCsv = () => {
+    if (products.length === 0) return;
+    const headers = ['SKU', 'Name', 'Category', 'Unit Price', 'Current Stock', 'Min Stock Alert', 'Location'];
+    const rows = products.map(p => [
+      `"${p.sku}"`,
+      `"${p.name.replace(/"/g, '""')}"`,
+      `"${p.category}"`,
+      p.unitPrice,
+      p.currentStock,
+      p.minStockAlert,
+      `"${p.location || 'Warehouse'}"`
+    ]);
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `sathvika_products_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    success('Products inventory exported to CSV');
+  };
 
-    if (adjustData.movementType === 'OUT' && selectedProduct.currentStock < adjustData.quantityChanged) {
-      error(`Cannot deduct ${adjustData.quantityChanged} units. Current stock is only ${selectedProduct.currentStock}.`);
+  // Handle Quick Stock Adjust Submit
+  const handleQuickAdjustSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!adjustProduct) return;
+    const qty = parseInt(adjustQty);
+    if (isNaN(qty) || qty <= 0) {
+      error('Please enter a valid quantity');
       return;
     }
 
+    setAdjusting(true);
     try {
-      await api.adjustStock(selectedProduct.id, adjustData);
-      success(`Stock ${adjustData.movementType === 'IN' ? 'inwarded' : 'deducted'} successfully`);
-      setIsAdjustModalOpen(false);
+      await api.adjustStock(adjustProduct.id, {
+        quantityChanged: qty,
+        movementType: adjustType,
+        reason: adjustReason || 'Quick Inward/Outward stock update',
+      });
+      success(`Stock ${adjustType === 'IN' ? 'increased' : 'decreased'} by ${qty} for ${adjustProduct.name}`);
+      setAdjustProduct(null);
+      setAdjustQty('');
       fetchProducts();
     } catch (err: any) {
       error(err.message || 'Stock adjustment failed');
+    } finally {
+      setAdjusting(false);
     }
   };
 
-  const canManageProducts = user?.role === 'ADMIN' || user?.role === 'WAREHOUSE';
+  const handleCreateSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCreating(true);
+    try {
+      await api.createProduct({
+        name,
+        sku,
+        category,
+        location: unit || 'Main Warehouse',
+        unitPrice: parseFloat(unitPrice),
+        minStockAlert: parseInt(lowStockThreshold),
+        initialStock: parseInt(initialStock),
+      });
+      success('Product SKU created successfully');
+      setIsModalOpen(false);
+      resetCreateForm();
+      fetchProducts();
+    } catch (err: any) {
+      error(err.message || 'Failed to create product');
+    } finally {
+      setCreating(false);
+    }
+  };
 
-  // Get distinct categories for filter
-  const categories = ['ALL', 'Electronics', 'Packaging', 'Hardware', 'Chemicals', 'Safety'];
+  const resetCreateForm = () => {
+    setName('');
+    setSku('');
+    setCategory('Electronics');
+    setUnit('Units');
+    setUnitPrice('');
+    setLowStockThreshold('10');
+    setInitialStock('0');
+  };
+
+  const categories = ['ALL', 'Electronics', 'Appliances', 'Hardware', 'Peripherals'];
 
   return (
     <div className="page-body">
+      {/* Header */}
       <div className="page-header">
         <div>
-          <h1 className="page-title">Product & Inventory Catalog</h1>
-          <p className="page-subtitle">Manage SKUs (Stock Keeping Units), stock levels, warehouse locations, and re-order thresholds</p>
+          <h1 className="page-title">
+            <span>Product & Stock Catalog</span>
+            <span className="badge badge-primary">{products.length} Items</span>
+          </h1>
+          <p className="page-subtitle">Real-time inventory levels, pricing snapshots, and inward/outward adjustments</p>
         </div>
-        {canManageProducts && (
-          <button onClick={openCreateModal} className="btn btn-primary">
-            <Plus size={18} /> Add Product
+
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button onClick={handleExportCsv} className="btn btn-outline" style={{ gap: '6px' }}>
+            <Download size={16} />
+            <span>Export CSV</span>
           </button>
-        )}
+          {user?.role !== 'ACCOUNTS' && (
+            <button onClick={() => setIsModalOpen(true)} className="btn btn-primary" style={{ gap: '6px' }}>
+              <Plus size={16} />
+              <span>Add Product SKU</span>
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Filter bar */}
-      <div
-        className="card"
-        style={{
-          marginBottom: '20px',
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '14px',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <div style={{ position: 'relative', flex: '1 1 280px', maxWidth: '380px' }}>
-          <Search
-            size={18}
-            color="#94a3b8"
-            style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }}
-          />
-          <input
-            type="text"
-            placeholder="Search by product name, SKU (Stock Keeping Unit), or rack..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="form-input"
-            style={{ paddingLeft: '38px' }}
-          />
-        </div>
+      {/* Filter Bar */}
+      <div className="card" style={{ padding: '16px 20px', marginBottom: '20px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+          <form onSubmit={handleSearchSubmit} style={{ display: 'flex', gap: '8px', flex: 1, minWidth: '280px' }}>
+            <div style={{ position: 'relative', flex: 1 }}>
+              <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
+              <input
+                type="text"
+                placeholder="Search by SKU or product name..."
+                className="form-input"
+                style={{ paddingLeft: '38px' }}
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+              />
+            </div>
+            <button type="submit" className="btn btn-secondary">Search</button>
+          </form>
 
-        <div style={{ display: 'flex', gap: '14px', alignItems: 'center', flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ fontSize: '13px', color: '#64748b', fontWeight: 600 }}>Category:</span>
-            <select
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
-              className="form-select"
-              style={{ width: '150px' }}
-            >
-              {categories.map((c) => (
-                <option key={c} value={c}>
-                  {c === 'ALL' ? 'All Categories' : c}
-                </option>
-              ))}
-            </select>
+          {/* Category Chips */}
+          <div style={{ display: 'flex', gap: '6px', overflowX: 'auto' }}>
+            {categories.map(c => (
+              <button
+                key={c}
+                onClick={() => setCategoryFilter(c)}
+                className={`btn btn-sm ${categoryFilter === c ? 'btn-primary' : 'btn-secondary'}`}
+              >
+                {c}
+              </button>
+            ))}
           </div>
-
-          <label
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              fontSize: '13px',
-              fontWeight: 600,
-              cursor: 'pointer',
-              color: lowStockOnly ? '#b91c1c' : '#475569',
-              backgroundColor: lowStockOnly ? '#fef2f2' : '#f1f5f9',
-              padding: '8px 12px',
-              borderRadius: '6px',
-              border: `1px solid ${lowStockOnly ? '#fecaca' : '#e2e8f0'}`,
-            }}
-          >
-            <input
-              type="checkbox"
-              checked={lowStockOnly}
-              onChange={(e) => setLowStockOnly(e.target.checked)}
-              style={{ cursor: 'pointer' }}
-            />
-            <AlertTriangle size={15} color={lowStockOnly ? '#ef4444' : '#64748b'} />
-            Low Stock Alerts Only
-          </label>
         </div>
       </div>
 
@@ -243,214 +219,143 @@ export const ProductsPage: React.FC = () => {
         <table className="data-table">
           <thead>
             <tr>
-              <th>Product Details</th>
-              <th>SKU (Stock Keeping Unit) / Code</th>
+              <th>SKU / Product</th>
               <th>Category</th>
-              <th style={{ textAlign: 'right' }}>Unit Price</th>
-              <th style={{ textAlign: 'center' }}>Stock Level</th>
-              <th>Warehouse Location</th>
-              <th style={{ textAlign: 'center' }}>Actions</th>
+              <th>Unit Price</th>
+              <th>Current Stock</th>
+              <th>Status</th>
+              <th>Quick Stock Action</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={7} style={{ textAlign: 'center', padding: '36px', color: '#64748b' }}>
-                  Loading product catalog...
-                </td>
+                <td colSpan={6} style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>Loading product inventory...</td>
               </tr>
-            ) : products.length > 0 ? (
-              products.map((p) => {
-                const isLow = p.currentStock <= p.minStockAlert;
+            ) : products.length === 0 ? (
+              <tr>
+                <td colSpan={6} style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>No products found.</td>
+              </tr>
+            ) : (
+              products.map(p => {
+                const isLowStock = p.currentStock <= p.minStockAlert;
                 return (
                   <tr key={p.id}>
                     <td>
-                      <div style={{ fontWeight: 700, color: '#0f172a' }}>{p.name}</div>
-                    </td>
-                    <td>
-                      <code style={{ fontSize: '12px', backgroundColor: '#f1f5f9', padding: '2px 6px', borderRadius: '4px', color: '#1e293b' }}>
-                        {p.sku}
-                      </code>
+                      <div style={{ fontWeight: 700, color: '#ffffff' }}>{p.name}</div>
+                      <div style={{ fontSize: '11px', color: '#a78bfa', fontFamily: 'monospace' }}>{p.sku}</div>
                     </td>
                     <td>
                       <span className="badge badge-neutral">{p.category}</span>
                     </td>
-                    <td style={{ textAlign: 'right', fontWeight: 600 }}>
-                      ₹{p.unitPrice.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                    </td>
-                    <td style={{ textAlign: 'center' }}>
-                      <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <span
-                          className={`badge ${
-                            p.currentStock === 0
-                              ? 'badge-danger'
-                              : isLow
-                              ? 'badge-warning'
-                              : 'badge-success'
-                          }`}
-                        >
-                          {p.currentStock} units
-                        </span>
-                        <span style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px' }}>
-                          Min: {p.minStockAlert}
-                        </span>
-                      </div>
+                    <td style={{ fontWeight: 600 }}>₹{p.unitPrice.toLocaleString('en-IN')}</td>
+                    <td>
+                      <span style={{ fontWeight: 700, color: isLowStock ? '#fb7185' : '#34d399' }}>{p.currentStock} Units</span>
                     </td>
                     <td>
-                      <span style={{ fontSize: '13px', color: '#475569' }}>{p.location}</span>
+                      {isLowStock ? (
+                        <span className="badge badge-danger">
+                          <AlertTriangle size={12} /> Low Stock
+                        </span>
+                      ) : (
+                        <span className="badge badge-success">
+                          <CheckCircle2 size={12} /> Healthy
+                        </span>
+                      )}
                     </td>
                     <td>
-                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-                        {canManageProducts && (
-                          <>
-                            <button
-                              onClick={() => openAdjustModal(p)}
-                              className="btn btn-outline btn-sm"
-                              title="Manual Stock Inward / Outward"
-                              style={{ display: 'flex', alignItems: 'center', gap: '4px' }}
-                            >
-                              <SlidersHorizontal size={13} /> Adjust Stock
-                            </button>
-                            <button
-                              onClick={() => openEditModal(p)}
-                              className="btn btn-outline btn-sm"
-                              title="Edit Product Details"
-                            >
-                              <Edit2 size={13} />
-                            </button>
-                          </>
-                        )}
-                      </div>
+                      <button
+                        onClick={() => {
+                          setAdjustProduct(p);
+                          setAdjustQty('10');
+                          setAdjustType('IN');
+                        }}
+                        className="btn btn-outline btn-sm"
+                        style={{ gap: '6px', fontSize: '12px' }}
+                      >
+                        <ArrowUpDown size={13} color="#8b5cf6" />
+                        <span>Adjust</span>
+                      </button>
                     </td>
                   </tr>
                 );
               })
-            ) : (
-              <tr>
-                <td colSpan={7} style={{ textAlign: 'center', padding: '36px', color: '#94a3b8' }}>
-                  No products matched your criteria.
-                </td>
-              </tr>
             )}
           </tbody>
         </table>
       </div>
 
-      {/* Add / Edit Product Modal */}
-      {isFormModalOpen && (
-        <div className="modal-backdrop">
-          <div className="modal-content" style={{ maxWidth: '580px' }}>
+      {/* Quick Adjust Modal */}
+      {adjustProduct && (
+        <div className="modal-backdrop" onClick={() => setAdjustProduct(null)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '460px' }}>
             <div className="modal-header">
-              <h2 className="modal-title">
-                {editingProduct ? 'Edit Catalog Product' : 'Add New Product to Inventory'}
-              </h2>
-              <button
-                onClick={() => setIsFormModalOpen(false)}
-                style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
-              >
-                <X size={20} />
+              <h3 className="modal-title">Quick Stock Adjustment</h3>
+              <button onClick={() => setAdjustProduct(null)} className="btn btn-secondary btn-sm" style={{ padding: '4px 8px' }}>
+                <X size={16} />
               </button>
             </div>
-            <form onSubmit={handleSaveProduct}>
+            <form onSubmit={handleQuickAdjustSubmit}>
               <div className="modal-body">
+                <div style={{ marginBottom: '16px', background: 'rgba(255,255,255,0.04)', padding: '12px', borderRadius: '8px' }}>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#ffffff' }}>{adjustProduct.name}</div>
+                  <div style={{ fontSize: '12px', color: '#94a3b8' }}>SKU: {adjustProduct.sku} | Current: {adjustProduct.currentStock} Units</div>
+                </div>
+
                 <div className="form-group">
-                  <label className="form-label">Product Name *</label>
+                  <label className="form-label">Movement Type</label>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setAdjustType('IN')}
+                      className={`btn ${adjustType === 'IN' ? 'btn-primary' : 'btn-secondary'}`}
+                      style={{ gap: '6px' }}
+                    >
+                      <PlusCircle size={16} />
+                      <span>INWARD (+)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAdjustType('OUT')}
+                      className={`btn ${adjustType === 'OUT' ? 'btn-danger' : 'btn-secondary'}`}
+                      style={{ gap: '6px' }}
+                    >
+                      <MinusCircle size={16} />
+                      <span>OUTWARD (-)</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Quantity (Units)</label>
                   <input
-                    type="text"
+                    type="number"
                     required
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    min="1"
                     className="form-input"
-                    placeholder="e.g. Wireless Barcode Scanner 2D"
+                    value={adjustQty}
+                    onChange={e => setAdjustQty(e.target.value)}
                   />
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                  <div className="form-group">
-                    <label className="form-label">SKU (Stock Keeping Unit) / Code *</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.sku}
-                      onChange={(e) => setFormData({ ...formData, sku: e.target.value.toUpperCase() })}
-                      className="form-input"
-                      placeholder="e.g. PROD-ELEC-001"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Category *</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.category}
-                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                      className="form-input"
-                      placeholder="e.g. Electronics, Packaging"
-                    />
-                  </div>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                  <div className="form-group">
-                    <label className="form-label">Unit Price (₹) *</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      required
-                      min="0.01"
-                      value={formData.unitPrice}
-                      onChange={(e) => setFormData({ ...formData, unitPrice: parseFloat(e.target.value) || 0 })}
-                      className="form-input"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Minimum Stock Alert *</label>
-                    <input
-                      type="number"
-                      required
-                      min="0"
-                      value={formData.minStockAlert}
-                      onChange={(e) => setFormData({ ...formData, minStockAlert: parseInt(e.target.value, 10) || 0 })}
-                      className="form-input"
-                    />
-                  </div>
-                </div>
-
-                {!editingProduct && (
-                  <div className="form-group">
-                    <label className="form-label">Initial Opening Stock (Units)</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={formData.currentStock}
-                      onChange={(e) => setFormData({ ...formData, currentStock: parseInt(e.target.value, 10) || 0 })}
-                      className="form-input"
-                    />
-                  </div>
-                )}
-
                 <div className="form-group">
-                  <label className="form-label">Warehouse Location / Rack *</label>
+                  <label className="form-label">Audit Reason</label>
                   <input
                     type="text"
                     required
-                    value={formData.location}
-                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                     className="form-input"
-                    placeholder="e.g. Warehouse A - Bay 02, Rack 4"
+                    value={adjustReason}
+                    onChange={e => setAdjustReason(e.target.value)}
                   />
                 </div>
               </div>
+
               <div className="modal-footer">
-                <button
-                  type="button"
-                  onClick={() => setIsFormModalOpen(false)}
-                  className="btn btn-outline"
-                >
+                <button type="button" onClick={() => setAdjustProduct(null)} className="btn btn-secondary">
                   Cancel
                 </button>
-                <button type="submit" className="btn btn-primary">
-                  {editingProduct ? 'Update Product' : 'Save Product'}
+                <button type="submit" disabled={adjusting} className="btn btn-primary">
+                  {adjusting ? 'Updating...' : 'Commit Stock'}
                 </button>
               </div>
             </form>
@@ -458,113 +363,112 @@ export const ProductsPage: React.FC = () => {
         </div>
       )}
 
-      {/* Adjust Stock Modal */}
-      {isAdjustModalOpen && selectedProduct && (
-        <div className="modal-backdrop">
-          <div className="modal-content" style={{ maxWidth: '500px' }}>
+      {/* Product Creation Modal */}
+      {isModalOpen && (
+        <div className="modal-backdrop" onClick={() => setIsModalOpen(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
-              <h2 className="modal-title">Adjust Stock Level</h2>
-              <button
-                onClick={() => setIsAdjustModalOpen(false)}
-                style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
-              >
-                <X size={20} />
+              <h3 className="modal-title">Create New Product SKU</h3>
+              <button onClick={() => setIsModalOpen(false)} className="btn btn-secondary btn-sm" style={{ padding: '4px 8px' }}>
+                <X size={16} />
               </button>
             </div>
-            <form onSubmit={handleAdjustStock}>
+            <form onSubmit={handleCreateSubmit}>
               <div className="modal-body">
-                <div
-                  style={{
-                    backgroundColor: '#f8fafc',
-                    padding: '12px 16px',
-                    borderRadius: '8px',
-                    border: '1px solid #e2e8f0',
-                    marginBottom: '16px',
-                  }}
-                >
-                  <div style={{ fontWeight: 700 }}>{selectedProduct.name}</div>
-                  <div style={{ fontSize: '12px', color: '#64748b' }}>
-                    SKU (Stock Keeping Unit): {selectedProduct.sku} • Location: {selectedProduct.location}
-                  </div>
-                  <div style={{ marginTop: '6px', fontSize: '14px' }}>
-                    Current Available Stock: <strong>{selectedProduct.currentStock} units</strong>
-                  </div>
-                </div>
-
                 <div className="form-group">
-                  <label className="form-label">Movement Type *</label>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                    <button
-                      type="button"
-                      onClick={() => setAdjustData({ ...adjustData, movementType: 'IN' })}
-                      className="btn"
-                      style={{
-                        backgroundColor: adjustData.movementType === 'IN' ? '#ecfdf5' : '#ffffff',
-                        border: `2px solid ${adjustData.movementType === 'IN' ? '#10b981' : '#e2e8f0'}`,
-                        color: adjustData.movementType === 'IN' ? '#065f46' : '#64748b',
-                      }}
-                    >
-                      <ArrowDownRight size={16} /> Stock IN (Inward)
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setAdjustData({ ...adjustData, movementType: 'OUT' })}
-                      className="btn"
-                      style={{
-                        backgroundColor: adjustData.movementType === 'OUT' ? '#fef2f2' : '#ffffff',
-                        border: `2px solid ${adjustData.movementType === 'OUT' ? '#ef4444' : '#e2e8f0'}`,
-                        color: adjustData.movementType === 'OUT' ? '#991b1b' : '#64748b',
-                      }}
-                    >
-                      <ArrowUpRight size={16} /> Stock OUT (Outward)
-                    </button>
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Quantity to Adjust *</label>
+                  <label className="form-label">Product Name</label>
                   <input
-                    type="number"
-                    min="1"
+                    type="text"
                     required
-                    value={adjustData.quantityChanged}
-                    onChange={(e) => setAdjustData({ ...adjustData, quantityChanged: parseInt(e.target.value, 10) || 1 })}
                     className="form-input"
+                    placeholder="e.g. Ultra HD 4K Wireless Monitor"
+                    value={name}
+                    onChange={e => setName(e.target.value)}
                   />
-                  {adjustData.movementType === 'OUT' && adjustData.quantityChanged > selectedProduct.currentStock && (
-                    <div style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px' }}>
-                      Warning: Deduction exceeds current stock ({selectedProduct.currentStock}). Negative stock is blocked.
-                    </div>
-                  )}
                 </div>
 
-                <div className="form-group">
-                  <label className="form-label">Mandatory Reason *</label>
-                  <textarea
-                    rows={2}
-                    required
-                    value={adjustData.reason}
-                    onChange={(e) => setAdjustData({ ...adjustData, reason: e.target.value })}
-                    className="form-textarea"
-                    placeholder="e.g. Inward from supplier PO #409, or Physical stock count correction..."
-                  />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                  <div className="form-group">
+                    <label className="form-label">SKU Code</label>
+                    <input
+                      type="text"
+                      required
+                      className="form-input"
+                      placeholder="e.g. ELEC-MON-4K"
+                      value={sku}
+                      onChange={e => setSku(e.target.value)}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Category</label>
+                    <select className="form-select" value={category} onChange={e => setCategory(e.target.value)}>
+                      <option value="Electronics">Electronics</option>
+                      <option value="Appliances">Appliances</option>
+                      <option value="Hardware">Hardware</option>
+                      <option value="Peripherals">Peripherals</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                  <div className="form-group">
+                    <label className="form-label">Unit Price (₹)</label>
+                    <input
+                      type="number"
+                      required
+                      min="0"
+                      step="0.01"
+                      className="form-input"
+                      placeholder="e.g. 18500"
+                      value={unitPrice}
+                      onChange={e => setUnitPrice(e.target.value)}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Unit of Measure</label>
+                    <input
+                      type="text"
+                      required
+                      className="form-input"
+                      placeholder="e.g. Units, Pieces, Boxes"
+                      value={unit}
+                      onChange={e => setUnit(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                  <div className="form-group">
+                    <label className="form-label">Initial Stock Count</label>
+                    <input
+                      type="number"
+                      required
+                      min="0"
+                      className="form-input"
+                      value={initialStock}
+                      onChange={e => setInitialStock(e.target.value)}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Low Stock Threshold</label>
+                    <input
+                      type="number"
+                      required
+                      min="1"
+                      className="form-input"
+                      value={lowStockThreshold}
+                      onChange={e => setLowStockThreshold(e.target.value)}
+                    />
+                  </div>
                 </div>
               </div>
 
               <div className="modal-footer">
-                <button
-                  type="button"
-                  onClick={() => setIsAdjustModalOpen(false)}
-                  className="btn btn-outline"
-                >
+                <button type="button" onClick={() => setIsModalOpen(false)} className="btn btn-secondary">
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  disabled={adjustData.movementType === 'OUT' && adjustData.quantityChanged > selectedProduct.currentStock}
-                  className="btn btn-primary"
-                >
-                  Commit Stock Movement
+                <button type="submit" disabled={creating} className="btn btn-primary">
+                  {creating ? 'Creating...' : 'Save Product'}
                 </button>
               </div>
             </form>

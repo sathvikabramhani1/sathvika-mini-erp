@@ -9,10 +9,12 @@ import { ProductsPage } from './pages/ProductsPage';
 import { StockLogsPage } from './pages/StockLogsPage';
 import { ChallansPage } from './pages/ChallansPage';
 import { LoginPage } from './pages/LoginPage';
+import { CommandPalette } from './components/CommandPalette';
 
 const MainLayout: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
   const [currentTab, setCurrentTab] = useState('dashboard');
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -22,12 +24,15 @@ const MainLayout: React.FC = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#0f172a',
+          backgroundColor: '#070913',
           color: '#ffffff',
           fontFamily: 'sans-serif',
         }}
       >
-        <div>Authenticating session...</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '16px' }}>
+          <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: '2px solid #8b5cf6', borderTopColor: 'transparent', animation: 'spin 0.8s linear infinite' }} />
+          <span>Authenticating SathvikaOps cluster session...</span>
+        </div>
       </div>
     );
   }
@@ -38,15 +43,25 @@ const MainLayout: React.FC = () => {
 
   return (
     <div className="app-container">
-      <Sidebar currentTab={currentTab} setCurrentTab={setCurrentTab} />
+      <Sidebar 
+        currentTab={currentTab} 
+        setCurrentTab={setCurrentTab} 
+        onOpenCommandPalette={() => setIsCommandPaletteOpen(true)} 
+      />
       <div className="main-content">
-        <Header />
+        <Header onOpenCommandPalette={() => setIsCommandPaletteOpen(true)} />
         {currentTab === 'dashboard' && <DashboardPage onNavigate={setCurrentTab} />}
         {currentTab === 'customers' && <CustomersPage />}
         {currentTab === 'products' && <ProductsPage />}
         {currentTab === 'stock-logs' && <StockLogsPage />}
         {currentTab === 'challans' && <ChallansPage />}
       </div>
+
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        onNavigate={setCurrentTab}
+      />
     </div>
   );
 };
