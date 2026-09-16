@@ -21,16 +21,16 @@
 
 ```mermaid
 graph TD
-    A[Customer Enquiry<br/>Status: NEW] -->|Sales User Quotes| B[Commercial Quotation<br/>Status: DRAFT]
-    B -->|Client Review| C{Quotation Status}
-    C -->|SENT| C
-    C -->|REJECTED| D[Quotation Archived / Lost]
-    C -->|ACCEPTED| E[Convert to Sales Order<br/>Status: PENDING]
-    E -->|Admin Stock Check| F{Stock Feasibility}
-    F -->|Insufficient Stock| G[Block Reservation 400 Bad Request]
-    F -->|Stock Available| H[Admin Confirms Order<br/>Status: CONFIRMED<br/>Physical: Unchanged | Reserved: += Qty]
-    H -->|Dispatch Processing| I[Admin Dispatches Order<br/>Status: DISPATCHED<br/>Physical: -= Qty | Reserved: -= Qty]
-    H -->|Order Cancellation| J[Cancel Order<br/>Status: CANCELLED<br/>Reserved: -= Qty Released]
+    A["Customer Enquiry<br/>Status: NEW"] -->|Sales User Quotes| B["Commercial Quotation<br/>Status: DRAFT"]
+    B -->|Client Review| C{"Quotation Status"}
+    C -->|SENT| C1["Quote Dispatched to Client"]
+    C -->|REJECTED| D["Quotation Archived / Lost"]
+    C -->|ACCEPTED| E["Convert to Sales Order<br/>Status: PENDING"]
+    E -->|Admin Stock Check| F{"Stock Feasibility"}
+    F -->|Insufficient Stock| G["Block Reservation: 400 Bad Request"]
+    F -->|Stock Available| H["Admin Confirms Order<br/>Status: CONFIRMED<br/>Physical: Unchanged, Reserved: += Qty"]
+    H -->|Dispatch Processing| I["Admin Dispatches Order<br/>Status: DISPATCHED<br/>Physical: -= Qty, Reserved: -= Qty"]
+    H -->|Order Cancellation| J["Cancel Order<br/>Status: CANCELLED<br/>Reserved: -= Qty Released"]
 ```
 
 ### 5 Core Workflow Stages
