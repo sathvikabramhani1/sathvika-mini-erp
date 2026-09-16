@@ -62,80 +62,101 @@ export const CustomersPage: React.FC = () => {
 
   return (
     <div className="page-container">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+      {/* Page Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
-            <div style={{ background: '#1e3a8a', padding: '8px', borderRadius: '8px', color: '#fff' }}>
-              <Users size={24} />
+            <div style={{ background: '#eff6ff', padding: '8px', borderRadius: '8px', color: '#2563eb', border: '1px solid #bfdbfe' }}>
+              <Users size={22} />
             </div>
             <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 800, color: '#0f172a' }}>
               Customer Relationship Master
             </h1>
           </div>
           <p style={{ margin: 0, color: '#64748b', fontSize: '14px' }}>
-            Registered B2B industrial clients and procurement contacts.
+            Registered B2B industrial clients, procurement managers, and commercial accounts.
           </p>
         </div>
 
-        <button onClick={() => setShowModal(true)} className="btn btn-primary" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-          <Plus size={18} /> Register Customer
+        <button onClick={() => setShowModal(true)} className="btn btn-primary">
+          <Plus size={16} /> Register New Customer
         </button>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <div style={{ position: 'relative', width: '320px' }}>
-          <Search size={16} color="#94a3b8" style={{ position: 'absolute', left: '10px', top: '10px' }} />
+      {/* Filter and Search Bar */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
+        <div style={{ position: 'relative', width: '340px' }}>
+          <Search size={16} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
           <input
             type="text"
             placeholder="Search company, contact person, city..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="form-control"
-            style={{ paddingLeft: '32px' }}
+            style={{ paddingLeft: '36px' }}
           />
+        </div>
+        <div style={{ fontSize: '13px', color: '#64748b', fontWeight: 500 }}>
+          Showing <strong>{filtered.length}</strong> active client{filtered.length === 1 ? '' : 's'}
         </div>
       </div>
 
-      <div className="card" style={{ overflow: 'hidden', padding: 0 }}>
+      {/* Customers Data Table */}
+      <div className="table-responsive">
         {loading ? (
-          <div style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>Loading customer directory...</div>
+          <div style={{ padding: '48px', textAlign: 'center', color: '#64748b' }}>Loading customer directory...</div>
         ) : filtered.length === 0 ? (
           <div style={{ padding: '48px', textAlign: 'center' }}>
             <Users size={44} color="#cbd5e1" style={{ margin: '0 auto 12px' }} />
-            <h3 style={{ margin: 0, color: '#334155' }}>No Customers Found</h3>
+            <h3 style={{ margin: '0 0 6px 0', color: '#334155', fontSize: '16px' }}>No Customers Found</h3>
+            <p style={{ margin: 0, color: '#94a3b8', fontSize: '13px' }}>
+              Try refining your search keyword or register a new customer above.
+            </p>
           </div>
         ) : (
-          <table className="table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <table className="table">
             <thead>
-              <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0', textAlign: 'left', fontSize: '12px', color: '#475569', textTransform: 'uppercase' }}>
-                <th style={{ padding: '12px 16px' }}>Company Name</th>
-                <th style={{ padding: '12px 16px' }}>Contact Person</th>
-                <th style={{ padding: '12px 16px' }}>Phone / Mobile</th>
-                <th style={{ padding: '12px 16px' }}>Email</th>
-                <th style={{ padding: '12px 16px' }}>City</th>
-                <th style={{ padding: '12px 16px', textAlign: 'center' }}>Workflow Activity</th>
+              <tr>
+                <th>Company Name</th>
+                <th>Contact Person</th>
+                <th>Phone / Mobile</th>
+                <th>Email</th>
+                <th>City</th>
+                <th style={{ textAlign: 'center' }}>Workflow Activity</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map((cust) => (
-                <tr key={cust.id} style={{ borderBottom: '1px solid #f1f5f9', fontSize: '13px' }}>
-                  <td style={{ padding: '14px 16px', fontWeight: 700, color: '#1e3a8a' }}>
-                    {cust.companyName}
+                <tr key={cust.id}>
+                  <td style={{ fontWeight: 700, color: '#1e3a8a' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Building2 size={16} color="#2563eb" />
+                      <span>{cust.companyName}</span>
+                    </div>
                   </td>
-                  <td style={{ padding: '14px 16px', fontWeight: 600, color: '#0f172a' }}>
+                  <td style={{ fontWeight: 600, color: '#0f172a' }}>
                     {cust.contactPerson}
                   </td>
-                  <td style={{ padding: '14px 16px', color: '#64748b' }}>
-                    {cust.mobile}
+                  <td style={{ color: '#475569' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Phone size={13} color="#94a3b8" />
+                      <span>{cust.mobile}</span>
+                    </div>
                   </td>
-                  <td style={{ padding: '14px 16px', color: '#64748b' }}>
-                    {cust.email}
+                  <td style={{ color: '#475569' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Mail size={13} color="#94a3b8" />
+                      <span>{cust.email}</span>
+                    </div>
                   </td>
-                  <td style={{ padding: '14px 16px' }}>
-                    <span className="badge badge-secondary">{cust.city}</span>
+                  <td>
+                    <span className="badge badge-secondary">
+                      <MapPin size={11} color="#64748b" />
+                      {cust.city}
+                    </span>
                   </td>
-                  <td style={{ padding: '14px 16px', textAlign: 'center' }}>
-                    <span style={{ fontSize: '11px', color: '#64748b' }}>
+                  <td style={{ textAlign: 'center' }}>
+                    <span style={{ fontSize: '12px', color: '#475569', background: '#f1f5f9', padding: '4px 8px', borderRadius: '4px', fontWeight: 500 }}>
                       {cust._count?.enquiries || 0} Enq • {cust._count?.quotations || 0} Quote • {cust._count?.salesOrders || 0} Order
                     </span>
                   </td>
@@ -146,61 +167,129 @@ export const CustomersPage: React.FC = () => {
         )}
       </div>
 
-      {/* Register Modal */}
+      {/* Standardized Enterprise Register Modal */}
       {showModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-          <div style={{ background: '#fff', borderRadius: '12px', maxWidth: '520px', width: '100%', padding: '24px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.2)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
-              <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 700 }}>Register New B2B Customer</h2>
-              <button onClick={() => setShowModal(false)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer' }}>✕</button>
-            </div>
-            <form onSubmit={handleCreateCustomer}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
-                <input
-                  type="text"
-                  placeholder="Company Name *"
-                  value={newCust.companyName}
-                  onChange={(e) => setNewCust({ ...newCust, companyName: e.target.value })}
-                  className="form-control"
-                  required
-                />
-                <input
-                  type="text"
-                  placeholder="Contact Person *"
-                  value={newCust.contactPerson}
-                  onChange={(e) => setNewCust({ ...newCust, contactPerson: e.target.value })}
-                  className="form-control"
-                  required
-                />
-                <input
-                  type="text"
-                  placeholder="Mobile / Phone *"
-                  value={newCust.mobile}
-                  onChange={(e) => setNewCust({ ...newCust, mobile: e.target.value })}
-                  className="form-control"
-                  required
-                />
-                <input
-                  type="email"
-                  placeholder="Email Address *"
-                  value={newCust.email}
-                  onChange={(e) => setNewCust({ ...newCust, email: e.target.value })}
-                  className="form-control"
-                  required
-                />
-                <input
-                  type="text"
-                  placeholder="City *"
-                  value={newCust.city}
-                  onChange={(e) => setNewCust({ ...newCust, city: e.target.value })}
-                  className="form-control"
-                  required
-                />
+        <div className="modal-backdrop">
+          <div className="modal-content" style={{ maxWidth: '540px' }}>
+            {/* Modal Header */}
+            <div className="modal-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563eb', border: '1px solid #bfdbfe' }}>
+                  <Building2 size={18} />
+                </div>
+                <div>
+                  <h2 className="modal-title">Register New B2B Customer</h2>
+                  <p className="modal-subtitle">Add verified enterprise client to the commercial CRM directory</p>
+                </div>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-                <button type="button" onClick={() => setShowModal(false)} className="btn btn-secondary">Cancel</button>
-                <button type="submit" className="btn btn-primary" disabled={submitting}>
-                  {submitting ? 'Saving...' : 'Register Customer'}
+              <button
+                type="button"
+                onClick={() => setShowModal(false)}
+                className="modal-close-btn"
+                title="Close dialog"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Modal Form Body */}
+            <form onSubmit={handleCreateCustomer}>
+              <div className="modal-body">
+                {/* Company Name Field */}
+                <div className="form-group">
+                  <label className="form-label">
+                    Company Name <span className="required">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Bharat Agro Foods Ltd."
+                    value={newCust.companyName}
+                    onChange={(e) => setNewCust({ ...newCust, companyName: e.target.value })}
+                    className="form-control"
+                    required
+                    autoFocus
+                  />
+                </div>
+
+                {/* 2-Column Contact Person & Mobile */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                  <div className="form-group">
+                    <label className="form-label">
+                      Contact Person <span className="required">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Rajesh Sharma"
+                      value={newCust.contactPerson}
+                      onChange={(e) => setNewCust({ ...newCust, contactPerson: e.target.value })}
+                      className="form-control"
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">
+                      Mobile / Phone <span className="required">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. +91 98765 43210"
+                      value={newCust.mobile}
+                      onChange={(e) => setNewCust({ ...newCust, mobile: e.target.value })}
+                      className="form-control"
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* 2-Column Email & City */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '14px' }}>
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label className="form-label">
+                      Email Address <span className="required">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      placeholder="procurement@company.com"
+                      value={newCust.email}
+                      onChange={(e) => setNewCust({ ...newCust, email: e.target.value })}
+                      className="form-control"
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label className="form-label">
+                      City / Location <span className="required">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Hyderabad"
+                      value={newCust.city}
+                      onChange={(e) => setNewCust({ ...newCust, city: e.target.value })}
+                      className="form-control"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  onClick={() => setShowModal(false)}
+                  className="btn btn-secondary"
+                  disabled={submitting}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={submitting}
+                >
+                  {submitting ? 'Registering...' : 'Register Customer'}
                 </button>
               </div>
             </form>

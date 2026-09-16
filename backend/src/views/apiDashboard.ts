@@ -492,7 +492,7 @@ export function renderApiDashboard(): string {
 </html>`;
 }
 
-export function renderHealthDashboard(metrics: any): string {
+export function renderHealthDashboard(metrics?: any): string {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>

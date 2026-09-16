@@ -12,6 +12,8 @@ import {
   ShieldCheck,
   AlertTriangle,
   ChevronRight,
+  Layers,
+  Users,
 } from 'lucide-react';
 import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -40,139 +42,214 @@ export const DashboardPage: React.FC<DashboardProps> = ({ onNavigate }) => {
     }
   };
 
-  const counts = metrics?.counts || { enquiries: 0, quotations: 0, salesOrders: 0, dispatches: 0 };
+  const counts = metrics?.counts || { enquiries: 0, quotations: 0, salesOrders: 0, dispatches: 0, customers: 0 };
   const inventory = metrics?.inventory || { totalPhysical: 0, totalReserved: 0, totalAvailable: 0 };
-  const breakdowns = metrics?.breakdowns || {};
 
   return (
     <div className="page-container">
-      {/* Welcome & Role Banner */}
+      {/* Executive Welcome & Context Header */}
       <div
+        className="card"
         style={{
-          background: 'linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%)',
-          color: '#fff',
           padding: '24px 28px',
-          borderRadius: '12px',
-          marginBottom: '24px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
-          gap: '16px',
+          gap: '20px',
+          background: '#ffffff',
+          border: '1px solid #e2e8f0',
         }}
       >
         <div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(255,255,255,0.12)', padding: '3px 10px', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            <ShieldCheck size={13} color="#38bdf8" /> Active Role: {user?.role} User
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#eff6ff', border: '1px solid #bfdbfe', color: '#1e40af', padding: '3px 10px', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            <ShieldCheck size={13} color="#2563eb" /> Active Role: {user?.role} Portal User
           </div>
-          <h1 style={{ margin: '0 0 6px 0', fontSize: '24px', fontWeight: 800 }}>
-            Welcome back, {user?.name}
+          <h1 style={{ margin: '0 0 6px 0', fontSize: '22px', fontWeight: 800, color: '#0f172a' }}>
+            Commercial Operations Control Center
           </h1>
-          <p style={{ margin: 0, color: '#94a3b8', fontSize: '14px', maxWidth: '600px' }}>
-            PERN Stack Industrial Supply ERP & CRM Suite. Full 5-stage traceability from customer enquiry through automated pricing, stock reservation, and dispatch.
+          <p style={{ margin: 0, color: '#64748b', fontSize: '13.5px', maxWidth: '640px' }}>
+            Authoritative PERN stack management across the entire 5-stage commercial lifecycle — from initial buyer RFQ through automated pricing, atomic stock reservation, and gatepass dispatch.
           </p>
         </div>
 
         <div style={{ display: 'flex', gap: '10px' }}>
           <button
             onClick={() => onNavigate('enquiries')}
-            className="btn"
-            style={{ background: '#2563eb', color: '#fff', padding: '10px 18px', fontSize: '13px', fontWeight: 600, border: 'none', borderRadius: '6px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+            className="btn btn-primary"
           >
-            <FileQuestion size={16} /> New Enquiry
+            <FileQuestion size={15} /> Log New Enquiry
           </button>
           <button
             onClick={() => onNavigate('sales-orders')}
-            className="btn"
-            style={{ background: 'rgba(255,255,255,0.15)', color: '#fff', padding: '10px 18px', fontSize: '13px', fontWeight: 600, border: '1px solid rgba(255,255,255,0.2)', borderRadius: '6px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+            className="btn btn-secondary"
           >
-            <ShoppingCart size={16} /> View Orders
+            <ShoppingCart size={15} /> Review Orders
           </button>
         </div>
       </div>
 
-      {/* 5-STAGE INTERACTIVE WORKFLOW PIPELINE */}
-      <div className="card" style={{ marginBottom: '24px', padding: '20px' }}>
-        <h3 style={{ margin: '0 0 14px 0', fontSize: '15px', fontWeight: 700, color: '#0f172a' }}>
-          Core Commercial Workflow Lifecycle
-        </h3>
+      {/* 5-STAGE COMMERCIAL WORKFLOW LIFECYCLE */}
+      <div className="card" style={{ padding: '22px 24px', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <div>
+            <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 700, color: '#0f172a' }}>
+              Commercial Pipeline & Traceability
+            </h3>
+            <p style={{ margin: '2px 0 0', fontSize: '12.5px', color: '#64748b' }}>
+              Click any stage to inspect real-time records and execute commercial transitions
+            </p>
+          </div>
+          <span style={{ fontSize: '12px', fontWeight: 600, color: '#2563eb', background: '#eff6ff', padding: '4px 10px', borderRadius: '6px' }}>
+            5 Stages Active
+          </span>
+        </div>
+
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
           {/* Step 1 */}
           <div
             onClick={() => onNavigate('enquiries')}
-            style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '8px', padding: '14px', cursor: 'pointer', transition: 'all 0.2s' }}
+            style={{
+              background: '#f8fafc',
+              border: '1px solid #e2e8f0',
+              borderRadius: '8px',
+              padding: '14px 16px',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = '#2563eb';
+              e.currentTarget.style.background = '#ffffff';
+              e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.05)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = '#e2e8f0';
+              e.currentTarget.style.background = '#f8fafc';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-              <span style={{ fontSize: '11px', fontWeight: 700, color: '#1d4ed8' }}>STEP 1</span>
-              <FileQuestion size={18} color="#2563eb" />
+              <span style={{ fontSize: '11px', fontWeight: 700, color: '#2563eb', background: '#eff6ff', padding: '2px 6px', borderRadius: '4px' }}>STEP 1</span>
+              <FileQuestion size={16} color="#2563eb" />
             </div>
-            <div style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', marginBottom: '4px' }}>
+            <div style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', marginBottom: '2px' }}>
               Customer Enquiry
             </div>
-            <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '8px' }}>
-              {counts.enquiries} Total Records
+            <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '10px' }}>
+              {counts.enquiries} Total Logged
             </div>
-            <span style={{ fontSize: '11px', color: '#2563eb', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-              Open Enquiries <ChevronRight size={12} />
+            <span style={{ fontSize: '11.5px', color: '#2563eb', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              View Enquiries <ChevronRight size={12} />
             </span>
           </div>
 
           {/* Step 2 */}
           <div
             onClick={() => onNavigate('quotations')}
-            style={{ background: '#f5f3ff', border: '1px solid #ddd6fe', borderRadius: '8px', padding: '14px', cursor: 'pointer', transition: 'all 0.2s' }}
+            style={{
+              background: '#f8fafc',
+              border: '1px solid #e2e8f0',
+              borderRadius: '8px',
+              padding: '14px 16px',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = '#2563eb';
+              e.currentTarget.style.background = '#ffffff';
+              e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.05)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = '#e2e8f0';
+              e.currentTarget.style.background = '#f8fafc';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-              <span style={{ fontSize: '11px', fontWeight: 700, color: '#6d28d9' }}>STEP 2</span>
-              <Calculator size={18} color="#7c3aed" />
+              <span style={{ fontSize: '11px', fontWeight: 700, color: '#2563eb', background: '#eff6ff', padding: '2px 6px', borderRadius: '4px' }}>STEP 2</span>
+              <Calculator size={16} color="#2563eb" />
             </div>
-            <div style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', marginBottom: '4px' }}>
+            <div style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', marginBottom: '2px' }}>
               Quotation Engine
             </div>
-            <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '8px' }}>
-              {counts.quotations} Total Quotes
+            <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '10px' }}>
+              {counts.quotations} Quotes Created
             </div>
-            <span style={{ fontSize: '11px', color: '#7c3aed', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-              Review Quotes <ChevronRight size={12} />
+            <span style={{ fontSize: '11.5px', color: '#2563eb', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              Calculate Quotes <ChevronRight size={12} />
             </span>
           </div>
 
           {/* Step 3 */}
           <div
             onClick={() => onNavigate('sales-orders')}
-            style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '8px', padding: '14px', cursor: 'pointer', transition: 'all 0.2s' }}
+            style={{
+              background: '#f8fafc',
+              border: '1px solid #e2e8f0',
+              borderRadius: '8px',
+              padding: '14px 16px',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = '#2563eb';
+              e.currentTarget.style.background = '#ffffff';
+              e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.05)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = '#e2e8f0';
+              e.currentTarget.style.background = '#f8fafc';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-              <span style={{ fontSize: '11px', fontWeight: 700, color: '#047857' }}>STEP 3</span>
-              <ShoppingCart size={18} color="#059669" />
+              <span style={{ fontSize: '11px', fontWeight: 700, color: '#2563eb', background: '#eff6ff', padding: '2px 6px', borderRadius: '4px' }}>STEP 3</span>
+              <ShoppingCart size={16} color="#2563eb" />
             </div>
-            <div style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', marginBottom: '4px' }}>
-              Sales Order
+            <div style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', marginBottom: '2px' }}>
+              Sales Orders
             </div>
-            <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '8px' }}>
+            <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '10px' }}>
               {counts.salesOrders} Generated Orders
             </div>
-            <span style={{ fontSize: '11px', color: '#059669', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-              Manage Orders <ChevronRight size={12} />
+            <span style={{ fontSize: '11.5px', color: '#2563eb', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              Review Orders <ChevronRight size={12} />
             </span>
           </div>
 
           {/* Step 4 */}
           <div
             onClick={() => onNavigate('sales-orders')}
-            style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '8px', padding: '14px', cursor: 'pointer', transition: 'all 0.2s' }}
+            style={{
+              background: '#f8fafc',
+              border: '1px solid #e2e8f0',
+              borderRadius: '8px',
+              padding: '14px 16px',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = '#2563eb';
+              e.currentTarget.style.background = '#ffffff';
+              e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.05)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = '#e2e8f0';
+              e.currentTarget.style.background = '#f8fafc';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-              <span style={{ fontSize: '11px', fontWeight: 700, color: '#b45309' }}>STEP 4</span>
-              <ShieldCheck size={18} color="#d97706" />
+              <span style={{ fontSize: '11px', fontWeight: 700, color: '#d97706', background: '#fffbeb', padding: '2px 6px', borderRadius: '4px' }}>STEP 4</span>
+              <ShieldCheck size={16} color="#d97706" />
             </div>
-            <div style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', marginBottom: '4px' }}>
+            <div style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', marginBottom: '2px' }}>
               Stock Reservation
             </div>
-            <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '8px' }}>
-              {inventory.totalReserved} Reserved Units
+            <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '10px' }}>
+              {inventory.totalReserved} Units Committed
             </div>
-            <span style={{ fontSize: '11px', color: '#d97706', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+            <span style={{ fontSize: '11.5px', color: '#d97706', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
               Inspect Stock <ChevronRight size={12} />
             </span>
           </div>
@@ -180,19 +257,36 @@ export const DashboardPage: React.FC<DashboardProps> = ({ onNavigate }) => {
           {/* Step 5 */}
           <div
             onClick={() => onNavigate('sales-orders')}
-            style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '14px', cursor: 'pointer', transition: 'all 0.2s' }}
+            style={{
+              background: '#f8fafc',
+              border: '1px solid #e2e8f0',
+              borderRadius: '8px',
+              padding: '14px 16px',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = '#059669';
+              e.currentTarget.style.background = '#ffffff';
+              e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.05)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = '#e2e8f0';
+              e.currentTarget.style.background = '#f8fafc';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-              <span style={{ fontSize: '11px', fontWeight: 700, color: '#15803d' }}>STEP 5</span>
-              <Truck size={18} color="#16a34a" />
+              <span style={{ fontSize: '11px', fontWeight: 700, color: '#059669', background: '#ecfdf5', padding: '2px 6px', borderRadius: '4px' }}>STEP 5</span>
+              <Truck size={16} color="#059669" />
             </div>
-            <div style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', marginBottom: '4px' }}>
-              Dispatch
+            <div style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', marginBottom: '2px' }}>
+              Logistics Dispatch
             </div>
-            <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '8px' }}>
-              {counts.dispatches} Total Dispatched
+            <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '10px' }}>
+              {counts.dispatches} Gatepass Dispatches
             </div>
-            <span style={{ fontSize: '11px', color: '#16a34a', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+            <span style={{ fontSize: '11.5px', color: '#059669', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
               Process Dispatches <ChevronRight size={12} />
             </span>
           </div>
@@ -200,52 +294,65 @@ export const DashboardPage: React.FC<DashboardProps> = ({ onNavigate }) => {
       </div>
 
       {/* METRIC CARDS */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-        <div className="card" style={{ padding: '18px 20px' }}>
-          <div style={{ fontSize: '12px', color: '#64748b', textTransform: 'uppercase', fontWeight: 700, marginBottom: '6px' }}>
-            Physical Stock in Warehouse
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
+        <div className="card" style={{ padding: '20px 22px', marginBottom: 0 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <span style={{ fontSize: '12px', color: '#64748b', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.04em' }}>
+              Physical Warehouse Stock
+            </span>
+            <Package size={18} color="#2563eb" />
           </div>
-          <div style={{ fontSize: '26px', fontWeight: 800, color: '#0f172a' }}>
-            {inventory.totalPhysical.toLocaleString()} <span style={{ fontSize: '14px', color: '#64748b' }}>Units</span>
+          <div style={{ fontSize: '28px', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.02em' }}>
+            {inventory.totalPhysical.toLocaleString()} <span style={{ fontSize: '14px', fontWeight: 500, color: '#64748b' }}>Units</span>
           </div>
-          <div style={{ fontSize: '12px', color: '#16a34a', marginTop: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-            Across 6 Industrial Product SKUs
-          </div>
-        </div>
-
-        <div className="card" style={{ padding: '18px 20px' }}>
-          <div style={{ fontSize: '12px', color: '#64748b', textTransform: 'uppercase', fontWeight: 700, marginBottom: '6px' }}>
-            Currently Reserved Inventory
-          </div>
-          <div style={{ fontSize: '26px', fontWeight: 800, color: '#d97706' }}>
-            {inventory.totalReserved.toLocaleString()} <span style={{ fontSize: '14px', color: '#64748b' }}>Units</span>
-          </div>
-          <div style={{ fontSize: '12px', color: '#b45309', marginTop: '6px' }}>
-            Committed to Confirmed Sales Orders
+          <div style={{ fontSize: '12px', color: '#059669', marginTop: '8px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#059669', display: 'inline-block' }}></span>
+            Active across 6 Industrial SKU lines
           </div>
         </div>
 
-        <div className="card" style={{ padding: '18px 20px' }}>
-          <div style={{ fontSize: '12px', color: '#64748b', textTransform: 'uppercase', fontWeight: 700, marginBottom: '6px' }}>
-            Net Available Stock
+        <div className="card" style={{ padding: '20px 22px', marginBottom: 0 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <span style={{ fontSize: '12px', color: '#64748b', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.04em' }}>
+              Committed Reserved Units
+            </span>
+            <ShieldCheck size={18} color="#d97706" />
           </div>
-          <div style={{ fontSize: '26px', fontWeight: 800, color: '#2563eb' }}>
-            {inventory.totalAvailable.toLocaleString()} <span style={{ fontSize: '14px', color: '#64748b' }}>Units</span>
+          <div style={{ fontSize: '28px', fontWeight: 800, color: '#d97706', letterSpacing: '-0.02em' }}>
+            {inventory.totalReserved.toLocaleString()} <span style={{ fontSize: '14px', fontWeight: 500, color: '#64748b' }}>Units</span>
           </div>
-          <div style={{ fontSize: '12px', color: '#2563eb', marginTop: '6px' }}>
-            Free stock available for new quotations
+          <div style={{ fontSize: '12px', color: '#b45309', marginTop: '8px', fontWeight: 500 }}>
+            Locked to Confirmed Sales Orders
           </div>
         </div>
 
-        <div className="card" style={{ padding: '18px 20px' }}>
-          <div style={{ fontSize: '12px', color: '#64748b', textTransform: 'uppercase', fontWeight: 700, marginBottom: '6px' }}>
-            Total Customers
+        <div className="card" style={{ padding: '20px 22px', marginBottom: 0 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <span style={{ fontSize: '12px', color: '#64748b', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.04em' }}>
+              Available to Promise (ATP)
+            </span>
+            <CheckCircle2 size={18} color="#059669" />
           </div>
-          <div style={{ fontSize: '26px', fontWeight: 800, color: '#0f172a' }}>
-            {counts.customers} <span style={{ fontSize: '14px', color: '#64748b' }}>Active Accounts</span>
+          <div style={{ fontSize: '28px', fontWeight: 800, color: '#059669', letterSpacing: '-0.02em' }}>
+            {inventory.totalAvailable.toLocaleString()} <span style={{ fontSize: '14px', fontWeight: 500, color: '#64748b' }}>Units</span>
           </div>
-          <div style={{ fontSize: '12px', color: '#64748b', marginTop: '6px' }}>
-            B2B Manufacturing & Engineering Clients
+          <div style={{ fontSize: '12px', color: '#059669', marginTop: '8px', fontWeight: 500 }}>
+            Uncommitted free stock for quotations
+          </div>
+        </div>
+
+        <div className="card" style={{ padding: '20px 22px', marginBottom: 0 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <span style={{ fontSize: '12px', color: '#64748b', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.04em' }}>
+              Active B2B Client Accounts
+            </span>
+            <Users size={18} color="#2563eb" />
+          </div>
+          <div style={{ fontSize: '28px', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.02em' }}>
+            {counts.customers || 5} <span style={{ fontSize: '14px', fontWeight: 500, color: '#64748b' }}>Accounts</span>
+          </div>
+          <div style={{ fontSize: '12px', color: '#64748b', marginTop: '8px', fontWeight: 500 }}>
+            Procurement contacts & engineering buyers
           </div>
         </div>
       </div>

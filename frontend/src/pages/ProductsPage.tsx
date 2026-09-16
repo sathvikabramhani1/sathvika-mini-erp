@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Package, Plus, Search, Layers, ShieldCheck, Tag } from 'lucide-react';
+import { Package, Plus, Search, ShieldCheck } from 'lucide-react';
 import { api } from '../services/api';
 import { Product } from '../types';
 import { useAuth } from '../context/AuthContext';
@@ -47,9 +47,16 @@ export const ProductsPage: React.FC = () => {
     setSubmitting(true);
     try {
       const created = await api.createProduct(newProd);
-      success(`Product [${created.productCode}] ${created.productName} created!`);
+      success(`Product [${created.productCode}] ${created.productName} created successfully!`);
       setShowModal(false);
-      setNewProd({ productCode: '', productName: '', category: 'Industrial Valves', unit: 'PCS', basePrice: 1000, initialPhysicalQuantity: 50 });
+      setNewProd({
+        productCode: '',
+        productName: '',
+        category: 'Industrial Valves',
+        unit: 'PCS',
+        basePrice: 1000,
+        initialPhysicalQuantity: 50,
+      });
       loadProducts();
     } catch (err: any) {
       error(err.message || 'Failed to create product.');
@@ -69,11 +76,12 @@ export const ProductsPage: React.FC = () => {
 
   return (
     <div className="page-container">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+      {/* Page Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
-            <div style={{ background: '#1e3a8a', padding: '8px', borderRadius: '8px', color: '#fff' }}>
-              <Package size={24} />
+            <div style={{ background: '#eff6ff', padding: '8px', borderRadius: '8px', color: '#2563eb', border: '1px solid #bfdbfe' }}>
+              <Package size={22} />
             </div>
             <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 800, color: '#0f172a' }}>
               Industrial Product Master & Stock
@@ -85,72 +93,81 @@ export const ProductsPage: React.FC = () => {
         </div>
 
         {user?.role === 'ADMIN' && (
-          <button onClick={() => setShowModal(true)} className="btn btn-primary" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-            <Plus size={18} /> Add Industrial Product
+          <button onClick={() => setShowModal(true)} className="btn btn-primary">
+            <Plus size={16} /> Add Industrial Product
           </button>
         )}
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <div style={{ position: 'relative', width: '320px' }}>
-          <Search size={16} color="#94a3b8" style={{ position: 'absolute', left: '10px', top: '10px' }} />
+      {/* Filter and Search Bar */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
+        <div style={{ position: 'relative', width: '340px' }}>
+          <Search size={16} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
           <input
             type="text"
             placeholder="Search code, name, category..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="form-control"
-            style={{ paddingLeft: '32px' }}
+            style={{ paddingLeft: '36px' }}
           />
+        </div>
+        <div style={{ fontSize: '13px', color: '#64748b', fontWeight: 500 }}>
+          Showing <strong>{filtered.length}</strong> catalog items
         </div>
       </div>
 
-      <div className="card" style={{ overflow: 'hidden', padding: 0 }}>
+      {/* Product Data Table */}
+      <div className="table-responsive">
         {loading ? (
-          <div style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>Loading products...</div>
+          <div style={{ padding: '48px', textAlign: 'center', color: '#64748b' }}>Loading products...</div>
         ) : filtered.length === 0 ? (
           <div style={{ padding: '48px', textAlign: 'center' }}>
             <Package size={44} color="#cbd5e1" style={{ margin: '0 auto 12px' }} />
-            <h3 style={{ margin: 0, color: '#334155' }}>No Products Found</h3>
+            <h3 style={{ margin: '0 0 6px 0', color: '#334155', fontSize: '16px' }}>No Products Found</h3>
+            <p style={{ margin: 0, color: '#94a3b8', fontSize: '13px' }}>Try searching a different item or category.</p>
           </div>
         ) : (
-          <table className="table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <table className="table">
             <thead>
-              <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0', textAlign: 'left', fontSize: '12px', color: '#475569', textTransform: 'uppercase' }}>
-                <th style={{ padding: '12px 16px' }}>Product Code</th>
-                <th style={{ padding: '12px 16px' }}>Product Name</th>
-                <th style={{ padding: '12px 16px' }}>Category</th>
-                <th style={{ padding: '12px 16px' }}>Base Price</th>
-                <th style={{ padding: '12px 16px', textAlign: 'center' }}>Physical</th>
-                <th style={{ padding: '12px 16px', textAlign: 'center' }}>Reserved</th>
-                <th style={{ padding: '12px 16px', textAlign: 'center' }}>Available</th>
+              <tr>
+                <th>Product Code</th>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Base Price</th>
+                <th style={{ textAlign: 'center' }}>Physical Stock</th>
+                <th style={{ textAlign: 'center' }}>Reserved Stock</th>
+                <th style={{ textAlign: 'center' }}>Available to Promise</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map((prod) => {
                 const inv = prod.inventory;
+                const isAvailable = (inv?.availableQuantity ?? 0) > 0;
                 return (
-                  <tr key={prod.id} style={{ borderBottom: '1px solid #f1f5f9', fontSize: '13px' }}>
-                    <td style={{ padding: '14px 16px', fontWeight: 700, color: '#1e3a8a' }}>
-                      {prod.productCode}
+                  <tr key={prod.id}>
+                    <td style={{ fontWeight: 700, color: '#1e3a8a' }}>
+                      <code>{prod.productCode}</code>
                     </td>
-                    <td style={{ padding: '14px 16px', fontWeight: 600, color: '#0f172a' }}>
+                    <td style={{ fontWeight: 600, color: '#0f172a' }}>
                       {prod.productName}
                     </td>
-                    <td style={{ padding: '14px 16px', color: '#64748b' }}>
-                      {prod.category}
+                    <td style={{ color: '#64748b' }}>
+                      <span className="badge badge-secondary">{prod.category}</span>
                     </td>
-                    <td style={{ padding: '14px 16px', fontWeight: 700, color: '#0f172a' }}>
-                      ₹{prod.basePrice.toLocaleString()} / {prod.unit}
+                    <td style={{ fontWeight: 700, color: '#0f172a' }}>
+                      ₹{prod.basePrice.toLocaleString()} <span style={{ fontSize: '12px', fontWeight: 400, color: '#64748b' }}>/ {prod.unit}</span>
                     </td>
-                    <td style={{ padding: '14px 16px', textAlign: 'center', fontWeight: 600 }}>
+                    <td style={{ textAlign: 'center', fontWeight: 600, color: '#334155' }}>
                       {inv?.physicalQuantity ?? 0} {prod.unit}
                     </td>
-                    <td style={{ padding: '14px 16px', textAlign: 'center', color: '#f59e0b', fontWeight: 700 }}>
+                    <td style={{ textAlign: 'center', color: '#d97706', fontWeight: 600 }}>
                       {inv?.reservedQuantity ?? 0} {prod.unit}
                     </td>
-                    <td style={{ padding: '14px 16px', textAlign: 'center', fontWeight: 800, color: (inv?.availableQuantity ?? 0) > 0 ? '#10b981' : '#ef4444' }}>
-                      {inv?.availableQuantity ?? 0} {prod.unit}
+                    <td style={{ textAlign: 'center' }}>
+                      <span className={`badge ${isAvailable ? 'badge-success' : 'badge-danger'}`}>
+                        {inv?.availableQuantity ?? 0} {prod.unit}
+                      </span>
                     </td>
                   </tr>
                 );
@@ -160,43 +177,82 @@ export const ProductsPage: React.FC = () => {
         )}
       </div>
 
-      {/* Product Modal */}
+      {/* Standardized Enterprise Product Modal */}
       {showModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-          <div style={{ background: '#fff', borderRadius: '12px', maxWidth: '520px', width: '100%', padding: '24px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.2)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
-              <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 700 }}>Add Industrial Product (Admin)</h2>
-              <button onClick={() => setShowModal(false)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer' }}>✕</button>
+        <div className="modal-backdrop">
+          <div className="modal-content" style={{ maxWidth: '540px' }}>
+            <div className="modal-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563eb', border: '1px solid #bfdbfe' }}>
+                  <Package size={18} />
+                </div>
+                <div>
+                  <h2 className="modal-title">Add Industrial Product</h2>
+                  <p className="modal-subtitle">Register item in SKU catalog with initial warehouse batch</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowModal(false)}
+                className="modal-close-btn"
+                title="Close dialog"
+              >
+                ✕
+              </button>
             </div>
+
             <form onSubmit={handleCreateProduct}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
-                <input
-                  type="text"
-                  placeholder="Product Code (e.g. IND-VLV-999) *"
-                  value={newProd.productCode}
-                  onChange={(e) => setNewProd({ ...newProd, productCode: e.target.value })}
-                  className="form-control"
-                  required
-                />
-                <input
-                  type="text"
-                  placeholder="Product Name *"
-                  value={newProd.productName}
-                  onChange={(e) => setNewProd({ ...newProd, productName: e.target.value })}
-                  className="form-control"
-                  required
-                />
-                <input
-                  type="text"
-                  placeholder="Category *"
-                  value={newProd.category}
-                  onChange={(e) => setNewProd({ ...newProd, category: e.target.value })}
-                  className="form-control"
-                  required
-                />
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
-                  <div>
-                    <label style={{ fontSize: '12px', color: '#64748b' }}>Unit</label>
+              <div className="modal-body">
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                  <div className="form-group">
+                    <label className="form-label">
+                      Product Code <span className="required">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. IND-VLV-999"
+                      value={newProd.productCode}
+                      onChange={(e) => setNewProd({ ...newProd, productCode: e.target.value })}
+                      className="form-control"
+                      required
+                      autoFocus
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">
+                      Category <span className="required">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Industrial Valves"
+                      value={newProd.category}
+                      onChange={(e) => setNewProd({ ...newProd, category: e.target.value })}
+                      className="form-control"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">
+                    Product Full Name <span className="required">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. High Pressure Cast Steel Flanged Ball Valve"
+                    value={newProd.productName}
+                    onChange={(e) => setNewProd({ ...newProd, productName: e.target.value })}
+                    className="form-control"
+                    required
+                  />
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label className="form-label">
+                      Unit <span className="required">*</span>
+                    </label>
                     <input
                       type="text"
                       placeholder="PCS / SET / NOS"
@@ -206,8 +262,11 @@ export const ProductsPage: React.FC = () => {
                       required
                     />
                   </div>
-                  <div>
-                    <label style={{ fontSize: '12px', color: '#64748b' }}>Base Price (₹)</label>
+
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label className="form-label">
+                      Base Price (₹) <span className="required">*</span>
+                    </label>
                     <input
                       type="number"
                       min="1"
@@ -217,8 +276,11 @@ export const ProductsPage: React.FC = () => {
                       required
                     />
                   </div>
-                  <div>
-                    <label style={{ fontSize: '12px', color: '#64748b' }}>Initial Stock</label>
+
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label className="form-label">
+                      Initial Stock <span className="required">*</span>
+                    </label>
                     <input
                       type="number"
                       min="0"
@@ -230,10 +292,22 @@ export const ProductsPage: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-                <button type="button" onClick={() => setShowModal(false)} className="btn btn-secondary">Cancel</button>
-                <button type="submit" className="btn btn-primary" disabled={submitting}>
-                  {submitting ? 'Saving...' : 'Create Product'}
+
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  onClick={() => setShowModal(false)}
+                  className="btn btn-secondary"
+                  disabled={submitting}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={submitting}
+                >
+                  {submitting ? 'Creating...' : 'Create Product'}
                 </button>
               </div>
             </form>

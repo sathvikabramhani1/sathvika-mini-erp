@@ -42,37 +42,36 @@ export class ErrorBoundary extends Component<Props, State> {
             justifyContent: 'center',
             padding: '32px',
             textAlign: 'center',
-            color: '#ffffff',
           }}
         >
           <div
             style={{
               width: '64px',
               height: '64px',
-              borderRadius: '20px',
-              background: 'rgba(244, 63, 94, 0.15)',
-              border: '1px solid rgba(244, 63, 94, 0.3)',
+              borderRadius: '16px',
+              background: '#fef2f2',
+              border: '1px solid #fecaca',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               marginBottom: '20px',
             }}
           >
-            <AlertTriangle size={32} color="#f43f5e" />
+            <AlertTriangle size={30} color="#dc2626" />
           </div>
-          <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>
             {this.props.fallbackTitle || 'A temporary display issue occurred'}
           </h2>
-          <p style={{ fontSize: '13px', color: '#a7f3d0', maxWidth: '440px', marginBottom: '24px' }}>
-            {this.state.error?.message || 'An unexpected rendering error occurred. The cluster is online and healthy.'}
+          <p style={{ fontSize: '13.5px', color: '#64748b', maxWidth: '460px', marginBottom: '24px', lineHeight: 1.5 }}>
+            {this.state.error?.message || 'An unexpected rendering error occurred. The backend cluster is online and healthy.'}
           </p>
           <div style={{ display: 'flex', gap: '12px' }}>
             <button
               onClick={this.handleReset}
               className="btn btn-primary"
-              style={{ gap: '8px', padding: '10px 20px' }}
+              style={{ gap: '8px', padding: '9px 18px' }}
             >
-              <RefreshCw size={16} />
+              <RefreshCw size={15} />
               <span>Reload Application</span>
             </button>
             <button
@@ -80,10 +79,10 @@ export class ErrorBoundary extends Component<Props, State> {
                 this.setState({ hasError: false, error: null });
                 window.location.href = '/';
               }}
-              className="btn btn-outline"
-              style={{ gap: '8px', padding: '10px 20px' }}
+              className="btn btn-secondary"
+              style={{ gap: '8px', padding: '9px 18px' }}
             >
-              <Home size={16} />
+              <Home size={15} />
               <span>Back to Overview</span>
             </button>
           </div>

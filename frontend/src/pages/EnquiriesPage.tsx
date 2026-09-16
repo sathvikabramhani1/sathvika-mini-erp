@@ -117,7 +117,6 @@ export const EnquiriesPage: React.FC<EnquiriesPageProps> = ({ onNavigate }) => {
       const created = await api.createEnquiry(payload);
       success(`Enquiry ${created.enquiryNumber} created successfully!`);
       setShowModal(false);
-      // Reset form
       setNotes('');
       setIsNewCustomer(false);
       loadData();
@@ -151,199 +150,181 @@ export const EnquiriesPage: React.FC<EnquiriesPageProps> = ({ onNavigate }) => {
     switch (status) {
       case 'NEW':
         return (
-          <span className="badge badge-info" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-            <Clock size={13} /> NEW
+          <span className="badge badge-primary">
+            <Clock size={12} /> NEW
           </span>
         );
       case 'QUOTED':
         return (
-          <span className="badge badge-warning" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-            <Layers size={13} /> QUOTED
+          <span className="badge badge-warning">
+            <Layers size={12} /> QUOTED
           </span>
         );
       case 'WON':
         return (
-          <span className="badge badge-success" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-            <CheckCircle2 size={13} /> WON
+          <span className="badge badge-success">
+            <CheckCircle2 size={12} /> WON
           </span>
         );
       case 'LOST':
         return (
-          <span className="badge badge-danger" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-            <XCircle size={13} /> LOST
+          <span className="badge badge-danger">
+            <XCircle size={12} /> LOST
           </span>
         );
       default:
-        return <span className="badge">{status}</span>;
+        return <span className="badge badge-secondary">{status}</span>;
     }
   };
 
   return (
     <div className="page-container">
-      {/* Header Banner */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+      {/* Page Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
-            <div style={{ background: '#1e3a8a', padding: '8px', borderRadius: '8px', color: '#fff' }}>
-              <FileQuestion size={24} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+            <div style={{ background: '#eff6ff', padding: '8px', borderRadius: '8px', color: '#2563eb', border: '1px solid #bfdbfe' }}>
+              <FileQuestion size={22} />
             </div>
             <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 800, color: '#0f172a' }}>
               Customer Enquiries
             </h1>
           </div>
-          <p style={{ margin: 0, color: '#64748b', fontSize: '14px' }}>
-            Step 1 of Workflow: Capture incoming commercial enquiries for industrial products. (NEW → QUOTED → WON/LOST)
+          <p style={{ margin: 0, color: '#64748b', fontSize: '13.5px' }}>
+            Step 1 of 5: Capture incoming buyer RFQs and initiate commercial pricing workflows.
           </p>
         </div>
 
         <button
           onClick={() => setShowModal(true)}
           className="btn btn-primary"
-          style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
         >
-          <Plus size={18} /> New Customer Enquiry
+          <Plus size={16} /> New Customer Enquiry
         </button>
       </div>
 
-      {/* Workflow Indicator Breadcrumb */}
-      <div
-        style={{
-          background: '#f8fafc',
-          border: '1px solid #e2e8f0',
-          borderRadius: '8px',
-          padding: '12px 18px',
-          marginBottom: '20px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          fontSize: '13px',
-          fontWeight: 600,
-        }}
-      >
-        <span style={{ color: '#2563eb', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-          <span style={{ background: '#2563eb', color: '#fff', borderRadius: '50%', width: '20px', height: '20px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px' }}>1</span>
-          Customer Enquiry
+      {/* Modern Workflow Stepper */}
+      <div className="workflow-stepper">
+        <span className="stepper-item active">
+          <span className="stepper-number">1</span>
+          <span>Enquiry</span>
         </span>
-        <ChevronRight size={16} color="#94a3b8" />
-        <span style={{ color: '#64748b' }}>2. Quotation</span>
-        <ChevronRight size={16} color="#94a3b8" />
-        <span style={{ color: '#64748b' }}>3. Sales Order</span>
-        <ChevronRight size={16} color="#94a3b8" />
-        <span style={{ color: '#64748b' }}>4. Inventory Reservation</span>
-        <ChevronRight size={16} color="#94a3b8" />
-        <span style={{ color: '#64748b' }}>5. Dispatch</span>
+        <ChevronRight size={14} color="#cbd5e1" />
+        <span className="stepper-item">
+          <span className="stepper-number">2</span>
+          <span>Quotation</span>
+        </span>
+        <ChevronRight size={14} color="#cbd5e1" />
+        <span className="stepper-item">
+          <span className="stepper-number">3</span>
+          <span>Sales Order</span>
+        </span>
+        <ChevronRight size={14} color="#cbd5e1" />
+        <span className="stepper-item">
+          <span className="stepper-number">4</span>
+          <span>Stock Reservation</span>
+        </span>
+        <ChevronRight size={14} color="#cbd5e1" />
+        <span className="stepper-item">
+          <span className="stepper-number">5</span>
+          <span>Dispatch</span>
+        </span>
       </div>
 
-      {/* Filter Tabs & Search Bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', marginBottom: '20px', flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', gap: '8px' }}>
+      {/* Filter Segmented Control & Search Box */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', marginBottom: '18px', flexWrap: 'wrap' }}>
+        <div className="segmented-control">
           {['ALL', 'NEW', 'QUOTED', 'WON', 'LOST'].map((st) => (
             <button
               key={st}
               onClick={() => setStatusFilter(st)}
               className={`filter-tab ${statusFilter === st ? 'active' : ''}`}
-              style={{
-                padding: '7px 16px',
-                borderRadius: '6px',
-                border: statusFilter === st ? '1px solid #2563eb' : '1px solid #e2e8f0',
-                background: statusFilter === st ? '#eff6ff' : '#ffffff',
-                color: statusFilter === st ? '#1d4ed8' : '#64748b',
-                fontWeight: statusFilter === st ? 700 : 500,
-                fontSize: '13px',
-                cursor: 'pointer',
-              }}
             >
               {st}
             </button>
           ))}
         </div>
 
-        <div style={{ position: 'relative', minWidth: '260px' }}>
-          <Search size={16} color="#94a3b8" style={{ position: 'absolute', left: '10px', top: '10px' }} />
+        <div className="search-box" style={{ width: '320px' }}>
+          <Search size={15} />
           <input
             type="text"
-            placeholder="Search by Enquiry #, Customer, City..."
+            placeholder="Search Enquiry #, Customer, City..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="form-control"
-            style={{ paddingLeft: '32px', fontSize: '13px' }}
           />
         </div>
       </div>
 
       {/* Enquiries Table */}
-      <div className="card" style={{ overflow: 'hidden', padding: 0 }}>
+      <div className="table-responsive">
         {loading ? (
-          <div style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>Loading enquiries...</div>
+          <div style={{ padding: '48px', textAlign: 'center', color: '#64748b' }}>Loading customer enquiries...</div>
         ) : filteredEnquiries.length === 0 ? (
           <div style={{ padding: '48px', textAlign: 'center' }}>
             <FileQuestion size={44} color="#cbd5e1" style={{ margin: '0 auto 12px' }} />
-            <h3 style={{ margin: '0 0 6px 0', color: '#334155' }}>No Customer Enquiries Found</h3>
-            <p style={{ margin: 0, color: '#94a3b8', fontSize: '14px' }}>
-              Create your first enquiry to initiate the sales quotation workflow.
+            <h3 style={{ margin: '0 0 6px 0', color: '#334155', fontSize: '16px' }}>No Customer Enquiries Found</h3>
+            <p style={{ margin: 0, color: '#94a3b8', fontSize: '13.5px' }}>
+              Create your first customer enquiry above to initiate the commercial workflow.
             </p>
           </div>
         ) : (
-          <table className="table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <table className="table">
             <thead>
-              <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0', textAlign: 'left', fontSize: '12px', color: '#475569', textTransform: 'uppercase' }}>
-                <th style={{ padding: '12px 16px' }}>Enquiry #</th>
-                <th style={{ padding: '12px 16px' }}>Customer</th>
-                <th style={{ padding: '12px 16px' }}>Date</th>
-                <th style={{ padding: '12px 16px' }}>Required By</th>
-                <th style={{ padding: '12px 16px' }}>Products Requested</th>
-                <th style={{ padding: '12px 16px' }}>Status</th>
-                <th style={{ padding: '12px 16px', textAlign: 'right' }}>Actions</th>
+              <tr>
+                <th>Enquiry #</th>
+                <th>Customer Account</th>
+                <th>Enquiry Date</th>
+                <th>Required By</th>
+                <th>Products Requested</th>
+                <th>Status</th>
+                <th style={{ textAlign: 'right' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredEnquiries.map((enq) => (
-                <tr key={enq.id} style={{ borderBottom: '1px solid #f1f5f9', fontSize: '13px' }}>
-                  <td style={{ padding: '14px 16px', fontWeight: 700, color: '#1e3a8a' }}>
-                    {enq.enquiryNumber}
+                <tr key={enq.id}>
+                  <td style={{ fontWeight: 700, color: '#1e3a8a' }}>
+                    <code>{enq.enquiryNumber}</code>
                   </td>
-                  <td style={{ padding: '14px 16px' }}>
+                  <td>
                     <div style={{ fontWeight: 600, color: '#0f172a' }}>{enq.customer.companyName}</div>
                     <div style={{ fontSize: '12px', color: '#64748b' }}>
                       {enq.customer.contactPerson} • {enq.customer.city}
                     </div>
                   </td>
-                  <td style={{ padding: '14px 16px', color: '#64748b' }}>
+                  <td style={{ color: '#475569' }}>
                     {new Date(enq.enquiryDate).toLocaleDateString()}
                   </td>
-                  <td style={{ padding: '14px 16px', color: '#64748b' }}>
+                  <td style={{ color: '#475569' }}>
                     {new Date(enq.requiredDate).toLocaleDateString()}
                   </td>
-                  <td style={{ padding: '14px 16px' }}>
+                  <td>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
                       {enq.items.slice(0, 2).map((item, idx) => (
-                        <span key={idx} style={{ fontSize: '12px', color: '#334155' }}>
+                        <span key={idx} style={{ fontSize: '12.5px', color: '#334155' }}>
                           • <strong>{item.quantity} {item.product?.unit || 'Units'}</strong> of {item.product?.productName}
                         </span>
                       ))}
                       {enq.items.length > 2 && (
-                        <span style={{ fontSize: '11px', color: '#64748b' }}>
+                        <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 500 }}>
                           +{enq.items.length - 2} more item(s)
                         </span>
                       )}
                     </div>
                   </td>
-                  <td style={{ padding: '14px 16px' }}>
+                  <td>
                     {getStatusBadge(enq.status)}
                   </td>
-                  <td style={{ padding: '14px 16px', textAlign: 'right' }}>
+                  <td style={{ textAlign: 'right' }}>
                     <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                       {/* Status Dropdown */}
                       <select
                         value={enq.status}
                         onChange={(e) => handleStatusChange(enq.id, e.target.value as EnquiryStatus)}
-                        style={{
-                          fontSize: '12px',
-                          padding: '4px 8px',
-                          borderRadius: '4px',
-                          border: '1px solid #cbd5e1',
-                          background: '#fff',
-                        }}
+                        className="form-select"
+                        style={{ fontSize: '12px', padding: '4px 8px', width: 'auto' }}
                       >
                         <option value="NEW">NEW</option>
                         <option value="QUOTED">QUOTED</option>
@@ -354,22 +335,11 @@ export const EnquiriesPage: React.FC<EnquiriesPageProps> = ({ onNavigate }) => {
                       {/* Convert to Quotation Button */}
                       <button
                         onClick={() => onNavigate?.('quotations')}
-                        className="btn btn-sm"
-                        style={{
-                          background: '#2563eb',
-                          color: '#fff',
-                          padding: '5px 10px',
-                          fontSize: '12px',
-                          borderRadius: '4px',
-                          border: 'none',
-                          cursor: 'pointer',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '4px',
-                        }}
+                        className="btn btn-primary btn-sm"
                         title="Open Quotation Engine"
                       >
-                        Quote <ArrowRight size={13} />
+                        <span>Quote</span>
+                        <ArrowRight size={13} />
                       </button>
                     </div>
                   </td>
@@ -380,228 +350,214 @@ export const EnquiriesPage: React.FC<EnquiriesPageProps> = ({ onNavigate }) => {
         )}
       </div>
 
-      {/* New Enquiry Modal */}
+      {/* Standardized Enterprise New Enquiry Modal */}
       {showModal && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(15, 23, 42, 0.6)',
-            backdropFilter: 'blur(4px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-            padding: '20px',
-          }}
-        >
-          <div
-            style={{
-              background: '#fff',
-              borderRadius: '12px',
-              maxWidth: '680px',
-              width: '100%',
-              maxHeight: '90vh',
-              overflowY: 'auto',
-              padding: '24px',
-              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2)',
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
-              <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#0f172a' }}>
-                New Customer Enquiry
-              </h2>
+        <div className="modal-backdrop">
+          <div className="modal-content" style={{ maxWidth: '680px' }}>
+            <div className="modal-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563eb', border: '1px solid #bfdbfe' }}>
+                  <FileQuestion size={18} />
+                </div>
+                <div>
+                  <h2 className="modal-title">New Customer Enquiry</h2>
+                  <p className="modal-subtitle">Log incoming industrial procurement RFQ into commercial pipeline</p>
+                </div>
+              </div>
               <button
+                type="button"
                 onClick={() => setShowModal(false)}
-                style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#64748b' }}
+                className="modal-close-btn"
+                title="Close dialog"
               >
                 ✕
               </button>
             </div>
 
             <form onSubmit={handleCreateEnquiry}>
-              {/* Customer Selector */}
-              <div style={{ marginBottom: '16px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                  <label style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>
-                    Customer Details
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => setIsNewCustomer(!isNewCustomer)}
-                    style={{ background: 'none', border: 'none', color: '#2563eb', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
-                  >
-                    {isNewCustomer ? '← Choose Existing Customer' : '+ Add New Customer'}
-                  </button>
+              <div className="modal-body">
+                {/* Customer Selector */}
+                <div className="form-group">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                    <label className="form-label" style={{ marginBottom: 0 }}>
+                      Customer Account <span className="required">*</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setIsNewCustomer(!isNewCustomer)}
+                      style={{ background: 'none', border: 'none', color: '#2563eb', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
+                    >
+                      {isNewCustomer ? '← Select Existing Customer' : '+ Register New Customer'}
+                    </button>
+                  </div>
+
+                  {!isNewCustomer ? (
+                    <select
+                      value={selectedCustomerId}
+                      onChange={(e) => setSelectedCustomerId(e.target.value)}
+                      className="form-control"
+                      required
+                    >
+                      {customers.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.companyName} ({c.contactPerson} - {c.city})
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '8px', border: '1px solid #e2e8f0', marginTop: '6px' }}>
+                      <div style={{ fontSize: '12px', fontWeight: 700, color: '#334155', marginBottom: '10px' }}>
+                        Quick Client Profile Details:
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                        <input
+                          type="text"
+                          placeholder="Company Name *"
+                          value={newCust.companyName}
+                          onChange={(e) => setNewCust({ ...newCust, companyName: e.target.value })}
+                          className="form-control"
+                          required
+                        />
+                        <input
+                          type="text"
+                          placeholder="Contact Person *"
+                          value={newCust.contactPerson}
+                          onChange={(e) => setNewCust({ ...newCust, contactPerson: e.target.value })}
+                          className="form-control"
+                          required
+                        />
+                        <input
+                          type="text"
+                          placeholder="Mobile / Phone *"
+                          value={newCust.mobile}
+                          onChange={(e) => setNewCust({ ...newCust, mobile: e.target.value })}
+                          className="form-control"
+                          required
+                        />
+                        <input
+                          type="email"
+                          placeholder="Email Address *"
+                          value={newCust.email}
+                          onChange={(e) => setNewCust({ ...newCust, email: e.target.value })}
+                          className="form-control"
+                          required
+                        />
+                        <input
+                          type="text"
+                          placeholder="City / Region *"
+                          value={newCust.city}
+                          onChange={(e) => setNewCust({ ...newCust, city: e.target.value })}
+                          className="form-control"
+                          style={{ gridColumn: 'span 2' }}
+                          required
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                {!isNewCustomer ? (
-                  <select
-                    value={selectedCustomerId}
-                    onChange={(e) => setSelectedCustomerId(e.target.value)}
-                    className="form-control"
-                    required
-                  >
-                    {customers.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.companyName} ({c.contactPerson} - {c.city})
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', background: '#f8fafc', padding: '12px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                {/* Required Delivery Date & Notes */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                  <div className="form-group">
+                    <label className="form-label">
+                      Required Delivery Date <span className="required">*</span>
+                    </label>
                     <input
-                      type="text"
-                      placeholder="Company Name *"
-                      value={newCust.companyName}
-                      onChange={(e) => setNewCust({ ...newCust, companyName: e.target.value })}
+                      type="date"
+                      value={requiredDate}
+                      onChange={(e) => setRequiredDate(e.target.value)}
                       className="form-control"
-                      required
-                    />
-                    <input
-                      type="text"
-                      placeholder="Contact Person *"
-                      value={newCust.contactPerson}
-                      onChange={(e) => setNewCust({ ...newCust, contactPerson: e.target.value })}
-                      className="form-control"
-                      required
-                    />
-                    <input
-                      type="text"
-                      placeholder="Mobile (+91...) *"
-                      value={newCust.mobile}
-                      onChange={(e) => setNewCust({ ...newCust, mobile: e.target.value })}
-                      className="form-control"
-                      required
-                    />
-                    <input
-                      type="email"
-                      placeholder="Email Address *"
-                      value={newCust.email}
-                      onChange={(e) => setNewCust({ ...newCust, email: e.target.value })}
-                      className="form-control"
-                      required
-                    />
-                    <input
-                      type="text"
-                      placeholder="City *"
-                      value={newCust.city}
-                      onChange={(e) => setNewCust({ ...newCust, city: e.target.value })}
-                      className="form-control"
-                      style={{ gridColumn: 'span 2' }}
                       required
                     />
                   </div>
-                )}
-              </div>
-
-              {/* Required Delivery Date & Notes */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '16px' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '6px', color: '#334155' }}>
-                    Required Delivery Date
-                  </label>
-                  <input
-                    type="date"
-                    value={requiredDate}
-                    onChange={(e) => setRequiredDate(e.target.value)}
-                    className="form-control"
-                    required
-                  />
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '6px', color: '#334155' }}>
-                    Commercial Notes
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Urgent requirement for facility overhaul"
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    className="form-control"
-                  />
-                </div>
-              </div>
-
-              {/* Dynamic Product Items */}
-              <div style={{ marginBottom: '20px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                  <label style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>
-                    Products & Quantities
-                  </label>
-                  <button
-                    type="button"
-                    onClick={handleAddItem}
-                    style={{
-                      background: '#eff6ff',
-                      border: '1px solid #bfdbfe',
-                      color: '#1d4ed8',
-                      fontSize: '12px',
-                      padding: '4px 10px',
-                      borderRadius: '4px',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    + Add Another Product
-                  </button>
+                  <div className="form-group">
+                    <label className="form-label">
+                      Commercial Notes
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Urgent requirement for facility overhaul"
+                      value={notes}
+                      onChange={(e) => setNotes(e.target.value)}
+                      className="form-control"
+                    />
+                  </div>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  {enquiryItems.map((item, idx) => (
-                    <div key={idx} style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                      <select
-                        value={item.productId}
-                        onChange={(e) => handleItemChange(idx, 'productId', e.target.value)}
-                        className="form-control"
-                        style={{ flex: 1 }}
-                        required
-                      >
-                        {products.map((p) => (
-                          <option key={p.id} value={p.id}>
-                            [{p.productCode}] {p.productName} (Base: ₹{p.basePrice} / {p.unit})
-                          </option>
-                        ))}
-                      </select>
+                {/* Dynamic Product Items */}
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <label className="form-label" style={{ marginBottom: 0 }}>
+                      Enquiry Line Items <span className="required">*</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={handleAddItem}
+                      className="btn btn-outline btn-sm"
+                      style={{ color: '#2563eb', borderColor: '#bfdbfe', background: '#eff6ff' }}
+                    >
+                      + Add Item Line
+                    </button>
+                  </div>
 
-                      <input
-                        type="number"
-                        min="1"
-                        placeholder="Qty"
-                        value={item.quantity}
-                        onChange={(e) => handleItemChange(idx, 'quantity', Math.max(1, parseInt(e.target.value) || 1))}
-                        className="form-control"
-                        style={{ width: '100px' }}
-                        required
-                      />
-
-                      {enquiryItems.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveItem(idx)}
-                          style={{
-                            background: '#fee2e2',
-                            border: 'none',
-                            color: '#b91c1c',
-                            width: '32px',
-                            height: '32px',
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                          }}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {enquiryItems.map((item, idx) => (
+                      <div key={idx} style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                        <select
+                          value={item.productId}
+                          onChange={(e) => handleItemChange(idx, 'productId', e.target.value)}
+                          className="form-control"
+                          style={{ flex: 1 }}
+                          required
                         >
-                          ✕
-                        </button>
-                      )}
-                    </div>
-                  ))}
+                          {products.map((p) => (
+                            <option key={p.id} value={p.id}>
+                              [{p.productCode}] {p.productName} (Base: ₹{p.basePrice} / {p.unit})
+                            </option>
+                          ))}
+                        </select>
+
+                        <input
+                          type="number"
+                          min="1"
+                          placeholder="Qty"
+                          value={item.quantity}
+                          onChange={(e) => handleItemChange(idx, 'quantity', Math.max(1, parseInt(e.target.value) || 1))}
+                          className="form-control"
+                          style={{ width: '100px' }}
+                          required
+                        />
+
+                        {enquiryItems.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveItem(idx)}
+                            style={{
+                              background: '#fef2f2',
+                              border: '1px solid #fecaca',
+                              color: '#dc2626',
+                              width: '34px',
+                              height: '34px',
+                              borderRadius: '6px',
+                              cursor: 'pointer',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontWeight: 700,
+                            }}
+                            title="Remove line item"
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
               {/* Submit Buttons */}
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+              <div className="modal-footer">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
