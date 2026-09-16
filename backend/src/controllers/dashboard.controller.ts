@@ -1,76 +1,74 @@
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { prisma } from '../db/prisma';
-import { AuthenticatedRequest } from '../types';
 
-export const getDashboardStats = async (_req: AuthenticatedRequest, res: Response) => {
+export const getDashboardMetrics = async (_req: Request, res: Response) => {
   const [
     totalCustomers,
-    activeCustomers,
-    leadCustomers,
-    allProducts,
-    totalChallans,
-    confirmedChallans,
-    draftChallans,
-    recentChallans,
-    recentMovements,
+    totalProducts,
+    totalEnquiries,
+    totalQuotations,
+    totalSalesOrders,
+    totalDispatches,
+    enquiryStats,
+    quotationStats,
+    orderStats,
+    inventories,
   ] = await Promise.all([
     prisma.customer.count(),
-    prisma.customer.count({ where: { status: 'ACTIVE' } }),
-    prisma.customer.count({ where: { status: 'LEAD' } }),
-    prisma.product.findMany({
-      select: {
-        id: true,
-        name: true,
-        sku: true,
-        currentStock: true,
-        minStockAlert: true,
-        category: true,
-        unitPrice: true,
-      },
-    }),
-    prisma.salesChallan.count(),
-    prisma.salesChallan.findMany({
-      where: { status: 'CONFIRMED' },
-      select: { totalAmount: true },
-    }),
-    prisma.salesChallan.count({ where: { status: 'DRAFT' } }),
-    prisma.salesChallan.findMany({
-      take: 5,
-      orderBy: { createdAt: 'desc' },
-      include: {
-        customer: { select: { name: true, businessName: true } },
-      },
-    }),
-    prisma.stockMovementLog.findMany({
-      take: 5,
-      orderBy: { createdAt: 'desc' },
-      include: {
-        product: { select: { name: true, sku: true } },
-        createdByUser: { select: { name: true, role: true } },
-      },
-    }),
+    prisma.product.count(),
+    prisma.enquiry.count(),
+    prisma.quotation.count(),
+    prisma.salesOrder.count(),
+    prisma.dispatch.count(),
+    prisma.enquiry.groupBy({ by: ['status'], _count: { id: true } }),
+    prisma.quotation.groupBy({ by: ['status'], _count: { id: true } }),
+    prisma.salesOrder.groupBy({ by: ['status'], _count: { id: true } }),
+    prisma.inventory.findMany({ include: { product: true } }),
   ]);
 
-  const totalRevenue = confirmedChallans.reduce((sum, c) => sum + c.totalAmount, 0);
-  const lowStockProducts = allProducts.filter((p) => p.currentStock <= p.minStockAlert);
+  let totalPhysicalStock = 0;
+  let totalReservedStock = 0;
+  let totalDamagedStock = 0;
+
+  for (const inv of inventories) {
+    totalPhysicalStock += inv.physicalQuantity;
+    totalReservedStock += inv.reservedQuantity;
+    totalDamagedStock += inv.damagedQuantity;
+  }
+
+  const totalAvailableStock = Math.max(0, totalPhysicalStock - totalReservedStock - totalDamagedStock);
 
   return res.json({
     success: true,
     data: {
-      metrics: {
-        totalRevenue,
-        totalCustomers,
-        activeCustomers,
-        leadCustomers,
-        totalProducts: allProducts.length,
-        lowStockCount: lowStockProducts.length,
-        totalChallans,
-        confirmedChallansCount: confirmedChallans.length,
-        draftChallansCount: draftChallans,
+      counts: {
+        customers: totalCustomers,
+        products: totalProducts,
+        enquiries: totalEnquiries,
+        quotations: totalQuotations,
+        salesOrders: totalSalesOrders,
+        dispatches: totalDispatches,
       },
-      lowStockAlerts: lowStockProducts.slice(0, 5),
-      recentChallans,
-      recentMovements,
+      inventory: {
+        totalPhysical: totalPhysicalStock,
+        totalReserved: totalReservedStock,
+        totalDamaged: totalDamagedStock,
+        totalAvailable: totalAvailableStock,
+      },
+      breakdowns: {
+        enquiries: enquiryStats.reduce((acc: any, curr) => {
+          acc[curr.status] = curr._count.id;
+          return acc;
+        }, {}),
+        quotations: quotationStats.reduce((acc: any, curr) => {
+          acc[curr.status] = curr._count.id;
+          return acc;
+        }, {}),
+        salesOrders: orderStats.reduce((acc: any, curr) => {
+          acc[curr.status] = curr._count.id;
+          return acc;
+        }, {}),
+      },
     },
   });
 };

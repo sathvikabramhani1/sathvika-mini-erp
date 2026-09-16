@@ -1,60 +1,88 @@
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { prisma } from '../db/prisma';
-import { AuthenticatedRequest } from '../types';
 
-export const getStockLogs = async (req: AuthenticatedRequest, res: Response) => {
-  const page = parseInt(req.query.page as string) || 1;
-  const limit = parseInt(req.query.limit as string) || 25;
-  const skip = (page - 1) * limit;
+export const getInventory = async (req: Request, res: Response) => {
+  const inventoryRecords = await prisma.inventory.findMany({
+    include: {
+      product: true,
+    },
+    orderBy: {
+      product: { productCode: 'asc' },
+    },
+  });
 
-  const movementType = req.query.movementType as string;
-  const productId = req.query.productId as string;
-  const search = (req.query.search as string)?.trim();
+  const formatted = inventoryRecords.map((inv) => {
+    const physical = inv.physicalQuantity;
+    const reserved = inv.reservedQuantity;
+    const damaged = inv.damagedQuantity;
+    const available = Math.max(0, physical - reserved - damaged);
 
-  const where: any = {};
+    return {
+      id: inv.id,
+      productId: inv.productId,
+      productCode: inv.product.productCode,
+      productName: inv.product.productName,
+      category: inv.product.category,
+      unit: inv.product.unit,
+      basePrice: inv.product.basePrice,
+      physicalQuantity: physical,
+      reservedQuantity: reserved,
+      damagedQuantity: damaged,
+      availableQuantity: available,
+      updatedAt: inv.updatedAt,
+    };
+  });
 
-  if (movementType && movementType !== 'ALL') {
-    where.movementType = movementType;
+  return res.json({ success: true, data: formatted });
+};
+
+export const updateInventory = async (req: Request, res: Response) => {
+  const { productId } = req.params;
+  const { physicalQuantity, damagedQuantity } = req.body;
+
+  const current = await prisma.inventory.findUnique({
+    where: { productId },
+    include: { product: true },
+  });
+
+  if (!current) {
+    return res.status(404).json({ success: false, error: 'Inventory record not found.' });
   }
 
-  if (productId) {
-    where.productId = productId;
+  const newPhysical = physicalQuantity !== undefined ? Number(physicalQuantity) : current.physicalQuantity;
+  const newDamaged = damagedQuantity !== undefined ? Number(damagedQuantity) : current.damagedQuantity;
+
+  if (newPhysical < 0 || newDamaged < 0) {
+    return res.status(400).json({
+      success: false,
+      error: 'Physical and Damaged quantities cannot be negative.',
+    });
   }
 
-  if (search) {
-    where.OR = [
-      { reason: { contains: search } },
-      { product: { name: { contains: search } } },
-      { product: { sku: { contains: search } } },
-    ];
+  // Prevent physical stock dropping below currently reserved stock!
+  if (newPhysical < current.reservedQuantity + newDamaged) {
+    return res.status(400).json({
+      success: false,
+      error: `Cannot reduce physical quantity to ${newPhysical}. It must be at least the reserved quantity (${current.reservedQuantity}) + damaged (${newDamaged}).`,
+    });
   }
 
-  const [total, logs] = await Promise.all([
-    prisma.stockMovementLog.count({ where }),
-    prisma.stockMovementLog.findMany({
-      where,
-      skip,
-      take: limit,
-      orderBy: { createdAt: 'desc' },
-      include: {
-        product: {
-          select: { id: true, name: true, sku: true, category: true, location: true },
-        },
-        createdByUser: {
-          select: { id: true, name: true, email: true, role: true },
-        },
-      },
-    }),
-  ]);
+  const updated = await prisma.inventory.update({
+    where: { productId },
+    data: {
+      physicalQuantity: newPhysical,
+      damagedQuantity: newDamaged,
+    },
+    include: { product: true },
+  });
+
+  const available = updated.physicalQuantity - updated.reservedQuantity - updated.damagedQuantity;
 
   return res.json({
     success: true,
-    data: logs,
-    pagination: {
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit),
+    data: {
+      ...updated,
+      availableQuantity: available,
     },
   });
 };

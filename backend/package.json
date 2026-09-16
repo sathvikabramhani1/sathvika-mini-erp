@@ -7,6 +7,7 @@
     "dev": "tsx watch src/index.ts",
     "build": "npx prisma generate --schema=./prisma/schema.postgresql.prisma && npx tsc",
     "start": "node dist/index.js",
+    "test": "tsx src/__tests__/case_study.test.ts",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
     "prisma:seed": "tsx prisma/seed.ts",

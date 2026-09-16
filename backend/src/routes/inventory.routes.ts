@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getStockLogs } from '../controllers/inventory.controller';
+import { getInventory, updateInventory } from '../controllers/inventory.controller';
 import { authenticateJwt } from '../middleware/auth';
 import { authorizeRoles } from '../middleware/rbac';
 
@@ -7,12 +7,10 @@ const router = Router();
 
 router.use(authenticateJwt);
 
-router.get('/', authorizeRoles('ADMIN', 'WAREHOUSE', 'SALES', 'ACCOUNTS'), getStockLogs);
-router.get('/movements', authorizeRoles('ADMIN', 'WAREHOUSE', 'SALES', 'ACCOUNTS'), getStockLogs);
-router.get(
-  '/logs',
-  authorizeRoles('ADMIN', 'WAREHOUSE', 'SALES', 'ACCOUNTS'),
-  getStockLogs
-);
+// Both Admin and Sales can view inventory
+router.get('/', getInventory);
+
+// Only Admin can update stock levels
+router.patch('/:productId', authorizeRoles('ADMIN'), updateInventory);
 
 export default router;

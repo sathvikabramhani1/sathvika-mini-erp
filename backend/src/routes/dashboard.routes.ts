@@ -1,12 +1,12 @@
 import { Router } from 'express';
-import { getDashboardStats } from '../controllers/dashboard.controller';
+import { getDashboardMetrics } from '../controllers/dashboard.controller';
 import { authenticateJwt } from '../middleware/auth';
 
 const router = Router();
 
 router.use(authenticateJwt);
 
-router.get('/', getDashboardStats);
-router.get('/stats', getDashboardStats);
+router.get('/metrics', getDashboardMetrics);
+router.get('/', getDashboardMetrics);
 
 export default router;
