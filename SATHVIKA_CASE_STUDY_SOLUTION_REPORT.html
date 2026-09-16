@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sathvika Mini ERP - PERN Case Study Solution Report</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 15mm 12mm;
+      @bottom-right {
+        content: counter(page);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-size: 8pt;
+        color: #64748b;
+      }
+    }
+    @media print {
+      body { background: #ffffff !important; padding: 0 !important; }
+      .no-print { display: none !important; }
+      .page-break { page-break-before: always; }
+      table { page-break-inside: avoid; }
+      pre { page-break-inside: avoid; }
+      .section-block { page-break-inside: avoid; }
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.45;
+      color: #0f172a;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 20px 16px;
+      background: #f8fafc;
+      font-size: 9pt;
+    }
+    .doc-container {
+      background: #ffffff;
+      padding: 32px 40px;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      border: 1px solid #e2e8f0;
+    }
+    .header-banner {
+      border-bottom: 3px solid #1e3a8a;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    h1 {
+      color: #1e3a8a;
+      font-size: 18pt;
+      margin: 0 0 4px 0;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+    }
+    .subtitle {
+      color: #64748b;
+      font-size: 10pt;
+      margin: 0;
+      font-style: italic;
+    }
+    .candidate-meta {
+      background: #eff6ff;
+      border-left: 4px solid #2563eb;
+      padding: 10px 16px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      font-size: 8.8pt;
+    }
+    h2 {
+      color: #1e3a8a;
+      font-size: 12pt;
+      margin-top: 18px;
+      margin-bottom: 6px;
+      border-bottom: 1.5px solid #e2e8f0;
+      padding-bottom: 3px;
+      font-weight: 700;
+    }
+    h3 {
+      color: #2563eb;
+      font-size: 10pt;
+      margin-top: 12px;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+    p {
+      margin: 0 0 8px 0;
+      text-align: justify;
+    }
+    ul, ol {
+      margin: 4px 0 10px 18px;
+      padding: 0;
+    }
+    li {
+      margin-bottom: 4px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 16px;
+      font-size: 8.5pt;
+    }
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 6px 10px;
+      text-align: left;
+    }
+    th {
+      background: #f1f5f9;
+      color: #1e3a8a;
+      font-weight: 700;
+    }
+    .callout {
+      background: #f0fdf4;
+      border-left: 3.5px solid #16a34a;
+      border-radius: 4px;
+      padding: 8px 12px;
+      margin: 10px 0;
+      font-size: 8.5pt;
+    }
+    pre {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-family: "Consolas", monospace;
+      font-size: 8pt;
+      overflow-x: auto;
+      line-height: 1.35;
+      margin: 8px 0 12px;
+    }
+    .print-btn {
+      background: #1e3a8a;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 12px;
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <div style="text-align: right;" class="no-print">
+    <button onclick="window.print()" class="print-btn">🖨️ Print / Save as PDF</button>
+  </div>
+
+  <div class="doc-container">
+    <div class="header-banner">
+      <div>
+        <h1>Technical Case Study Solution Report</h1>
+        <p class="subtitle">Full-Stack Developer Selection — Industrial Mini ERP & CRM Suite</p>
+      </div>
+      <div style="text-align: right; font-size: 8.5pt; color: #64748b;">
+        Round 2 Submission<br>
+        Date: September 17, 2026
+      </div>
+    </div>
+
+    <div class="candidate-meta">
+      <div><strong>Candidate Name:</strong> Swayampakam Sathvika Bramhani</div>
+      <div><strong>Institution:</strong> GITAM University</div>
+      <div><strong>Email:</strong> sswayamp@gitam.in</div>
+      <div><strong>GitHub Account:</strong> <a href="https://github.com/sathvikabramhani1" target="_blank">sathvikabramhani1</a></div>
+      <div style="grid-column: span 2;"><strong>GitHub Repository:</strong> <a href="https://github.com/sathvikabramhani1/sathvika-mini-erp" target="_blank">https://github.com/sathvikabramhani1/sathvika-mini-erp</a></div>
+    </div>
+
+    <h2>1. Executive Summary & Problem Context</h2>
+    <p>
+      This document presents the complete technical architecture and implementation for the <strong>PERN Full-Stack Technical Case Study</strong>. The application models a real-world manufacturing and supply company distributing industrial products to commercial B2B clients.
+    </p>
+    <p>
+      The core workflow enforces strict sequential lifecycle integrity across five distinct stages:
+    </p>
+    <div class="callout">
+      <strong>Core Workflow Lifecycle:</strong><br>
+      Customer Enquiry (NEW → QUOTED → WON/LOST) ➔ Commercial Quotation (DRAFT → SENT → ACCEPTED/REJECTED) ➔ Sales Order (PENDING) ➔ Stock Reservation (CONFIRMED) ➔ Dispatch Fulfillment (DISPATCHED)
+    </div>
+
+    <h2>2. Technology Stack</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Layer</th>
+          <th>Technology</th>
+          <th>Key Libraries / Rationale</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Database</strong></td>
+          <td>PostgreSQL / SQLite via Prisma ORM</td>
+          <td>Fully normalized relational model with atomic transactions, row-level concurrency locking, foreign keys, and unique indexes.</td>
+        </tr>
+        <tr>
+          <td><strong>Backend API</strong></td>
+          <td>Node.js & Express.js (TypeScript)</td>
+          <td>RESTful design, JWT authentication, bcryptjs (salt 10), role-based access control (RBAC) middleware, and authoritative calculation engines.</td>
+        </tr>
+        <tr>
+          <td><strong>Frontend UI</strong></td>
+          <td>React.js (Vite + TypeScript)</td>
+          <td>Modern responsive UI with 4 dedicated functional screens, live stock feasibility indicators, live financial calculation cards, and modals.</td>
+        </tr>
+        <tr>
+          <td><strong>Testing Suite</strong></td>
+          <td>Node Native Test Runner & Assertions</td>
+          <td>Automated test suite executing end-to-end integration tests covering all mandatory case study scenarios plus bonus concurrency testing.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>3. Role-Based Access Control (RBAC) Architecture</h2>
+    <p>
+      Authentication is secured using <strong>JSON Web Tokens (JWT)</strong> with passwords hashed via <code>bcryptjs</code>. Permissions are strictly enforced by the backend middleware:
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Role</th>
+          <th>Credentials</th>
+          <th>Permissions & Capabilities</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>ADMIN</strong></td>
+          <td><code>admin@sathvika.com</code> / <code>Password123!</code></td>
+          <td>Full system access: Manage inventory, confirm sales orders (atomically reserving stock), and process dispatch fulfillment.</td>
+        </tr>
+        <tr>
+          <td><strong>SALES USER</strong></td>
+          <td><code>sales@sathvika.com</code> / <code>Password123!</code></td>
+          <td>Register customers, log enquiries, generate commercial quotations, convert accepted quotes to sales orders, and view live stock. Restricted from confirming orders or dispatching.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>4. Core Functional Workflow Implementation</h2>
+    
+    <h3>4.1 Stage 1: Customer Enquiry</h3>
+    <p>
+      Captures customer requirements with target delivery dates, notes, and dynamic multi-product line items. Enquiries transition through statuses: <code>NEW</code> → <code>QUOTED</code> → <code>WON</code> / <code>LOST</code>. Supports both existing customer selection and inline onboarding of new commercial clients.
+    </p>
+
+    <h3>4.2 Stage 2: Commercial Quotation Engine</h3>
+    <p>
+      Quotations reference a specific customer enquiry. The backend engine acts as the authoritative source of truth for all mathematical calculations:
+    </p>
+    <ul>
+      <li><strong>Line Amount Calculation:</strong> <code>Line Amount = (Qty × Unit Price × (1 − Discount%)) × (1 + GST%)</code></li>
+      <li><strong>Tax & Discount Aggregation:</strong> Computes Subtotal, Trade Discount, Taxable Base, and 18% GST.</li>
+      <li><strong>Lifecycle Progression:</strong> <code>DRAFT</code> → <code>SENT</code> → <code>ACCEPTED</code> / <code>REJECTED</code>.</li>
+    </ul>
+
+    <h3>4.3 Stage 3: Quotation to Sales Order Conversion</h3>
+    <p>
+      Enforces two critical business rules mandated by the case study:
+    </p>
+    <ol>
+      <li><strong>Accepted Status Enforcement:</strong> Only <code>ACCEPTED</code> quotations can be converted into Sales Orders. Conversions from <code>DRAFT</code> or <code>REJECTED</code> statuses are rejected with <code>400 Bad Request</code>.</li>
+      <li><strong>Duplicate Prevention:</strong> A 1-to-1 unique constraint prevents duplicate Sales Orders from being generated from the same quotation.</li>
+    </ol>
+
+    <h3>4.4 Stage 4: Inventory Reservation & Concurrency Race Condition Solution</h3>
+    <p>
+      When an Administrator confirms a Sales Order, the backend validates available stock:
+      $$\text{Available Stock} = \text{Physical Quantity} - \text{Reserved Quantity} - \text{Damaged Quantity}$$
+    </p>
+    <p>
+      <strong>Concurrency Solution:</strong> To solve the simultaneous reservation challenge (e.g. User A requesting 80 units and User B requesting 50 units on available stock of 100), reservations are executed inside isolated Prisma database transactions:
+    </p>
+    <pre>
+await prisma.$transaction(async (tx) => {
+  const inv = await tx.inventory.findUnique({ where: { productId } });
+  const available = inv.physicalQuantity - inv.reservedQuantity - inv.damagedQuantity;
+
+  if (available < requiredQuantity) {
+    throw new Error(`Cannot reserve more than available inventory.`);
+  }
+
+  // Atomically increment reserved stock; physical stock remains untouched
+  await tx.inventory.update({
+    where: { id: inv.id },
+    data: { reservedQuantity: { increment: requiredQuantity } }
+  });
+});
+    </pre>
+    <p>
+      Simultaneous conflicting requests are serialized: one request commits successfully, while the other receives an immediate <code>400 Bad Request</code>. Over-allocation is mathematically impossible.
+    </p>
+
+    <h3>4.5 Stage 5: Dispatch Fulfillment</h3>
+    <p>
+      Admin dispatches confirmed orders by specifying the <strong>Vehicle Registration Number</strong> and <strong>Driver Name</strong>. Upon dispatch, <strong>both Physical Quantity and Reserved Quantity decrement simultaneously</strong>, finalizing the fulfillment cycle.
+    </p>
+
+    <h2>5. Automated Test Suite Verification Results</h2>
+    <p>
+      All 5 mandatory case study integration tests and the concurrency race condition test pass with 100% success rate:
+    </p>
+    <pre>
+===============================================================
+       PERN TECHNICAL CASE STUDY AUTOMATED TEST SUITE          
+===============================================================
+[SETUP] Logging in as Admin and Sales User...
+  ✔ Admin & Sales User tokens acquired
+
+[TEST 1] Quotation total is calculated correctly (Discount & GST)...
+  ✔ PASS: Subtotal (8,200), Discount (820), GST (1,328.40), Grand Total (8,708.40) verified correctly.
+
+[TEST 2] Rejected / Draft quotation cannot create a Sales Order...
+  ✔ DRAFT quotation conversion properly blocked (400 Bad Request)
+  ✔ REJECTED quotation conversion properly blocked (400 Bad Request)
+  ✔ PASS: Only ACCEPTED quotations can create a Sales Order.
+
+[TEST 3] Same quotation cannot generate duplicate Sales Orders...
+  ✔ First conversion created Sales Order SO-2026-002
+  ✔ PASS: Duplicate Sales Order creation strictly prevented.
+
+[TEST 4] Cannot reserve more than available inventory...
+  ✔ PASS: Stock check verified. Reservation beyond available quantity blocked.
+
+[TEST 5] Unauthorized user cannot perform restricted operations (RBAC)...
+  ✔ Sales User blocked from confirming sales order (403 Forbidden)
+  ✔ Sales User blocked from dispatching sales order (403 Forbidden)
+  ✔ PASS: Role-Based Access Control strictly enforced at backend level.
+
+[BONUS TEST] Simultaneous inventory reservations (Concurrency race condition)...
+  Firing simultaneous confirmations: Order A (80 units) & Order B (50 units) on stock of 100...
+  ✔ Successfully resolved race condition! One order succeeded, one safely rejected.
+  ✔ Final reserved stock: 80 / 100 (No over-allocation).
+  ✔ PASS: Database transaction concurrency handling verified.
+
+===============================================================
+       ALL 5 MANDATORY TESTS + CONCURRENCY BONUS PASSED!      
+===============================================================
+    </pre>
+
+    <h2>6. Live Verification Preparedness (Case Study Round 3)</h2>
+    <ul>
+      <li><strong>Damaged Stock Extension:</strong> The <code>damagedQuantity</code> column is pre-modeled in the <code>Inventory</code> table. Available stock calculation dynamically subtracts damaged stock: <code>Available = Physical − Reserved − Damaged</code>.</li>
+      <li><strong>Order Cancellation:</strong> <code>POST /api/sales-orders/:id/cancel</code> is implemented to safely return reserved stock to the available inventory pool when an order is cancelled.</li>
+    </ul>
+
+    <h2>7. Submission Deliverables Summary</h2>
+    <ul>
+      <li><strong>Source Code Repository:</strong> <a href="https://github.com/sathvikabramhani1/sathvika-mini-erp">https://github.com/sathvikabramhani1/sathvika-mini-erp</a> (5 progressive, structured commits)</li>
+      <li><strong>Postman API Collection:</strong> <code>sathvika-case-study.postman_collection.json</code> in project root</li>
+      <li><strong>Local Execution:</strong> Backend runs on <code>http://localhost:5000</code>, Frontend on <code>http://localhost:5173</code></li>
+    </ul>
+  </div>
+</body>
+</html>
