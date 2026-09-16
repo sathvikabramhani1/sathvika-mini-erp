@@ -3,12 +3,14 @@
 > **A robust, production-grade B2B Mini ERP application built with the PERN stack (PostgreSQL + Express.js + React.js + Node.js) implementing the complete commercial lifecycle:**
 >
 > $$\textbf{Customer Enquiry} \longrightarrow \textbf{Commercial Quotation} \longrightarrow \textbf{Sales Order} \longrightarrow \textbf{Inventory Reservation} \longrightarrow \textbf{Dispatch}$$
+> 🚀 **Live 24/7 Cloud Application**: **[https://sathvika-mini-erp.vercel.app](https://sathvika-mini-erp.vercel.app)**
 
 ---
 
 ## 🌟 Executive Summary & Evaluation Highlights
 
 - **Candidate**: Swayampakam Sathvika Bramhani (`sathvikabramhani1`)
+- **Live Deployment**: [https://sathvika-mini-erp.vercel.app](https://sathvika-mini-erp.vercel.app) (Hosted 24/7 on Vercel)
 - **Technology Stack**: **PostgreSQL** + **Express.js** + **React.js** + **Node.js** + **Prisma ORM** + **TypeScript**
 - **Strict Business Logic & Mathematical Validation**: Authoritative server-side price, discount, and GST calculation. No client calculations blindly trusted.
 - **Concurrency & Race Condition Safety**: Atomic transactional stock reservations using database-level locking preventing overselling when concurrent requests arrive.
