@@ -1,4 +1,5 @@
 // PostgreSQL Prisma Schema for Production / Docker / Neon / Supabase / Render Deployment
+// Workflow: Customer Enquiry -> Quotation -> Sales Order -> Inventory Reservation -> Dispatch
 
 generator client {
   provider = "prisma-client-js"
@@ -14,97 +15,179 @@ model User {
   email        String   @unique
   name         String
   passwordHash String
-  role         String   @default("SALES") // ADMIN, SALES, WAREHOUSE, ACCOUNTS
+  role         String   @default("SALES") // ADMIN, SALES
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  createdNotes      CustomerFollowUpNote[]
-  stockMovements    StockMovementLog[]
-  createdChallans   SalesChallan[]
+  createdEnquiries     Enquiry[]
+  createdQuotations   Quotation[]
+  confirmedSalesOrders SalesOrder[]
+  createdDispatches   Dispatch[]
 }
 
 model Customer {
-  id           String    @id @default(uuid())
-  name         String
-  mobile       String
-  email        String
-  businessName String
-  gstNumber    String?
-  customerType String    @default("RETAIL") // RETAIL, WHOLESALE, DISTRIBUTOR
-  address      String
-  status       String    @default("LEAD")   // LEAD, ACTIVE, INACTIVE
-  followUpDate DateTime?
-  notes        String?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-
-  followUpNotes CustomerFollowUpNote[]
-  challans      SalesChallan[]
-}
-
-model CustomerFollowUpNote {
-  id              String   @id @default(uuid())
-  customerId      String
-  customer        Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  note            String
-  createdByUserId String?
-  createdByUser   User?    @relation(fields: [createdByUserId], references: [id], onDelete: SetNull)
-  createdAt       DateTime @default(now())
-}
-
-model Product {
   id            String   @id @default(uuid())
-  name          String
-  sku           String   @unique
-  category      String
-  unitPrice     Float
-  currentStock  Int      @default(0)
-  minStockAlert Int      @default(10)
-  location      String
+  companyName   String
+  contactPerson String
+  mobile        String
+  email         String
+  city          String
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  stockMovements StockMovementLog[]
-  challanItems   SalesChallanItem[]
+  enquiries   Enquiry[]
+  quotations  Quotation[]
+  salesOrders SalesOrder[]
 }
 
-model StockMovementLog {
-  id              String   @id @default(uuid())
-  productId       String
-  product         Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  quantityChanged Int
-  movementType    String   // IN, OUT
-  reason          String
-  createdByUserId String?
-  createdByUser   User?    @relation(fields: [createdByUserId], references: [id], onDelete: SetNull)
-  createdAt       DateTime @default(now())
+model Product {
+  id          String   @id @default(uuid())
+  productCode String   @unique
+  productName String
+  category    String
+  unit        String   // PCS, SET, MTR, NOS, KG
+  basePrice   Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  inventory       Inventory?
+  enquiryItems    EnquiryItem[]
+  quotationItems  QuotationItem[]
+  salesOrderItems SalesOrderItem[]
+  dispatchItems   DispatchItem[]
 }
 
-model SalesChallan {
+model Inventory {
+  id               String   @id @default(uuid())
+  productId        String   @unique
+  product          Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  physicalQuantity Int      @default(0)
+  reservedQuantity Int      @default(0)
+  damagedQuantity  Int      @default(0) // Live verification requirement: available = physical - reserved - damaged
+  updatedAt        DateTime @updatedAt
+}
+
+model Enquiry {
   id              String   @id @default(uuid())
-  challanNumber   String   @unique
+  enquiryNumber   String   @unique
   customerId      String
-  customer        Customer @relation(fields: [customerId], references: [id])
-  totalQuantity   Int      @default(0)
-  totalAmount     Float    @default(0)
-  status          String   @default("DRAFT") // DRAFT, CONFIRMED, CANCELLED
+  customer        Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  enquiryDate     DateTime @default(now())
+  requiredDate    DateTime
+  notes           String?
+  status          String   @default("NEW") // NEW, QUOTED, WON, LOST
   createdByUserId String?
   createdByUser   User?    @relation(fields: [createdByUserId], references: [id], onDelete: SetNull)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  items           SalesChallanItem[]
+  items      EnquiryItem[]
+  quotations Quotation[]
 }
 
-model SalesChallanItem {
-  id                  String       @id @default(uuid())
-  challanId           String
-  challan             SalesChallan @relation(fields: [challanId], references: [id], onDelete: Cascade)
-  productId           String?
-  product             Product?     @relation(fields: [productId], references: [id], onDelete: SetNull)
-  productNameSnapshot String
-  skuSnapshot         String
-  unitPriceSnapshot   Float
-  quantity            Int
-  subtotal            Float
+model EnquiryItem {
+  id        String   @id @default(uuid())
+  enquiryId String
+  enquiry   Enquiry  @relation(fields: [enquiryId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+  quantity  Int
+  createdAt DateTime @default(now())
+}
+
+model Quotation {
+  id              String    @id @default(uuid())
+  quotationNumber String    @unique
+  enquiryId       String
+  enquiry         Enquiry   @relation(fields: [enquiryId], references: [id], onDelete: Restrict)
+  customerId      String
+  customer        Customer  @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  validUntil      DateTime
+  subtotal        Float     @default(0)
+  discountPercent Float     @default(0)
+  discountAmount  Float     @default(0)
+  gstPercent      Float     @default(18)
+  gstAmount       Float     @default(0)
+  grandTotal      Float     @default(0)
+  status          String    @default("DRAFT") // DRAFT, SENT, ACCEPTED, REJECTED
+  createdByUserId String?
+  createdByUser   User?     @relation(fields: [createdByUserId], references: [id], onDelete: SetNull)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  items      QuotationItem[]
+  salesOrder SalesOrder?
+}
+
+model QuotationItem {
+  id              String    @id @default(uuid())
+  quotationId     String
+  quotation       Quotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  productId       String
+  product         Product   @relation(fields: [productId], references: [id], onDelete: Restrict)
+  quantity        Int
+  unitPrice       Float
+  discountPercent Float     @default(0)
+  gstPercent      Float     @default(18)
+  lineAmount      Float
+  createdAt       DateTime  @default(now())
+}
+
+model SalesOrder {
+  id                String     @id @default(uuid())
+  orderNumber       String     @unique
+  quotationId       String     @unique // Traceable 1-to-1 link, prevents duplicate orders from same quotation
+  quotation         Quotation  @relation(fields: [quotationId], references: [id], onDelete: Restrict)
+  customerId        String
+  customer          Customer   @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  orderDate         DateTime   @default(now())
+  totalAmount       Float      @default(0)
+  status            String     @default("PENDING") // PENDING, CONFIRMED, DISPATCHED, CANCELLED
+  confirmedAt       DateTime?
+  confirmedByUserId String?
+  confirmedByUser   User?      @relation(fields: [confirmedByUserId], references: [id], onDelete: SetNull)
+  cancelledAt       DateTime?
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  items      SalesOrderItem[]
+  dispatches Dispatch[]
+}
+
+model SalesOrderItem {
+  id           String     @id @default(uuid())
+  salesOrderId String
+  salesOrder   SalesOrder @relation(fields: [salesOrderId], references: [id], onDelete: Cascade)
+  productId    String
+  product      Product    @relation(fields: [productId], references: [id], onDelete: Restrict)
+  quantity     Int
+  unitPrice    Float
+  lineAmount   Float
+  createdAt    DateTime   @default(now())
+}
+
+model Dispatch {
+  id              String     @id @default(uuid())
+  dispatchNumber  String     @unique
+  salesOrderId    String
+  salesOrder      SalesOrder @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
+  dispatchDate    DateTime   @default(now())
+  vehicleNumber   String
+  driverName      String
+  createdByUserId String?
+  createdByUser   User?      @relation(fields: [createdByUserId], references: [id], onDelete: SetNull)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  items DispatchItem[]
+}
+
+model DispatchItem {
+  id         String   @id @default(uuid())
+  dispatchId String
+  dispatch   Dispatch @relation(fields: [dispatchId], references: [id], onDelete: Cascade)
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+  quantity   Int
+  createdAt  DateTime @default(now())
 }
