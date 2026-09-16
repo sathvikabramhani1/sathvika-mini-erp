@@ -1,15 +1,16 @@
 import React from 'react';
-import { 
-  LogOut, 
-  Search, 
-  Activity, 
-  LayoutDashboard, 
-  Users, 
-  Package, 
-  History, 
-  FileSpreadsheet, 
-  Leaf,
-  ShieldCheck
+import {
+  LogOut,
+  Search,
+  Activity,
+  LayoutDashboard,
+  FileQuestion,
+  Calculator,
+  ShoppingCart,
+  Package,
+  Users,
+  ShieldCheck,
+  Building2,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -23,11 +24,12 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, setCurrentTab, onOpe
   const { user, logout } = useAuth();
 
   const navTabs = [
-    { id: 'dashboard', label: 'Overview', icon: LayoutDashboard },
-    { id: 'customers', label: 'Customer CRM', icon: Users },
-    { id: 'products', label: 'Product & Stock', icon: Package },
-    { id: 'stock-logs', label: 'Stock Audit', icon: History },
-    { id: 'challans', label: 'Sales Challans', icon: FileSpreadsheet },
+    { id: 'dashboard', label: 'Workflow Overview', icon: LayoutDashboard },
+    { id: 'enquiries', label: '1. Enquiries', icon: FileQuestion },
+    { id: 'quotations', label: '2. Quotations', icon: Calculator },
+    { id: 'sales-orders', label: '3. Sales Orders & Stock', icon: ShoppingCart },
+    { id: 'products', label: 'Product Master', icon: Package },
+    { id: 'customers', label: 'Customers', icon: Users },
   ];
 
   return (
@@ -41,22 +43,22 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, setCurrentTab, onOpe
               width: '40px',
               height: '40px',
               borderRadius: '12px',
-              background: 'linear-gradient(135deg, #10b981 0%, #047857 100%)',
+              background: 'linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 4px 16px rgba(16, 185, 129, 0.4)',
-              border: '1px solid rgba(255, 255, 255, 0.25)'
+              boxShadow: '0 4px 16px rgba(37, 99, 235, 0.35)',
+              border: '1px solid rgba(255, 255, 255, 0.25)',
             }}
           >
-            <Leaf size={22} color="#ffffff" />
+            <Building2 size={22} color="#ffffff" />
           </div>
           <div>
             <div style={{ fontWeight: 800, fontSize: '18px', letterSpacing: '-0.02em', color: '#ffffff' }}>
-              Mini ERP + CRM <span style={{ color: '#fbbf24', fontSize: '15px', fontWeight: 600 }}>Portal</span>
+              Sathvika <span style={{ color: '#60a5fa', fontSize: '15px', fontWeight: 600 }}>Mini ERP</span>
             </div>
-            <div style={{ fontSize: '10px', color: '#a7f3d0', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700 }}>
-              Sathvika Organics B2B Operations Suite
+            <div style={{ fontSize: '10px', color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700 }}>
+              PERN Full-Stack Technical Case Study
             </div>
           </div>
         </div>
@@ -69,39 +71,74 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, setCurrentTab, onOpe
             padding: '7px 16px',
             fontSize: '13px',
             gap: '10px',
-            background: 'rgba(9, 29, 20, 0.7)',
-            borderColor: 'rgba(16, 185, 129, 0.3)',
-            color: '#a7f3d0',
+            background: 'rgba(15, 23, 42, 0.7)',
+            borderColor: 'rgba(59, 130, 246, 0.3)',
+            color: '#bfdbfe',
           }}
           title="Global Quick Search (Ctrl + K)"
         >
-          <Search size={15} color="#10b981" />
+          <Search size={15} color="#60a5fa" />
           <span>Quick actions & jump...</span>
-          <kbd style={{
-            fontSize: '11px',
-            background: 'rgba(255, 255, 255, 0.1)',
-            padding: '2px 6px',
-            borderRadius: '4px',
-            color: '#ffffff'
-          }}>Ctrl K</kbd>
+          <kbd
+            style={{
+              fontSize: '11px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              padding: '2px 6px',
+              borderRadius: '4px',
+              color: '#ffffff',
+            }}
+          >
+            Ctrl K
+          </kbd>
         </button>
 
         {/* Authenticated User Status & Profile */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(9, 29, 20, 0.8)', padding: '6px 12px', borderRadius: '12px', border: '1px solid rgba(16, 185, 129, 0.25)' }}>
-            <ShieldCheck size={16} color="#10b981" />
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: 'rgba(15, 23, 42, 0.8)',
+              padding: '6px 12px',
+              borderRadius: '12px',
+              border: '1px solid rgba(59, 130, 246, 0.25)',
+            }}
+          >
+            <ShieldCheck size={16} color="#60a5fa" />
             <div style={{ fontSize: '12px', color: '#e2e8f0' }}>
               Role: <strong style={{ color: '#fbbf24' }}>{user?.role}</strong>
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', borderLeft: '1px solid rgba(255,255,255,0.1)', paddingLeft: '14px' }}>
-            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'linear-gradient(135deg, #10b981, #d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff', fontWeight: 700, fontSize: '13px' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              borderLeft: '1px solid rgba(255,255,255,0.1)',
+              paddingLeft: '14px',
+            }}
+          >
+            <div
+              style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '8px',
+                background: 'linear-gradient(135deg, #2563eb, #7c3aed)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#ffffff',
+                fontWeight: 700,
+                fontSize: '13px',
+              }}
+            >
               {user?.name?.charAt(0) || 'S'}
             </div>
             <div>
               <div style={{ fontSize: '12px', fontWeight: 700, color: '#ffffff' }}>{user?.name}</div>
-              <div style={{ fontSize: '10px', color: '#a7f3d0' }}>{user?.email}</div>
+              <div style={{ fontSize: '10px', color: '#93c5fd' }}>{user?.email}</div>
             </div>
             <button
               onClick={logout}
@@ -115,8 +152,16 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, setCurrentTab, onOpe
         </div>
       </div>
 
-      {/* Bottom Row: Studio Horizontal Navigation Tabs */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid rgba(16, 185, 129, 0.15)', paddingTop: '10px' }}>
+      {/* Bottom Row: Horizontal Navigation Tabs */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          borderTop: '1px solid rgba(59, 130, 246, 0.2)',
+          paddingTop: '10px',
+        }}
+      >
         <nav className="nav-tabs-bar">
           {navTabs.map((tab) => {
             const Icon = tab.icon;
@@ -135,9 +180,21 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, setCurrentTab, onOpe
         </nav>
 
         {/* Operational Pulse */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#34d399', background: 'rgba(16, 185, 129, 0.12)', padding: '4px 10px', borderRadius: '9999px', border: '1px solid rgba(16, 185, 129, 0.25)' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            fontSize: '11px',
+            color: '#60a5fa',
+            background: 'rgba(37, 99, 235, 0.15)',
+            padding: '4px 10px',
+            borderRadius: '9999px',
+            border: '1px solid rgba(37, 99, 235, 0.3)',
+          }}
+        >
           <Activity size={12} />
-          <span>PostgreSQL Cluster Connected</span>
+          <span>PERN Workflow Operational</span>
         </div>
       </div>
     </header>

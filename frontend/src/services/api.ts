@@ -1,3 +1,15 @@
+import {
+  Customer,
+  Product,
+  InventoryItem,
+  Enquiry,
+  Quotation,
+  SalesOrder,
+  User,
+  EnquiryStatus,
+  QuotationStatus,
+} from '../types';
+
 const BASE_URL = '/api';
 
 function getAuthHeader(): Record<string, string> {
@@ -30,116 +42,110 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
 export const api = {
   // Auth
   login: (credentials: { email: string; password: string }) =>
-    request<{ token: string; user: any }>('/auth/login', {
+    request<{ token: string; user: User }>('/auth/login', {
       method: 'POST',
       body: JSON.stringify(credentials),
     }),
 
-  getCurrentUser: () => request<any>('/auth/me'),
+  getCurrentUser: () => request<User>('/auth/me'),
 
   // Dashboard
-  getDashboardStats: () => request<any>('/dashboard/stats'),
+  getDashboardMetrics: () => request<any>('/dashboard/metrics'),
 
   // Customers
-  getCustomers: (params?: { page?: number; limit?: number; search?: string; status?: string; customerType?: string }) => {
-    const query = new URLSearchParams();
-    if (params?.page) query.set('page', String(params.page));
-    if (params?.limit) query.set('limit', String(params.limit));
-    if (params?.search) query.set('search', params.search);
-    if (params?.status) query.set('status', params.status);
-    if (params?.customerType) query.set('customerType', params.customerType);
-    return request<any>(`/customers?${query.toString()}`);
-  },
-
-  getCustomerById: (id: string) => request<any>(`/customers/${id}`),
-
-  createCustomer: (customerData: any) =>
-    request<any>('/customers', {
+  getCustomers: () => request<Customer[]>('/customers'),
+  getCustomerById: (id: string) => request<Customer>(`/customers/${id}`),
+  createCustomer: (data: Partial<Customer>) =>
+    request<Customer>('/customers', {
       method: 'POST',
-      body: JSON.stringify(customerData),
-    }),
-
-  updateCustomer: (id: string, customerData: any) =>
-    request<any>(`/customers/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(customerData),
-    }),
-
-  deleteCustomer: (id: string) =>
-    request<any>(`/customers/${id}`, {
-      method: 'DELETE',
-    }),
-
-  addCustomerNote: (id: string, note: string) =>
-    request<any>(`/customers/${id}/notes`, {
-      method: 'POST',
-      body: JSON.stringify({ note }),
+      body: JSON.stringify(data),
     }),
 
   // Products
-  getProducts: (params?: { page?: number; limit?: number; search?: string; category?: string; lowStock?: boolean }) => {
-    const query = new URLSearchParams();
-    if (params?.page) query.set('page', String(params.page));
-    if (params?.limit) query.set('limit', String(params.limit));
-    if (params?.search) query.set('search', params.search);
-    if (params?.category) query.set('category', params.category);
-    if (params?.lowStock) query.set('lowStock', 'true');
-    return request<any>(`/products?${query.toString()}`);
-  },
-
-  getProductById: (id: string) => request<any>(`/products/${id}`),
-
-  createProduct: (productData: any) =>
-    request<any>('/products', {
-      method: 'POST',
-      body: JSON.stringify(productData),
-    }),
-
-  updateProduct: (id: string, productData: any) =>
-    request<any>(`/products/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(productData),
-    }),
-
-  adjustStock: (id: string, data: { quantityChanged: number; movementType: 'IN' | 'OUT'; reason: string }) =>
-    request<any>(`/products/${id}/adjust-stock`, {
+  getProducts: () => request<Product[]>('/products'),
+  getProductById: (id: string) => request<Product>(`/products/${id}`),
+  createProduct: (data: any) =>
+    request<Product>('/products', {
       method: 'POST',
       body: JSON.stringify(data),
     }),
 
-  // Inventory logs
-  getStockLogs: (params?: { page?: number; limit?: number; search?: string; movementType?: string; productId?: string }) => {
-    const query = new URLSearchParams();
-    if (params?.page) query.set('page', String(params.page));
-    if (params?.limit) query.set('limit', String(params.limit));
-    if (params?.search) query.set('search', params.search);
-    if (params?.movementType) query.set('movementType', params.movementType);
-    if (params?.productId) query.set('productId', params.productId);
-    return request<any>(`/inventory/logs?${query.toString()}`);
-  },
-
-  // Challans
-  getChallans: (params?: { page?: number; limit?: number; search?: string; status?: string; customerId?: string }) => {
-    const query = new URLSearchParams();
-    if (params?.page) query.set('page', String(params.page));
-    if (params?.limit) query.set('limit', String(params.limit));
-    if (params?.search) query.set('search', params.search);
-    if (params?.status) query.set('status', params.status);
-    if (params?.customerId) query.set('customerId', params.customerId);
-    return request<any>(`/challans?${query.toString()}`);
-  },
-
-  getChallanById: (id: string) => request<any>(`/challans/${id}`),
-
-  createChallan: (data: { customerId: string; status: 'DRAFT' | 'CONFIRMED'; items: { productId: string; quantity: number }[] }) =>
-    request<any>('/challans', {
-      method: 'POST',
+  // Inventory
+  getInventory: () => request<InventoryItem[]>('/inventory'),
+  updateInventory: (productId: string, data: { physicalQuantity?: number; damagedQuantity?: number }) =>
+    request<any>(`/inventory/${productId}`, {
+      method: 'PATCH',
       body: JSON.stringify(data),
     }),
 
-  updateChallanStatus: (id: string, status: 'CONFIRMED' | 'CANCELLED') =>
-    request<any>(`/challans/${id}/status`, {
+  // Enquiries
+  getEnquiries: (status?: string) => {
+    const query = status && status !== 'ALL' ? `?status=${status}` : '';
+    return request<Enquiry[]>(`/enquiries${query}`);
+  },
+  getEnquiryById: (id: string) => request<Enquiry>(`/enquiries/${id}`),
+  createEnquiry: (data: {
+    customerId?: string;
+    customer?: Partial<Customer>;
+    requiredDate: string;
+    notes?: string;
+    items: { productId: string; quantity: number }[];
+  }) =>
+    request<Enquiry>('/enquiries', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  updateEnquiryStatus: (id: string, status: EnquiryStatus) =>
+    request<Enquiry>(`/enquiries/${id}/status`, {
       method: 'PATCH',
       body: JSON.stringify({ status }),
+    }),
+
+  // Quotations
+  getQuotations: (status?: string) => {
+    const query = status && status !== 'ALL' ? `?status=${status}` : '';
+    return request<Quotation[]>(`/quotations${query}`);
+  },
+  getQuotationById: (id: string) => request<Quotation>(`/quotations/${id}`),
+  createQuotation: (data: {
+    enquiryId: string;
+    customerId?: string;
+    validUntil?: string;
+    discountPercent?: number;
+    gstPercent?: number;
+    items: { productId: string; quantity: number; unitPrice?: number; discountPercent?: number; gstPercent?: number }[];
+  }) =>
+    request<Quotation>('/quotations', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  updateQuotationStatus: (id: string, status: QuotationStatus) =>
+    request<Quotation>(`/quotations/${id}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status }),
+    }),
+  convertQuotationToOrder: (id: string) =>
+    request<SalesOrder>(`/quotations/${id}/convert`, {
+      method: 'POST',
+    }),
+
+  // Sales Orders
+  getSalesOrders: (status?: string) => {
+    const query = status && status !== 'ALL' ? `?status=${status}` : '';
+    return request<SalesOrder[]>(`/sales-orders${query}`);
+  },
+  getSalesOrderById: (id: string) => request<SalesOrder>(`/sales-orders/${id}`),
+  confirmSalesOrder: (id: string) =>
+    request<SalesOrder>(`/sales-orders/${id}/confirm`, {
+      method: 'POST',
+    }),
+  dispatchSalesOrder: (id: string, data: { vehicleNumber: string; driverName: string }) =>
+    request<{ dispatch: any; order: SalesOrder }>(`/sales-orders/${id}/dispatch`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  cancelSalesOrder: (id: string) =>
+    request<SalesOrder>(`/sales-orders/${id}/cancel`, {
+      method: 'POST',
     }),
 };

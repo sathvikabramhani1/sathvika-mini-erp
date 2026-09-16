@@ -61,8 +61,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const emailMap: Record<UserRole, string> = {
       ADMIN: 'admin@sathvika.com',
       SALES: 'sales@sathvika.com',
-      WAREHOUSE: 'warehouse@sathvika.com',
-      ACCOUNTS: 'accounts@sathvika.com',
     };
 
     await login(emailMap[role], 'Password123!');
@@ -87,6 +85,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth must be used within an AuthProvider');
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
   return context;
 };

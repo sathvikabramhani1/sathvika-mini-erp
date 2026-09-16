@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { 
-  Search, 
-  LayoutDashboard, 
-  Users, 
-  Package, 
-  History, 
-  FileSpreadsheet, 
-  CornerDownLeft
+import {
+  Search,
+  LayoutDashboard,
+  Users,
+  Package,
+  FileQuestion,
+  Calculator,
+  ShoppingCart,
+  CornerDownLeft,
 } from 'lucide-react';
 
 interface CommandPaletteProps {
@@ -35,78 +36,93 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose,
   if (!isOpen) return null;
 
   const navCommands = [
-    { id: 'dashboard', label: 'Go to Operations Overview', category: 'Navigation', icon: LayoutDashboard },
-    { id: 'customers', label: 'Go to Customer CRM Module', category: 'Navigation', icon: Users },
-    { id: 'products', label: 'Go to Product & Inventory Module', category: 'Navigation', icon: Package },
-    { id: 'stock-logs', label: 'Go to Stock Movement Audit Trail', category: 'Navigation', icon: History },
-    { id: 'challans', label: 'Go to Sales Challans & Dispatch', category: 'Navigation', icon: FileSpreadsheet },
+    { id: 'enquiries', label: '1. Customer Enquiries (Create, View, Status)', category: 'Workflow', icon: FileQuestion },
+    { id: 'quotations', label: '2. Commercial Quotations (Pricing, Discount, GST)', category: 'Workflow', icon: Calculator },
+    { id: 'sales-orders', label: '3. Sales Orders, Stock Reservation & Dispatch', category: 'Workflow', icon: ShoppingCart },
+    { id: 'dashboard', label: 'Workflow Overview & Live Metrics', category: 'Navigation', icon: LayoutDashboard },
+    { id: 'products', label: 'Industrial Product Master & Stock List', category: 'Master Data', icon: Package },
+    { id: 'customers', label: 'B2B Customer Relationship Directory', category: 'Master Data', icon: Users },
   ];
 
-  const filteredNav = navCommands.filter(c => c.label.toLowerCase().includes(query.toLowerCase()));
+  const filteredNav = navCommands.filter((c) => c.label.toLowerCase().includes(query.toLowerCase()));
 
   return (
     <div className="modal-backdrop" onClick={onClose} style={{ zIndex: 100 }}>
-      <div 
-        className="modal-content" 
-        onClick={e => e.stopPropagation()} 
-        style={{ 
-          maxWidth: '560px', 
-          background: '#082115', 
-          border: '1px solid rgba(16, 185, 129, 0.4)',
-          boxShadow: '0 25px 60px rgba(0,0,0,0.8), 0 0 30px rgba(16, 185, 129, 0.2)'
+      <div
+        className="modal-content"
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          maxWidth: '560px',
+          width: '100%',
+          padding: 0,
+          overflow: 'hidden',
+          borderRadius: '12px',
+          background: '#ffffff',
+          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2)',
         }}
       >
-        <div style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-          <Search size={20} color="#10b981" />
+        <div style={{ display: 'flex', alignItems: 'center', padding: '12px 16px', borderBottom: '1px solid #e2e8f0', gap: '10px' }}>
+          <Search size={18} color="#64748b" />
           <input
-            autoFocus
             type="text"
-            placeholder="Type a command or jump to module..."
+            placeholder="Type a command or jump to section..."
             value={query}
-            onChange={e => setQuery(e.target.value)}
+            onChange={(e) => setQuery(e.target.value)}
+            autoFocus
             style={{
-              flex: 1,
-              background: 'transparent',
               border: 'none',
-              color: '#ffffff',
-              fontSize: '16px',
               outline: 'none',
-              fontFamily: 'inherit'
+              width: '100%',
+              fontSize: '14px',
+              color: '#0f172a',
             }}
           />
-          <span style={{ fontSize: '11px', color: '#a7f3d0', background: 'rgba(255,255,255,0.08)', padding: '2px 8px', borderRadius: '4px' }}>
-            ESC
-          </span>
+          <kbd style={{ fontSize: '11px', background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px', color: '#64748b' }}>ESC</kbd>
         </div>
 
-        <div style={{ maxHeight: '360px', overflowY: 'auto', padding: '12px 14px' }}>
-          {filteredNav.map(item => {
-            const Icon = item.icon;
-            return (
-              <div
-                key={item.id}
-                onClick={() => { onNavigate(item.id); onClose(); }}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '12px 14px',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease',
-                  color: '#f0fdf4'
-                }}
-                onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'rgba(16, 185, 129, 0.15)')}
-                onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <Icon size={18} color="#10b981" />
-                  <span style={{ fontSize: '14px', fontWeight: 500 }}>{item.label}</span>
+        <div style={{ maxHeight: '340px', overflowY: 'auto', padding: '8px' }}>
+          {filteredNav.length === 0 ? (
+            <div style={{ padding: '24px', textAlign: 'center', color: '#94a3b8', fontSize: '13px' }}>
+              No matching navigation actions found.
+            </div>
+          ) : (
+            filteredNav.map((cmd) => {
+              const Icon = cmd.icon;
+              return (
+                <div
+                  key={cmd.id}
+                  onClick={() => {
+                    onNavigate(cmd.id);
+                    onClose();
+                  }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '10px 12px',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                    color: '#334155',
+                    transition: 'all 0.15s',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = '#f1f5f9')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ background: '#eff6ff', padding: '6px', borderRadius: '6px', color: '#2563eb' }}>
+                      <Icon size={16} />
+                    </div>
+                    <div>
+                      <div style={{ fontWeight: 600, color: '#0f172a' }}>{cmd.label}</div>
+                      <div style={{ fontSize: '11px', color: '#94a3b8' }}>{cmd.category}</div>
+                    </div>
+                  </div>
+                  <CornerDownLeft size={14} color="#94a3b8" />
                 </div>
-                <CornerDownLeft size={14} color="#6ee7b7" />
-              </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
       </div>
     </div>
