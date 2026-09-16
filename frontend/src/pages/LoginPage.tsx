@@ -25,6 +25,20 @@ export const LoginPage: React.FC = () => {
     }
   };
 
+  const handleQuickLogin = async (roleEmail: string) => {
+    setEmail(roleEmail);
+    setPassword('Password123!');
+    setLoading(true);
+    try {
+      await login(roleEmail, 'Password123!');
+      success(`Logged in successfully as ${roleEmail === 'admin@sathvika.com' ? 'Admin' : 'Sales'}!`);
+    } catch (err: any) {
+      error(err.message || 'Login failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div
       style={{
@@ -122,8 +136,56 @@ export const LoginPage: React.FC = () => {
           </button>
         </form>
 
+        {/* Quick 1-Click Evaluator Sign-In */}
+        <div style={{ marginTop: '16px', display: 'flex', gap: '8px' }}>
+          <button
+            type="button"
+            disabled={loading}
+            onClick={() => handleQuickLogin('admin@sathvika.com')}
+            style={{
+              flex: 1,
+              padding: '8px 10px',
+              fontSize: '12px',
+              fontWeight: 600,
+              backgroundColor: 'rgba(16, 185, 129, 0.15)',
+              color: '#6ee7b7',
+              border: '1px solid rgba(16, 185, 129, 0.3)',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+            }}
+          >
+            🛡️ Admin Quick Login
+          </button>
+          <button
+            type="button"
+            disabled={loading}
+            onClick={() => handleQuickLogin('sales@sathvika.com')}
+            style={{
+              flex: 1,
+              padding: '8px 10px',
+              fontSize: '12px',
+              fontWeight: 600,
+              backgroundColor: 'rgba(59, 130, 246, 0.15)',
+              color: '#93c5fd',
+              border: '1px solid rgba(59, 130, 246, 0.3)',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+            }}
+          >
+            💼 Sales Quick Login
+          </button>
+        </div>
+
         {/* Collapsible Credentials Reference for Evaluators */}
-        <div style={{ marginTop: '24px', borderTop: '1px solid rgba(16, 185, 129, 0.15)', paddingTop: '16px' }}>
+        <div style={{ marginTop: '20px', borderTop: '1px solid rgba(16, 185, 129, 0.15)', paddingTop: '14px' }}>
           <button
             type="button"
             onClick={() => setShowCredentialsHelp(!showCredentialsHelp)}
@@ -150,11 +212,19 @@ export const LoginPage: React.FC = () => {
           {showCredentialsHelp && (
             <div style={{ marginTop: '12px', background: 'rgba(6, 22, 14, 0.95)', border: '1px solid rgba(16, 185, 129, 0.25)', borderRadius: '8px', padding: '12px', fontSize: '11px', color: '#cbd5e1' }}>
               <div style={{ marginBottom: '6px', color: '#fbbf24', fontWeight: 700 }}>Password for all roles: Password123!</div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
-                <div>• <strong>Admin:</strong> admin@sathvika.com</div>
-                <div>• <strong>Sales:</strong> sales@sathvika.com</div>
-                <div>• <strong>Warehouse:</strong> warehouse@sathvika.com</div>
-                <div>• <strong>Accounts:</strong> accounts@sathvika.com</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                <div
+                  onClick={() => handleQuickLogin('admin@sathvika.com')}
+                  style={{ cursor: 'pointer', padding: '4px', borderRadius: '4px', background: 'rgba(255,255,255,0.05)' }}
+                >
+                  • <strong>Admin:</strong> admin@sathvika.com
+                </div>
+                <div
+                  onClick={() => handleQuickLogin('sales@sathvika.com')}
+                  style={{ cursor: 'pointer', padding: '4px', borderRadius: '4px', background: 'rgba(255,255,255,0.05)' }}
+                >
+                  • <strong>Sales:</strong> sales@sathvika.com
+                </div>
               </div>
             </div>
           )}

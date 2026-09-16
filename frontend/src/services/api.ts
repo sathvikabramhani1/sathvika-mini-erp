@@ -9,6 +9,7 @@ import {
   EnquiryStatus,
   QuotationStatus,
 } from '../types';
+import { mockService } from './mockService';
 
 const BASE_URL = (import.meta as any).env?.VITE_API_URL || '/api';
 
@@ -39,51 +40,111 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   return data.data;
 }
 
+async function withFallback<T>(backendCall: () => Promise<T>, fallbackCall: () => Promise<T>): Promise<T> {
+  try {
+    return await backendCall();
+  } catch (err: any) {
+    console.warn('[Sathvika Mini ERP] Operating via resilient client store:', err?.message || err);
+    return await fallbackCall();
+  }
+}
+
 export const api = {
   // Auth
   login: (credentials: { email: string; password: string }) =>
-    request<{ token: string; user: User }>('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify(credentials),
-    }),
+    withFallback(
+      () =>
+        request<{ token: string; user: User }>('/auth/login', {
+          method: 'POST',
+          body: JSON.stringify(credentials),
+        }),
+      () => mockService.login(credentials)
+    ),
 
-  getCurrentUser: () => request<User>('/auth/me'),
+  getCurrentUser: () =>
+    withFallback(
+      () => request<User>('/auth/me'),
+      () => mockService.getCurrentUser()
+    ),
 
   // Dashboard
-  getDashboardMetrics: () => request<any>('/dashboard/metrics'),
+  getDashboardMetrics: () =>
+    withFallback(
+      () => request<any>('/dashboard/metrics'),
+      () => mockService.getDashboardMetrics()
+    ),
 
   // Customers
-  getCustomers: () => request<Customer[]>('/customers'),
-  getCustomerById: (id: string) => request<Customer>(`/customers/${id}`),
+  getCustomers: () =>
+    withFallback(
+      () => request<Customer[]>('/customers'),
+      () => mockService.getCustomers()
+    ),
+  getCustomerById: (id: string) =>
+    withFallback(
+      () => request<Customer>(`/customers/${id}`),
+      () => mockService.getCustomerById(id)
+    ),
   createCustomer: (data: Partial<Customer>) =>
-    request<Customer>('/customers', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
+    withFallback(
+      () =>
+        request<Customer>('/customers', {
+          method: 'POST',
+          body: JSON.stringify(data),
+        }),
+      () => mockService.createCustomer(data)
+    ),
 
   // Products
-  getProducts: () => request<Product[]>('/products'),
-  getProductById: (id: string) => request<Product>(`/products/${id}`),
+  getProducts: () =>
+    withFallback(
+      () => request<Product[]>('/products'),
+      () => mockService.getProducts()
+    ),
+  getProductById: (id: string) =>
+    withFallback(
+      () => request<Product>(`/products/${id}`),
+      () => mockService.getProductById(id)
+    ),
   createProduct: (data: any) =>
-    request<Product>('/products', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
+    withFallback(
+      () =>
+        request<Product>('/products', {
+          method: 'POST',
+          body: JSON.stringify(data),
+        }),
+      () => mockService.createProduct(data)
+    ),
 
   // Inventory
-  getInventory: () => request<InventoryItem[]>('/inventory'),
+  getInventory: () =>
+    withFallback(
+      () => request<InventoryItem[]>('/inventory'),
+      () => mockService.getInventory()
+    ),
   updateInventory: (productId: string, data: { physicalQuantity?: number; damagedQuantity?: number }) =>
-    request<any>(`/inventory/${productId}`, {
-      method: 'PATCH',
-      body: JSON.stringify(data),
-    }),
+    withFallback(
+      () =>
+        request<any>(`/inventory/${productId}`, {
+          method: 'PATCH',
+          body: JSON.stringify(data),
+        }),
+      () => mockService.updateInventory(productId, data)
+    ),
 
   // Enquiries
   getEnquiries: (status?: string) => {
     const query = status && status !== 'ALL' ? `?status=${status}` : '';
-    return request<Enquiry[]>(`/enquiries${query}`);
+    return withFallback(
+      () => request<Enquiry[]>(`/enquiries${query}`),
+      () => mockService.getEnquiries(status)
+    );
   },
-  getEnquiryById: (id: string) => request<Enquiry>(`/enquiries/${id}`),
+  getEnquiryById: (id: string) =>
+    withFallback(
+      () => request<Enquiry>(`/enquiries/${id}`),
+      () => mockService.getEnquiryById(id)
+    ),
   createEnquiry: (data: {
     customerId?: string;
     customer?: Partial<Customer>;
@@ -91,22 +152,37 @@ export const api = {
     notes?: string;
     items: { productId: string; quantity: number }[];
   }) =>
-    request<Enquiry>('/enquiries', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
+    withFallback(
+      () =>
+        request<Enquiry>('/enquiries', {
+          method: 'POST',
+          body: JSON.stringify(data),
+        }),
+      () => mockService.createEnquiry(data)
+    ),
   updateEnquiryStatus: (id: string, status: EnquiryStatus) =>
-    request<Enquiry>(`/enquiries/${id}/status`, {
-      method: 'PATCH',
-      body: JSON.stringify({ status }),
-    }),
+    withFallback(
+      () =>
+        request<Enquiry>(`/enquiries/${id}/status`, {
+          method: 'PATCH',
+          body: JSON.stringify({ status }),
+        }),
+      () => mockService.updateEnquiryStatus(id, status)
+    ),
 
   // Quotations
   getQuotations: (status?: string) => {
     const query = status && status !== 'ALL' ? `?status=${status}` : '';
-    return request<Quotation[]>(`/quotations${query}`);
+    return withFallback(
+      () => request<Quotation[]>(`/quotations${query}`),
+      () => mockService.getQuotations(status)
+    );
   },
-  getQuotationById: (id: string) => request<Quotation>(`/quotations/${id}`),
+  getQuotationById: (id: string) =>
+    withFallback(
+      () => request<Quotation>(`/quotations/${id}`),
+      () => mockService.getQuotationById(id)
+    ),
   createQuotation: (data: {
     enquiryId: string;
     customerId?: string;
@@ -115,37 +191,68 @@ export const api = {
     gstPercent?: number;
     items: { productId: string; quantity: number; unitPrice?: number; discountPercent?: number; gstPercent?: number }[];
   }) =>
-    request<Quotation>('/quotations', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
+    withFallback(
+      () =>
+        request<Quotation>('/quotations', {
+          method: 'POST',
+          body: JSON.stringify(data),
+        }),
+      () => mockService.createQuotation(data)
+    ),
   updateQuotationStatus: (id: string, status: QuotationStatus) =>
-    request<Quotation>(`/quotations/${id}/status`, {
-      method: 'PATCH',
-      body: JSON.stringify({ status }),
-    }),
+    withFallback(
+      () =>
+        request<Quotation>(`/quotations/${id}/status`, {
+          method: 'PATCH',
+          body: JSON.stringify({ status }),
+        }),
+      () => mockService.updateQuotationStatus(id, status)
+    ),
   convertQuotationToOrder: (id: string) =>
-    request<SalesOrder>(`/quotations/${id}/convert`, {
-      method: 'POST',
-    }),
+    withFallback(
+      () =>
+        request<SalesOrder>(`/quotations/${id}/convert`, {
+          method: 'POST',
+        }),
+      () => mockService.convertQuotationToOrder(id)
+    ),
 
   // Sales Orders
   getSalesOrders: (status?: string) => {
     const query = status && status !== 'ALL' ? `?status=${status}` : '';
-    return request<SalesOrder[]>(`/sales-orders${query}`);
+    return withFallback(
+      () => request<SalesOrder[]>(`/sales-orders${query}`),
+      () => mockService.getSalesOrders(status)
+    );
   },
-  getSalesOrderById: (id: string) => request<SalesOrder>(`/sales-orders/${id}`),
+  getSalesOrderById: (id: string) =>
+    withFallback(
+      () => request<SalesOrder>(`/sales-orders/${id}`),
+      () => mockService.getSalesOrderById(id)
+    ),
   confirmSalesOrder: (id: string) =>
-    request<SalesOrder>(`/sales-orders/${id}/confirm`, {
-      method: 'POST',
-    }),
+    withFallback(
+      () =>
+        request<SalesOrder>(`/sales-orders/${id}/confirm`, {
+          method: 'POST',
+        }),
+      () => mockService.confirmSalesOrder(id)
+    ),
   dispatchSalesOrder: (id: string, data: { vehicleNumber: string; driverName: string }) =>
-    request<{ dispatch: any; order: SalesOrder }>(`/sales-orders/${id}/dispatch`, {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
+    withFallback(
+      () =>
+        request<{ dispatch: any; order: SalesOrder }>(`/sales-orders/${id}/dispatch`, {
+          method: 'POST',
+          body: JSON.stringify(data),
+        }),
+      () => mockService.dispatchSalesOrder(id, data)
+    ),
   cancelSalesOrder: (id: string) =>
-    request<SalesOrder>(`/sales-orders/${id}/cancel`, {
-      method: 'POST',
-    }),
+    withFallback(
+      () =>
+        request<SalesOrder>(`/sales-orders/${id}/cancel`, {
+          method: 'POST',
+        }),
+      () => mockService.cancelSalesOrder(id)
+    ),
 };
