@@ -25,7 +25,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (savedToken) {
         try {
           const profile = await api.getCurrentUser();
-          setUser(profile);
+          if (profile && profile.id) {
+            setUser(profile);
+          } else {
+            throw new Error('Invalid user profile');
+          }
         } catch (err) {
           console.error('Session expired or invalid token');
           localStorage.removeItem('token');
@@ -43,6 +47,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     try {
       const res = await api.login({ email, password });
+      if (!res || !res.token || !res.user) {
+        throw new Error('Authentication failed: Invalid credentials or session payload');
+      }
       localStorage.setItem('token', res.token);
       setToken(res.token);
       setUser(res.user);

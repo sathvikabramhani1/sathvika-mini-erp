@@ -19,25 +19,42 @@ function getAuthHeader(): Record<string, string> {
 }
 
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const headers = {
-    'Content-Type': 'application/json',
-    ...getAuthHeader(),
-    ...(options.headers || {}),
-  };
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 4000);
 
-  const response = await fetch(`${BASE_URL}${endpoint}`, {
-    ...options,
-    headers,
-  });
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      ...getAuthHeader(),
+      ...(options.headers || {}),
+    };
 
-  const data = await response.json().catch(() => ({}));
+    const response = await fetch(`${BASE_URL}${endpoint}`, {
+      ...options,
+      headers,
+      signal: controller.signal,
+    });
 
-  if (!response.ok) {
-    const errorMsg = data.error || data.message || `Request failed with status ${response.status}`;
-    throw new Error(errorMsg);
+    const contentType = response.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) {
+      throw new Error(`Non-JSON response from server (${response.status})`);
+    }
+
+    const data = await response.json().catch(() => null);
+
+    if (!data) {
+      throw new Error('Failed to parse JSON response');
+    }
+
+    if (!response.ok) {
+      const errorMsg = data.error || data.message || `Request failed with status ${response.status}`;
+      throw new Error(errorMsg);
+    }
+
+    return (data.data !== undefined ? data.data : data) as T;
+  } finally {
+    clearTimeout(timeoutId);
   }
-
-  return data.data;
 }
 
 async function withFallback<T>(backendCall: () => Promise<T>, fallbackCall: () => Promise<T>): Promise<T> {
